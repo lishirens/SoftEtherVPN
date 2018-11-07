@@ -10631,7 +10631,7 @@ bool SiIsEnterpriseFunctionsRestrictedOnOpenSource(CEDAR *c)
 
 	if (StrCmpi(region, "JP") == 0 || StrCmpi(region, "CN") == 0)
 	{
-		ret = true;
+		ret = false;
 	}
 
 	return ret;
