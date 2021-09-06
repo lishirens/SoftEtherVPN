@@ -1,123 +1,36 @@
 // SoftEther VPN Source Code - Developer Edition Master Branch
 // Cedar Communication Module
-// 
-// SoftEther VPN Server, Client and Bridge are free software under GPLv2.
-// 
-// Copyright (c) Daiyuu Nobori.
-// Copyright (c) SoftEther VPN Project, University of Tsukuba, Japan.
-// Copyright (c) SoftEther Corporation.
-// 
-// All Rights Reserved.
-// 
-// http://www.softether.org/
-// 
-// Author: Daiyuu Nobori, Ph.D.
-// Comments: Tetsuo Sugiyama, Ph.D.
-// 
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// version 2 as published by the Free Software Foundation.
-// 
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License version 2
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-// CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-// SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-// 
-// THE LICENSE AGREEMENT IS ATTACHED ON THE SOURCE-CODE PACKAGE
-// AS "LICENSE.TXT" FILE. READ THE TEXT FILE IN ADVANCE TO USE THE SOFTWARE.
-// 
-// 
-// THIS SOFTWARE IS DEVELOPED IN JAPAN, AND DISTRIBUTED FROM JAPAN,
-// UNDER JAPANESE LAWS. YOU MUST AGREE IN ADVANCE TO USE, COPY, MODIFY,
-// MERGE, PUBLISH, DISTRIBUTE, SUBLICENSE, AND/OR SELL COPIES OF THIS
-// SOFTWARE, THAT ANY JURIDICAL DISPUTES WHICH ARE CONCERNED TO THIS
-// SOFTWARE OR ITS CONTENTS, AGAINST US (SOFTETHER PROJECT, SOFTETHER
-// CORPORATION, DAIYUU NOBORI OR OTHER SUPPLIERS), OR ANY JURIDICAL
-// DISPUTES AGAINST US WHICH ARE CAUSED BY ANY KIND OF USING, COPYING,
-// MODIFYING, MERGING, PUBLISHING, DISTRIBUTING, SUBLICENSING, AND/OR
-// SELLING COPIES OF THIS SOFTWARE SHALL BE REGARDED AS BE CONSTRUED AND
-// CONTROLLED BY JAPANESE LAWS, AND YOU MUST FURTHER CONSENT TO
-// EXCLUSIVE JURISDICTION AND VENUE IN THE COURTS SITTING IN TOKYO,
-// JAPAN. YOU MUST WAIVE ALL DEFENSES OF LACK OF PERSONAL JURISDICTION
-// AND FORUM NON CONVENIENS. PROCESS MAY BE SERVED ON EITHER PARTY IN
-// THE MANNER AUTHORIZED BY APPLICABLE LAW OR COURT RULE.
-// 
-// USE ONLY IN JAPAN. DO NOT USE THIS SOFTWARE IN ANOTHER COUNTRY UNLESS
-// YOU HAVE A CONFIRMATION THAT THIS SOFTWARE DOES NOT VIOLATE ANY
-// CRIMINAL LAWS OR CIVIL RIGHTS IN THAT PARTICULAR COUNTRY. USING THIS
-// SOFTWARE IN OTHER COUNTRIES IS COMPLETELY AT YOUR OWN RISK. THE
-// SOFTETHER VPN PROJECT HAS DEVELOPED AND DISTRIBUTED THIS SOFTWARE TO
-// COMPLY ONLY WITH THE JAPANESE LAWS AND EXISTING CIVIL RIGHTS INCLUDING
-// PATENTS WHICH ARE SUBJECTS APPLY IN JAPAN. OTHER COUNTRIES' LAWS OR
-// CIVIL RIGHTS ARE NONE OF OUR CONCERNS NOR RESPONSIBILITIES. WE HAVE
-// NEVER INVESTIGATED ANY CRIMINAL REGULATIONS, CIVIL LAWS OR
-// INTELLECTUAL PROPERTY RIGHTS INCLUDING PATENTS IN ANY OF OTHER 200+
-// COUNTRIES AND TERRITORIES. BY NATURE, THERE ARE 200+ REGIONS IN THE
-// WORLD, WITH DIFFERENT LAWS. IT IS IMPOSSIBLE TO VERIFY EVERY
-// COUNTRIES' LAWS, REGULATIONS AND CIVIL RIGHTS TO MAKE THE SOFTWARE
-// COMPLY WITH ALL COUNTRIES' LAWS BY THE PROJECT. EVEN IF YOU WILL BE
-// SUED BY A PRIVATE ENTITY OR BE DAMAGED BY A PUBLIC SERVANT IN YOUR
-// COUNTRY, THE DEVELOPERS OF THIS SOFTWARE WILL NEVER BE LIABLE TO
-// RECOVER OR COMPENSATE SUCH DAMAGES, CRIMINAL OR CIVIL
-// RESPONSIBILITIES. NOTE THAT THIS LINE IS NOT LICENSE RESTRICTION BUT
-// JUST A STATEMENT FOR WARNING AND DISCLAIMER.
-// 
-// 
-// SOURCE CODE CONTRIBUTION
-// ------------------------
-// 
-// Your contribution to SoftEther VPN Project is much appreciated.
-// Please send patches to us through GitHub.
-// Read the SoftEther VPN Patch Acceptance Policy in advance:
-// http://www.softether.org/5-download/src/9.patch
-// 
-// 
-// DEAR SECURITY EXPERTS
-// ---------------------
-// 
-// If you find a bug or a security vulnerability please kindly inform us
-// about the problem immediately so that we can fix the security problem
-// to protect a lot of users around the world as soon as possible.
-// 
-// Our e-mail address for security reports is:
-// softether-vpn-security [at] softether.org
-// 
-// Please note that the above e-mail address is not a technical support
-// inquiry address. If you need technical assistance, please visit
-// http://www.softether.org/ and ask your question on the users forum.
-// 
-// Thank you for your cooperation.
-// 
-// 
-// NO MEMORY OR RESOURCE LEAKS
-// ---------------------------
-// 
-// The memory-leaks and resource-leaks verification under the stress
-// test has been passed before release this source code.
 
 
 // Sam.c
 // Security Accounts Manager
 
-#include "CedarPch.h"
+#include "Sam.h"
 
+#include "Account.h"
+#include "Cedar.h"
+#include "Hub.h"
+#include "IPC.h"
+#include "Proto_PPP.h"
+#include "Radius.h"
+#include "Server.h"
 
-int base64_enc_len(unsigned int plainLen) {
-	unsigned int n = plainLen;
-	return (n + 2 - ((n + 2) % 3)) / 3 * 4;
-}
+#include "Mayaqua/Encoding.h"
+#include "Mayaqua/Internat.h"
+#include "Mayaqua/Memory.h"
+#include "Mayaqua/Microsoft.h"
+#include "Mayaqua/Object.h"
+#include "Mayaqua/Str.h"
+
+#include <string.h>
+
+#ifdef OS_UNIX
+#include <stdio.h>
+#include <stdlib.h>
+
+#include <signal.h>
+#include <unistd.h>
+#endif
 
 PID OpenChildProcess(const char* path, char* const parameter[], int fd[] )
 {
@@ -217,10 +130,12 @@ bool SmbAuthenticate(char* name, char* password, char* domainname, char* groupna
 	int   fds[2];
 	FILE* out, *in;
 	PID   pid;
-	char  buffer[255];
 	char  ntlm_timeout[32];
 	char* proc_parameter[6];
-	
+
+    // DNS Name 255 chars + OU names are limited to 64 characters +  cmdline 32 + 1
+    char  requiremember[352];
+
 	if (name == NULL || password == NULL || domainname == NULL || groupname == NULL)
 	{
 		Debug("Sam.c - SmbAuthenticate - wrong password parameter\n");
@@ -232,8 +147,6 @@ bool SmbAuthenticate(char* name, char* password, char* domainname, char* groupna
 		Debug("Sam.c - SmbAuthenticate - wrong MsCHAPv2 parameter\n");
 		return false;
 	}
-
-	Zero(buffer, sizeof(buffer));
 
 	// Truncate string if unsafe char
 	EnSafeStr(domainname, '\0');
@@ -262,14 +175,11 @@ bool SmbAuthenticate(char* name, char* password, char* domainname, char* groupna
 
 	if (strlen(groupname) > 1)
 	{
-		// DNS Name 255 chars + OU names are limited to 64 characters +  cmdline 32 + 1
-		char  requiremember[352];
-
 		// Truncate string if unsafe char
 		EnSafeStr(groupname, '\0');
 
 		snprintf(requiremember, sizeof(requiremember), "--require-membership-of=%s\\%s", domainname, groupname);
-		
+
 		proc_parameter[4] = requiremember;
 		proc_parameter[5] = 0;
 	}
@@ -301,64 +211,48 @@ bool SmbAuthenticate(char* name, char* password, char* domainname, char* groupna
 		return false;
 	}
 
-	if (base64_enc_len(strlen(name)) < sizeof(buffer)-1 &&
-		base64_enc_len(strlen(password)) < sizeof(buffer)-1 &&
-		base64_enc_len(strlen(domainname)) < sizeof(buffer)-1)
 	{
-		char  answer[300];
-
-		unsigned int end = B64_Encode(buffer, name, strlen(name));
-		buffer[end] = '\0';
+		char *base64 = Base64FromBin(NULL, name, StrLen(name));
 		fputs("Username:: ", out);
-		fputs(buffer, out);
+		fputs(base64, out);
 		fputs("\n", out);
-		Debug("Username: %s\n", buffer);
-		buffer[0] = 0;
+		Free(base64);
 
-		end = B64_Encode(buffer, domainname, strlen(domainname));
-		buffer[end] = '\0';
+		base64 = Base64FromBin(NULL, domainname, StrLen(domainname));
 		fputs("NT-Domain:: ", out);
-		fputs(buffer, out);
+		fputs(base64, out);
 		fputs("\n", out);
-		Debug("NT-Domain: %s\n", buffer);
-		buffer[0] = 0;
+		Free(base64);
 
-		if (password[0] != '\0')
+		if (IsEmptyStr(password) == false)
 		{
-			Debug("Password authentication\n");
-			end = B64_Encode(buffer, password, strlen(password));
-			buffer[end] = '\0';
+			Debug("SmbAuthenticate(): Using password authentication...\n");
+
+			base64 = Base64FromBin(NULL, password, StrLen(password));
 			fputs("Password:: ", out);
-			fputs(buffer, out);
+			fputs(base64, out);
 			fputs("\n", out);
-			Debug("Password: %s\n", buffer);
-			buffer[0] = 0;
+			Free(base64);
 		}
 		else
 		{
-			char* mschapv2_client_response;
-			char* base64_challenge8;
+			Debug("SmbAuthenticate(): Using MsChapV2 authentication...\n");
 
-			Debug("MsChapV2 authentication\n");
-			mschapv2_client_response = CopyBinToStr(MsChapV2_ClientResponse, 24);
-			end = B64_Encode(buffer, mschapv2_client_response, 48);
-			buffer[end] = '\0';
-			fputs("NT-Response:: ", out);
-			fputs(buffer, out);
-			fputs("\n", out);
-			Debug("NT-Response:: %s\n", buffer);
-			buffer[0] = 0;
+			char *mschapv2_client_response = CopyBinToStr(MsChapV2_ClientResponse, 24);
+			base64 = Base64FromBin(NULL, mschapv2_client_response, 48);
 			Free(mschapv2_client_response);
-
-			base64_challenge8 = CopyBinToStr(challenge8, 8);
-			end = B64_Encode(buffer, base64_challenge8 , 16);
-			buffer[end] = '\0';
-			fputs("LANMAN-Challenge:: ", out);
-			fputs(buffer, out);
+			fputs("NT-Response:: ", out);
+			fputs(base64, out);
 			fputs("\n", out);
-			Debug("LANMAN-Challenge:: %s\n", buffer);
-			buffer[0] = 0;
+			Free(base64);
+
+			char *base64_challenge8 = CopyBinToStr(challenge8, 8);
+			base64 = Base64FromBin(NULL, base64_challenge8, 16);
 			Free(base64_challenge8);
+			fputs("LANMAN-Challenge:: ", out);
+			fputs(base64, out);
+			fputs("\n", out);
+			Free(base64);
 
 			fputs("Request-User-Session-Key: Yes\n", out);
  		}
@@ -368,6 +262,7 @@ bool SmbAuthenticate(char* name, char* password, char* domainname, char* groupna
 		fflush (out);
 		// Request send!
 
+		char answer[300];
 		Zero(answer, sizeof(answer));
 
 		while (fgets(answer, sizeof(answer)-1, in))
@@ -406,7 +301,7 @@ bool SmbAuthenticate(char* name, char* password, char* domainname, char* groupna
 				response_parameter[0] ='\0';
 				response_parameter++;
 
-				end = Decode64(response_parameter, response_parameter);
+				const UINT end = Base64Decode(response_parameter, response_parameter, StrLen(response_parameter));
 				response_parameter[end] = '\0';
 			}
 

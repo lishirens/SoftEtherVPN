@@ -1,117 +1,51 @@
 // SoftEther VPN Source Code - Developer Edition Master Branch
 // Cedar Communication Module
-// 
-// SoftEther VPN Server, Client and Bridge are free software under GPLv2.
-// 
-// Copyright (c) Daiyuu Nobori.
-// Copyright (c) SoftEther VPN Project, University of Tsukuba, Japan.
-// Copyright (c) SoftEther Corporation.
-// 
-// All Rights Reserved.
-// 
-// http://www.softether.org/
-// 
-// Author: Daiyuu Nobori, Ph.D.
-// Comments: Tetsuo Sugiyama, Ph.D.
-// 
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// version 2 as published by the Free Software Foundation.
-// 
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License version 2
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-// CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-// SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-// 
-// THE LICENSE AGREEMENT IS ATTACHED ON THE SOURCE-CODE PACKAGE
-// AS "LICENSE.TXT" FILE. READ THE TEXT FILE IN ADVANCE TO USE THE SOFTWARE.
-// 
-// 
-// THIS SOFTWARE IS DEVELOPED IN JAPAN, AND DISTRIBUTED FROM JAPAN,
-// UNDER JAPANESE LAWS. YOU MUST AGREE IN ADVANCE TO USE, COPY, MODIFY,
-// MERGE, PUBLISH, DISTRIBUTE, SUBLICENSE, AND/OR SELL COPIES OF THIS
-// SOFTWARE, THAT ANY JURIDICAL DISPUTES WHICH ARE CONCERNED TO THIS
-// SOFTWARE OR ITS CONTENTS, AGAINST US (SOFTETHER PROJECT, SOFTETHER
-// CORPORATION, DAIYUU NOBORI OR OTHER SUPPLIERS), OR ANY JURIDICAL
-// DISPUTES AGAINST US WHICH ARE CAUSED BY ANY KIND OF USING, COPYING,
-// MODIFYING, MERGING, PUBLISHING, DISTRIBUTING, SUBLICENSING, AND/OR
-// SELLING COPIES OF THIS SOFTWARE SHALL BE REGARDED AS BE CONSTRUED AND
-// CONTROLLED BY JAPANESE LAWS, AND YOU MUST FURTHER CONSENT TO
-// EXCLUSIVE JURISDICTION AND VENUE IN THE COURTS SITTING IN TOKYO,
-// JAPAN. YOU MUST WAIVE ALL DEFENSES OF LACK OF PERSONAL JURISDICTION
-// AND FORUM NON CONVENIENS. PROCESS MAY BE SERVED ON EITHER PARTY IN
-// THE MANNER AUTHORIZED BY APPLICABLE LAW OR COURT RULE.
-// 
-// USE ONLY IN JAPAN. DO NOT USE THIS SOFTWARE IN ANOTHER COUNTRY UNLESS
-// YOU HAVE A CONFIRMATION THAT THIS SOFTWARE DOES NOT VIOLATE ANY
-// CRIMINAL LAWS OR CIVIL RIGHTS IN THAT PARTICULAR COUNTRY. USING THIS
-// SOFTWARE IN OTHER COUNTRIES IS COMPLETELY AT YOUR OWN RISK. THE
-// SOFTETHER VPN PROJECT HAS DEVELOPED AND DISTRIBUTED THIS SOFTWARE TO
-// COMPLY ONLY WITH THE JAPANESE LAWS AND EXISTING CIVIL RIGHTS INCLUDING
-// PATENTS WHICH ARE SUBJECTS APPLY IN JAPAN. OTHER COUNTRIES' LAWS OR
-// CIVIL RIGHTS ARE NONE OF OUR CONCERNS NOR RESPONSIBILITIES. WE HAVE
-// NEVER INVESTIGATED ANY CRIMINAL REGULATIONS, CIVIL LAWS OR
-// INTELLECTUAL PROPERTY RIGHTS INCLUDING PATENTS IN ANY OF OTHER 200+
-// COUNTRIES AND TERRITORIES. BY NATURE, THERE ARE 200+ REGIONS IN THE
-// WORLD, WITH DIFFERENT LAWS. IT IS IMPOSSIBLE TO VERIFY EVERY
-// COUNTRIES' LAWS, REGULATIONS AND CIVIL RIGHTS TO MAKE THE SOFTWARE
-// COMPLY WITH ALL COUNTRIES' LAWS BY THE PROJECT. EVEN IF YOU WILL BE
-// SUED BY A PRIVATE ENTITY OR BE DAMAGED BY A PUBLIC SERVANT IN YOUR
-// COUNTRY, THE DEVELOPERS OF THIS SOFTWARE WILL NEVER BE LIABLE TO
-// RECOVER OR COMPENSATE SUCH DAMAGES, CRIMINAL OR CIVIL
-// RESPONSIBILITIES. NOTE THAT THIS LINE IS NOT LICENSE RESTRICTION BUT
-// JUST A STATEMENT FOR WARNING AND DISCLAIMER.
-// 
-// 
-// SOURCE CODE CONTRIBUTION
-// ------------------------
-// 
-// Your contribution to SoftEther VPN Project is much appreciated.
-// Please send patches to us through GitHub.
-// Read the SoftEther VPN Patch Acceptance Policy in advance:
-// http://www.softether.org/5-download/src/9.patch
-// 
-// 
-// DEAR SECURITY EXPERTS
-// ---------------------
-// 
-// If you find a bug or a security vulnerability please kindly inform us
-// about the problem immediately so that we can fix the security problem
-// to protect a lot of users around the world as soon as possible.
-// 
-// Our e-mail address for security reports is:
-// softether-vpn-security [at] softether.org
-// 
-// Please note that the above e-mail address is not a technical support
-// inquiry address. If you need technical assistance, please visit
-// http://www.softether.org/ and ask your question on the users forum.
-// 
-// Thank you for your cooperation.
-// 
-// 
-// NO MEMORY OR RESOURCE LEAKS
-// ---------------------------
-// 
-// The memory-leaks and resource-leaks verification under the stress
-// test has been passed before release this source code.
-
+// © 2020 Nokia
 
 // Command.c
 // vpncmd Command Line Management Utility
 
-#include "CedarPch.h"
+#include "Command.h"
+
+#include "Admin.h"
+#include "AzureClient.h"
+#include "Connection.h"
+#include "Console.h"
+#include "Database.h"
+#include "DDNS.h"
+#include "Layer3.h"
+#include "Nat.h"
+#include "Proto_IPsec.h"
+#include "Proto_WireGuard.h"
+#include "Radius.h"
+#include "Server.h"
+#include "Virtual.h"
+#include "WinUi.h"
+
+#include "Mayaqua/Cfg.h"
+#include "Mayaqua/FileIO.h"
+#include "Mayaqua/Internat.h"
+#include "Mayaqua/Kernel.h"
+#include "Mayaqua/Memory.h"
+#include "Mayaqua/Microsoft.h"
+#include "Mayaqua/Network.h"
+#include "Mayaqua/Object.h"
+#include "Mayaqua/OS.h"
+#include "Mayaqua/Pack.h"
+#include "Mayaqua/Secure.h"
+#include "Mayaqua/Str.h"
+#include "Mayaqua/Table.h"
+#include "Mayaqua/Tick64.h"
+#include "Mayaqua/Unix.h"
+
+#include "Mayaqua/Crypto/Key.h"
+
+#include <stdlib.h>
+
+#ifdef OS_UNIX
+#include <signal.h>
+#include <sys/wait.h>
+#endif
 
 // System checker definition
 typedef bool (CHECKER_PROC_DEF)();
@@ -173,13 +107,26 @@ void CheckNetworkListenThread(THREAD *thread, void *param)
 {
 	CHECK_NETWORK_1 *c = (CHECK_NETWORK_1 *)param;
 	SOCK *s;
-	UINT i;
+	UINT i, rsa_bits = 1024;
 	K *pub, *pri;
 	X *x;
 	LIST *o = NewList(NULL);
 	NAME *name = NewName(L"Test", L"Test", L"Test", L"JP", L"Ibaraki", L"Tsukuba");
 
-	RsaGen(&pri, &pub, 1024);
+	// Set RSA bits considering OpenSSL security Level
+	// Security level 4 needs 7680 bits
+	switch (GetOSSecurityLevel())
+	{
+	case 2:
+		rsa_bits = 2048;
+		break;
+	case 3:
+		rsa_bits = 4096;
+		break;
+	default:
+		break;
+	}
+	RsaGen(&pri, &pub, rsa_bits);
 	x = NewRootX(pub, pri, name, 1000, NULL);
 
 	FreeName(name);
@@ -898,6 +845,8 @@ void PtMain(PT *pt)
 		CMD cmd[] =
 		{
 			{"About", PsAbout},
+			{"GenX25519", PtGenX25519},
+			{"GetPublicX25519", PtGetPublicX25519},
 			{"MakeCert", PtMakeCert},
 			{"MakeCert2048", PtMakeCert2048},
 			{"TrafficClient", PtTrafficClient},
@@ -992,7 +941,7 @@ void VpnCmdInitBootPath()
 	char tmp[MAX_PATH];
 	GetExeName(exe_path, sizeof(exe_path));
 
-	if (SearchStrEx(exe_path, "ham.exe", 0, false) != INFINITE || SearchStrEx(exe_path, "ham_x64.exe", 0, false) != INFINITE || SearchStrEx(exe_path, "ham_ia64.exe", 0, false) != INFINITE)
+	if (SearchStrEx(exe_path, "ham.exe", 0, false) != INFINITE)
 	{
 		return;
 	}
@@ -1007,61 +956,31 @@ void VpnCmdInitBootPath()
 		if ((CEDAR_VERSION_BUILD >= current_ver) ||
 			MsRegIsValue(REG_LOCAL_MACHINE, VPNCMD_BOOTSTRAP_REG_KEYNAME, VPNCMD_BOOTSTRAP_REG_VALUENAME_PATH) == false)
 		{
-			char *src_filename;
 			bool b = false;
 			// Copy the vpncmdsys.exe to system32
-			if (MsIsNt())
-			{
-				Format(tmp, sizeof(tmp), "%s\\vpncmd.exe", MsGetSystem32Dir());
-			}
-			else
-			{
-				Format(tmp, sizeof(tmp), "%s\\vpncmd.exe", MsGetWindowsDir());
-			}
-
-			src_filename = VPNCMD_BOOTSTRAP_FILENAME;
-
-			if (IsX64())
-			{
-				src_filename = VPNCMD_BOOTSTRAP_FILENAME_X64;
-			}
-
-			if (IsIA64())
-			{
-				src_filename = VPNCMD_BOOTSTRAP_FILENAME_IA64;
-			}
-
-			b = true;
+			Format(tmp, sizeof(tmp), "%s\\vpncmd.exe", MsGetSystem32Dir());
 
 			if (MsIs64BitWindows() == false || Is64())
 			{
 				if (IsFile(tmp) == false || (CEDAR_VERSION_BUILD > current_ver) || MsRegIsValue(REG_LOCAL_MACHINE, VPNCMD_BOOTSTRAP_REG_KEYNAME, VPNCMD_BOOTSTRAP_REG_VALUENAME_PATH) == false)
 				{
-					b = FileCopy(src_filename, tmp);
+					b = FileCopy(VPNCMD_BOOTSTRAP_FILENAME, tmp);
 				}
 			}
 			else
 			{
-				void *wow;
+				void *wow = MsDisableWow64FileSystemRedirection();
 
-				wow = MsDisableWow64FileSystemRedirection();
-
-				if (true)
+				if (IsFile(tmp) == false || (CEDAR_VERSION_BUILD > current_ver) || MsRegIsValue(REG_LOCAL_MACHINE, VPNCMD_BOOTSTRAP_REG_KEYNAME, VPNCMD_BOOTSTRAP_REG_VALUENAME_PATH) == false)
 				{
-					if (IsFile(tmp) == false || (CEDAR_VERSION_BUILD > current_ver) || MsRegIsValue(REG_LOCAL_MACHINE, VPNCMD_BOOTSTRAP_REG_KEYNAME, VPNCMD_BOOTSTRAP_REG_VALUENAME_PATH) == false)
-					{
-						b = FileCopy(src_filename, tmp);
-					}
+					b = FileCopy(VPNCMD_BOOTSTRAP_FILENAME, tmp);
 				}
 
 				MsRestoreWow64FileSystemRedirection(wow);
 
-				if (true)
+				if (IsFile(tmp) == false || (CEDAR_VERSION_BUILD > current_ver) || MsRegIsValue(REG_LOCAL_MACHINE, VPNCMD_BOOTSTRAP_REG_KEYNAME, VPNCMD_BOOTSTRAP_REG_VALUENAME_PATH) == false)
 				{
-					if (IsFile(tmp) == false || (CEDAR_VERSION_BUILD > current_ver) || MsRegIsValue(REG_LOCAL_MACHINE, VPNCMD_BOOTSTRAP_REG_KEYNAME, VPNCMD_BOOTSTRAP_REG_VALUENAME_PATH) == false)
-					{
-						b = FileCopy(src_filename, tmp);
-					}
+					b = FileCopy(VPNCMD_BOOTSTRAP_FILENAME, tmp);
 				}
 			}
 
@@ -2746,6 +2665,131 @@ UINT PtTrafficClient(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
 	return ret;
 }
 
+UINT PtGenX25519(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
+{
+	UINT ret = ERR_INTERNAL_ERROR;
+
+	LIST *o = ParseCommandList(c, cmd_name, str, NULL, 0);
+	if (o == NULL)
+	{
+		return ret;
+	}
+
+	EVP_PKEY *opaque = CryptoKeyOpaqueNew(KEY_X25519);
+
+	CRYPTO_KEY_RAW *private = NULL, *public = NULL;
+	const bool ok = CryptoKeyOpaqueToRaw(opaque, &private, &public);
+	CryptoKeyOpaqueFree(opaque);
+
+	if (ok == false)
+	{
+		goto FINAL;
+	}
+
+	char *base64 = Base64FromBin(NULL, private->Data, private->Size);
+	if (base64 == NULL)
+	{
+		goto FINAL;
+	}
+
+	wchar_t buf[MAX_SIZE];
+	UniFormat(buf, sizeof(buf), L"\n%s%S", _UU("CMD_GenX25519_PRIVATE_KEY"), base64);
+	Free(base64);
+
+	c->Write(c, buf);
+
+	base64 = Base64FromBin(NULL, public->Data, public->Size);
+	if (base64 == NULL)
+	{
+		goto FINAL;
+	}
+
+	UniFormat(buf, sizeof(buf), L"%s%S\n\n", _UU("CMD_GenX25519_PUBLIC_KEY"), base64);
+	Free(base64);
+
+	c->Write(c, buf);
+
+	ret = ERR_NO_ERROR;
+FINAL:
+	CryptoKeyRawFree(private);
+	CryptoKeyRawFree(public);
+	FreeParamValueList(o);
+
+	if (ret != ERR_NO_ERROR)
+	{
+		CmdPrintError(c, ret);
+	}
+
+	return ret;
+}
+
+UINT PtGetPublicX25519(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
+{
+	const PARAM args[] =
+	{
+		{"[private]", CmdPrompt, _UU("CMD_GetPublicX25519_PRIVATE_KEY"), CmdEvalNotEmpty, NULL}
+	};
+
+	LIST *o = ParseCommandList(c, cmd_name, str, args, sizeof(args) / sizeof(args[0]));
+	if (o == NULL)
+	{
+		return ERR_INVALID_PARAMETER;
+	}
+
+	UINT ret = ERR_INVALID_PARAMETER;
+
+	UINT size;
+	char *base64 = GetParamStr(o, "[private]");
+	void *bin = Base64ToBin(&size, base64, StrLen(base64));
+	if (bin == NULL)
+	{
+		goto FINAL;
+	}
+
+	CRYPTO_KEY_RAW *private = CryptoKeyRawNew(bin, size, KEY_X25519);
+	Free(bin);
+
+	if (private == NULL)
+	{
+		goto FINAL;
+	}
+
+	ret = ERR_INTERNAL_ERROR;
+
+	CRYPTO_KEY_RAW *public = CryptoKeyRawPublic(private);
+	CryptoKeyRawFree(private);
+
+	if (public == NULL)
+	{
+		goto FINAL;
+	}
+
+	base64 = Base64FromBin(NULL, public->Data, public->Size);
+	CryptoKeyRawFree(public);
+
+	if (base64 == NULL)
+	{
+		goto FINAL;
+	}
+
+	wchar_t buf[MAX_SIZE];
+	UniFormat(buf, sizeof(buf), L"\n%s%S\n\n", _UU("CMD_GetPublicX25519_PUBLIC_KEY"), base64);
+	Free(base64);
+
+	c->Write(c, buf);
+
+	ret = ERR_NO_ERROR;
+FINAL:
+	FreeParamValueList(o);
+
+	if (ret != ERR_NO_ERROR)
+	{
+		CmdPrintError(c, ret);
+	}
+
+	return ret;
+}
+
 // Certificate easy creation tool (1024 bit)
 UINT PtMakeCert(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
 {
@@ -3054,6 +3098,9 @@ void PcMain(PC *pc)
 			{"AccountEncryptEnable", PcAccountEncryptEnable},
 			{"AccountCompressEnable", PcAccountCompressEnable},
 			{"AccountCompressDisable", PcAccountCompressDisable},
+			{"AccountHttpHeaderAdd", PcAccountHttpHeaderAdd},
+			{"AccountHttpHeaderDelete", PcAccountHttpHeaderDelete},
+			{"AccountHttpHeaderGet", PcAccountHttpHeaderGet},
 			{"AccountProxyNone", PcAccountProxyNone},
 			{"AccountProxyHttp", PcAccountProxyHttp},
 			{"AccountProxySocks", PcAccountProxySocks},
@@ -3074,6 +3121,7 @@ void PcMain(PC *pc)
 			{"AccountStatusShow", PcAccountStatusShow},
 			{"AccountStatusHide", PcAccountStatusHide},
 			{"AccountSecureCertSet", PcAccountSecureCertSet},
+			{"AccountOpensslEngineCertSet", PcAccountOpensslEngineCertSet},
 			{"AccountRetrySet", PcAccountRetrySet},
 			{"AccountStartupSet", PcAccountStartupSet},
 			{"AccountStartupRemove", PcAccountStartupRemove},
@@ -3081,9 +3129,6 @@ void PcMain(PC *pc)
 			{"AccountImport", PcAccountImport},
 			{"RemoteEnable", PcRemoteEnable},
 			{"RemoteDisable", PcRemoteDisable},
-			{"TUNDownOnDisconnectEnable", PcTunDownOnDisconnectEnable},
-			{"TUNDownOnDisconnectDisable", PcTunDownOnDisconnectDisable},
-			{"TUNDownOnDisconnectGet", PcTunDownOnDisconnectGet},
 			{"KeepEnable", PcKeepEnable},
 			{"KeepDisable", PcKeepDisable},
 			{"KeepSet", PcKeepSet},
@@ -4850,7 +4895,7 @@ UINT PcAccountCertGet(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
 
 	if (ret == ERR_NO_ERROR)
 	{
-		if (t.ClientAuth->AuthType != CLIENT_AUTHTYPE_CERT)
+		if (t.ClientAuth->AuthType != CLIENT_AUTHTYPE_CERT && t.ClientAuth->AuthType != CLIENT_AUTHTYPE_OPENSSLENGINE)
 		{
 			c->Write(c, _UU("CMD_CascadeCertSet_Not_Auth_Cert"));
 			ret = ERR_INTERNAL_ERROR;
@@ -5108,6 +5153,226 @@ UINT PcAccountCompressDisable(CONSOLE *c, char *cmd_name, wchar_t *str, void *pa
 
 	// Release of the parameter list
 	FreeParamValueList(o);
+
+	return ret;
+}
+
+UINT PcAccountHttpHeaderAdd(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
+{
+	LIST *o;
+	PC *pc = (PC *)param;
+	UINT ret = ERR_NO_ERROR;
+	RPC_CLIENT_GET_ACCOUNT t;
+
+	// Parameter list that can be specified
+	PARAM args[] =
+	{
+		{"[name]", CmdPrompt, _UU("CMD_AccountCreate_Prompt_Name"), CmdEvalNotEmpty, NULL},
+		{"NAME", CmdPrompt, _UU("CMD_AccountHttpHeader_Prompt_Name"), CmdEvalNotEmpty, NULL},
+		{"DATA", CmdPrompt, _UU("CMD_AccountHttpHeader_Prompt_Data"), NULL, NULL},
+	};
+
+	// Get the parameter list
+	o = ParseCommandList(c, cmd_name, str, args, sizeof(args) / sizeof(args[0]));
+	if (o == NULL)
+	{
+		return ERR_INVALID_PARAMETER;
+	}
+
+	// RPC call
+	Zero(&t, sizeof(t));
+	UniStrCpy(t.AccountName, sizeof(t.AccountName), GetParamUniStr(o, "[name]"));
+	ret = CcGetAccount(pc->RemoteClient, &t);
+
+	if (ret == ERR_NO_ERROR)
+	{
+		UINT i = 0;
+		TOKEN_LIST *tokens = NULL;
+		HTTP_HEADER *header = NULL;
+		char *name = GetParamStr(o, "NAME");
+
+		Trim(name);
+
+		header = NewHttpHeader("", "", "");
+
+		tokens = ParseToken(t.ClientOption->CustomHttpHeader, "\r\n");
+		for (i = 0; i < tokens->NumTokens; i++)
+		{
+			AddHttpValueStr(header, tokens->Token[i]);
+		}
+		FreeToken(tokens);
+
+		if (GetHttpValue(header, name) == NULL)
+		{
+			RPC_CLIENT_CREATE_ACCOUNT z;
+			char s[HTTP_CUSTOM_HEADER_MAX_SIZE];
+
+			Format(s, sizeof(s), "%s: %s\r\n", name, GetParamStr(o, "DATA"));
+			EnSafeHttpHeaderValueStr(s, ' ');
+
+			if ((StrLen(s) + StrLen(t.ClientOption->CustomHttpHeader)) < sizeof(t.ClientOption->CustomHttpHeader)) {
+				StrCat(t.ClientOption->CustomHttpHeader, sizeof(s), s);
+
+				Zero(&z, sizeof(z));
+				z.CheckServerCert = t.CheckServerCert;
+				z.RetryOnServerCert = t.RetryOnServerCert;
+				z.ClientAuth = t.ClientAuth;
+				z.ClientOption = t.ClientOption;
+				z.ServerCert = t.ServerCert;
+				z.StartupAccount = t.StartupAccount;
+
+				ret = CcSetAccount(pc->RemoteClient, &z);
+			}
+			else
+			{
+				// Error has occurred
+				ret = ERR_TOO_MANT_ITEMS;
+			}
+		}
+		else
+		{
+			// Error has occurred
+			ret = ERR_OBJECT_EXISTS;
+		}
+
+		FreeHttpHeader(header);
+	}
+
+	if (ret != ERR_NO_ERROR)
+	{
+		// Error has occurred
+		CmdPrintError(c, ret);
+	}
+
+	CiFreeClientGetAccount(&t);
+
+	// Release of the parameter list
+	FreeParamValueList(o);
+
+	return ret;
+}
+
+UINT PcAccountHttpHeaderDelete(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
+{
+	PC *pc = (PC *)param;
+	UINT ret = ERR_NO_ERROR;
+	RPC_CLIENT_GET_ACCOUNT t;
+
+	// Parameter list that can be specified
+	PARAM args[] =
+	{
+		{"[name]", CmdPrompt, _UU("CMD_AccountCreate_Prompt_Name"), CmdEvalNotEmpty, NULL},
+		{"NAME", CmdPrompt, _UU("CMD_AccountHttpHeader_Prompt_Name"), CmdEvalNotEmpty, NULL},
+	};
+
+	// Get the parameter list
+	LIST *o = ParseCommandList(c, cmd_name, str, args, sizeof(args) / sizeof(args[0]));
+	if (o == NULL)
+	{
+		return ERR_INVALID_PARAMETER;
+	}
+
+	// RPC call
+	Zero(&t, sizeof(t));
+	UniStrCpy(t.AccountName, sizeof(t.AccountName), GetParamUniStr(o, "[name]"));
+	ret = CcGetAccount(pc->RemoteClient, &t);
+
+	if (ret == ERR_NO_ERROR)
+	{
+		UINT i = 0;
+		TOKEN_LIST *tokens = NULL;
+		RPC_CLIENT_CREATE_ACCOUNT z;
+		char *value = GetParamStr(o, "NAME");
+
+		Zero(&z, sizeof(z));
+		z.CheckServerCert = t.CheckServerCert;
+		z.RetryOnServerCert = t.RetryOnServerCert;
+		z.ClientAuth = t.ClientAuth;
+		z.ClientOption = t.ClientOption;
+		z.ServerCert = t.ServerCert;
+		z.StartupAccount = t.StartupAccount;
+
+		Zero(z.ClientOption->CustomHttpHeader, sizeof(z.ClientOption->CustomHttpHeader));
+
+		tokens = ParseToken(t.ClientOption->CustomHttpHeader, "\r\n");
+
+		for (i = 0; i < tokens->NumTokens; i++)
+		{
+			if (StartWith(tokens->Token[i], value) == false)
+			{
+				StrCat(z.ClientOption->CustomHttpHeader, sizeof(z.ClientOption->CustomHttpHeader), tokens->Token[i]);
+				StrCat(z.ClientOption->CustomHttpHeader, 1, "\r\n");
+			}
+		}
+
+		ret = CcSetAccount(pc->RemoteClient, &z);
+	}
+	else
+	{
+		// Error has occurred
+		CmdPrintError(c, ret);
+	}
+
+	CiFreeClientGetAccount(&t);
+
+	// Release of the parameter list
+	FreeParamValueList(o);
+
+	return ret;
+}
+
+UINT PcAccountHttpHeaderGet(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
+{
+	PC *pc = (PC *)param;
+	UINT ret = ERR_NO_ERROR;
+	RPC_CLIENT_GET_ACCOUNT t;
+
+	// Parameter list that can be specified
+	PARAM args[] =
+	{
+		{"[name]", CmdPrompt, _UU("CMD_AccountCreate_Prompt_Name"), CmdEvalNotEmpty, NULL},
+	};
+
+	// Get the parameter list
+	LIST *o = ParseCommandList(c, cmd_name, str, args, sizeof(args) / sizeof(args[0]));
+	if (o == NULL)
+	{
+		return ERR_INVALID_PARAMETER;
+	}
+
+	// RPC call
+	Zero(&t, sizeof(t));
+	UniStrCpy(t.AccountName, sizeof(t.AccountName), GetParamUniStr(o, "[name]"));
+	ret = CcGetAccount(pc->RemoteClient, &t);
+
+	// Release of the parameter list
+	FreeParamValueList(o);
+
+	if (ret == ERR_NO_ERROR)
+	{
+		wchar_t unistr[HTTP_CUSTOM_HEADER_MAX_SIZE];
+		TOKEN_LIST *tokens = NULL;
+		UINT i = 0;
+		CT *ct = CtNew();
+		CtInsertColumn(ct, _UU("CMD_CT_STD_COLUMN_1"), false);
+
+		tokens = ParseToken(t.ClientOption->CustomHttpHeader, "\r\n");
+
+		for (i = 0; i < tokens->NumTokens; i++)
+		{
+			StrToUni(unistr, sizeof(unistr), tokens->Token[i]);
+			CtInsert(ct, unistr);
+		}
+
+		CtFreeEx(ct, c, false);
+	}
+	else
+	{
+		// Error has occurred
+		CmdPrintError(c, ret);
+	}
+
+	CiFreeClientGetAccount(&t);
 
 	return ret;
 }
@@ -6329,6 +6594,76 @@ UINT PcAccountSecureCertSet(CONSOLE *c, char *cmd_name, wchar_t *str, void *para
 	return ret;
 }
 
+UINT PcAccountOpensslEngineCertSet(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
+{
+	LIST *o;
+	PC *pc = (PC *)param;
+	UINT ret = ERR_NO_ERROR;
+	RPC_CLIENT_GET_ACCOUNT t;
+	// Parameter list that can be specified
+	PARAM args[] =
+	{
+		{"[name]", CmdPrompt, _UU("CMD_AccountCreate_Prompt_Name"), CmdEvalNotEmpty, NULL},
+		{"LOADCERT", CmdPrompt, _UU("CMD_LOADCERTPATH"), CmdEvalIsFile, NULL},
+		{"KEYNAME", CmdPrompt, _UU("CMD_AccountOpensslCertSet_PROMPT_KEYNAME"), CmdEvalNotEmpty, NULL},
+		{"ENGINENAME", CmdPrompt, _UU("CMD_AccountOpensslCertSet_PROMPT_ENGINENAME"), CmdEvalNotEmpty, NULL},
+	};
+
+	// Get the parameter list
+	o = ParseCommandList(c, cmd_name, str, args, sizeof(args) / sizeof(args[0]));
+	if (o == NULL)
+	{
+		return ERR_INVALID_PARAMETER;
+	}
+
+	// RPC call
+	Zero(&t, sizeof(t));
+
+	UniStrCpy(t.AccountName, sizeof(t.AccountName), GetParamUniStr(o, "[name]"));
+
+	ret = CcGetAccount(pc->RemoteClient, &t);
+
+	if (ret == ERR_NO_ERROR)
+	{
+		RPC_CLIENT_CREATE_ACCOUNT z;
+		t.ClientAuth->AuthType = CLIENT_AUTHTYPE_OPENSSLENGINE;
+    X *x;
+	  x = FileToXW(GetParamUniStr(o, "LOADCERT"));
+    if (x == NULL)
+    {
+			c->Write(c, _UU("CMD_LOADCERT_FAILED"));
+    }
+		StrCpy(t.ClientAuth->OpensslEnginePrivateKeyName, sizeof(t.ClientAuth->OpensslEnginePrivateKeyName),
+					 GetParamStr(o, "KEYNAME"));
+		StrCpy(t.ClientAuth->OpensslEngineName, sizeof(t.ClientAuth->OpensslEngineName),
+					 GetParamStr(o, "ENGINENAME"));
+		t.ClientAuth->ClientX = CloneX(x);
+		Zero(&z, sizeof(z));
+		z.CheckServerCert = t.CheckServerCert;
+		z.RetryOnServerCert = t.RetryOnServerCert;
+		z.ClientAuth = t.ClientAuth;
+		z.ClientOption = t.ClientOption;
+		z.ServerCert = t.ServerCert;
+		z.StartupAccount = t.StartupAccount;
+
+		ret = CcSetAccount(pc->RemoteClient, &z);
+	}
+
+	if (ret != ERR_NO_ERROR)
+	{
+		// Error has occurred
+		CmdPrintError(c, ret);
+	}
+
+	CiFreeClientGetAccount(&t);
+
+	// Release of the parameter list
+	FreeParamValueList(o);
+
+	return ret;
+}
+
+
 // Set the retry interval and number of retries when disconnect or connection failure of connection settings
 UINT PcAccountRetrySet(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
 {
@@ -6830,135 +7165,6 @@ UINT PcRemoteDisable(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
 	return ret;
 }
 
-// Enable turning TUN interface up/down on client connect/disconnect
-UINT PcTunDownOnDisconnectEnable(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
-{
-	LIST *o;
-	PC *pc = (PC *)param;
-	UINT ret = ERR_NO_ERROR;
-	CLIENT_CONFIG t;
-
-	// Get the parameter list
-	o = ParseCommandList(c, cmd_name, str, NULL, 0);
-	if (o == NULL)
-	{
-		return ERR_INVALID_PARAMETER;
-	}
-
-	// RPC call
-	Zero(&t, sizeof(t));
-
-	ret = CcGetClientConfig(pc->RemoteClient, &t);
-
-	if (ret == ERR_NO_ERROR)
-	{
-		// Change the settings
-		t.NicDownOnDisconnect = true;
-		ret = CcSetClientConfig(pc->RemoteClient, &t);
-	}
-
-	if (ret == ERR_NO_ERROR)
-	{
-		// Success
-	}
-
-	if (ret != ERR_NO_ERROR)
-	{
-		// Error has occurred
-		CmdPrintError(c, ret);
-	}
-
-	// Release of the parameter list
-	FreeParamValueList(o);
-
-	return ret;
-}
-
-// Disable turning TUN interface up/down on client connect/disconnect
-UINT PcTunDownOnDisconnectDisable(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
-{
-	LIST *o;
-	PC *pc = (PC *)param;
-	UINT ret = ERR_NO_ERROR;
-	CLIENT_CONFIG t;
-
-	// Get the parameter list
-	o = ParseCommandList(c, cmd_name, str, NULL, 0);
-	if (o == NULL)
-	{
-		return ERR_INVALID_PARAMETER;
-	}
-
-	// RPC call
-	Zero(&t, sizeof(t));
-
-	ret = CcGetClientConfig(pc->RemoteClient, &t);
-
-	if (ret == ERR_NO_ERROR)
-	{
-		// Change the settings
-		t.NicDownOnDisconnect = false;
-		ret = CcSetClientConfig(pc->RemoteClient, &t);
-	}
-
-	if (ret == ERR_NO_ERROR)
-	{
-		// Success
-	}
-
-	if (ret != ERR_NO_ERROR)
-	{
-		// Error has occurred
-		CmdPrintError(c, ret);
-	}
-
-	// Release of the parameter list
-	FreeParamValueList(o);
-
-	return ret;
-}
-
-// Get status of turning TUN interface up/down on client connect/disconnect
-UINT PcTunDownOnDisconnectGet(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
-{
-	LIST *o;
-	PC *pc = (PC *)param;
-	UINT ret = ERR_NO_ERROR;
-	CLIENT_CONFIG t;
-
-	o = ParseCommandList(c, cmd_name, str, NULL, 0);
-	if (o == NULL)
-	{
-		return ERR_INVALID_PARAMETER;
-	}
-
-	// RPC call
-	Zero(&t, sizeof(t));
-
-	ret = CcGetClientConfig(pc->RemoteClient, &t);
-
-	if (ret == ERR_NO_ERROR)
-	{
-		CT *ct = CtNewStandard();
-
-		CtInsert(ct, _UU("CMD_TUNDownOnDisconnectGet_COLUMN1"),
-			t.NicDownOnDisconnect ? _UU("SM_ACCESS_ENABLE") : _UU("SM_ACCESS_DISABLE"));
-
-		CtFree(ct, c);
-	}
-
-	if (ret != ERR_NO_ERROR)
-	{
-		// Error has occurred
-		CmdPrintError(c, ret);
-	}
-
-	// Release of the parameter list
-	FreeParamValueList(o);
-
-	return ret;
-}
-
 // Enable the maintenance function of the Internet connection
 UINT PcKeepEnable(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
 {
@@ -7388,6 +7594,10 @@ void PsMain(PS *ps)
 			{"ListenerList", PsListenerList},
 			{"ListenerEnable", PsListenerEnable},
 			{"ListenerDisable", PsListenerDisable},
+			{"PortsUDPGet", PsPortsUDPGet},
+			{"PortsUDPSet", PsPortsUDPSet},
+			{"ProtoOptionsGet", PsProtoOptionsGet},
+			{"ProtoOptionsSet", PsProtoOptionsSet},
 			{"ServerPasswordSet", PsServerPasswordSet},
 			{"ClusterSettingGet", PsClusterSettingGet},
 			{"ClusterSettingStandalone", PsClusterSettingStandalone},
@@ -7433,6 +7643,9 @@ void PsMain(PS *ps)
 			{"RouterTableDel", PsRouterTableDel},
 			{"LogFileList", PsLogFileList},
 			{"LogFileGet", PsLogFileGet},
+			{"WgkAdd", PsWgkAdd},
+			{"WgkDelete", PsWgkDelete},
+			{"WgkEnum", PsWgkEnum},
 			{"HubCreate", PsHubCreate},
 			{"HubCreateDynamic", PsHubCreateDynamic},
 			{"HubCreateStatic", PsHubCreateStatic},
@@ -7443,6 +7656,7 @@ void PsMain(PS *ps)
 			{"Hub", PsHub},
 			{"Online", PsOnline},
 			{"Offline", PsOffline},
+			{"SetStaticNetwork", PsSetStaticNetwork},
 			{"SetMaxSession", PsSetMaxSession},
 			{"SetHubPassword", PsSetHubPassword},
 			{"SetEnumAllow", PsSetEnumAllow},
@@ -7476,6 +7690,9 @@ void PsMain(PS *ps)
 			{"CascadeCompressEnable", PsCascadeCompressEnable},
 			{"CascadeCompressDisable", PsCascadeCompressDisable},
 			{"CascadeProxyNone", PsCascadeProxyNone},
+			{"CascadeHttpHeaderAdd", PsCascadeHttpHeaderAdd},
+			{"CascadeHttpHeaderDelete", PsCascadeHttpHeaderDelete},
+			{"CascadeHttpHeaderGet", PsCascadeHttpHeaderGet},
 			{"CascadeProxyHttp", PsCascadeProxyHttp},
 			{"CascadeProxySocks", PsCascadeProxySocks},
 			{"CascadeProxySocks5", PsCascadeProxySocks5},
@@ -7570,11 +7787,7 @@ void PsMain(PS *ps)
 			{"EtherIpClientAdd", PsEtherIpClientAdd},
 			{"EtherIpClientDelete", PsEtherIpClientDelete},
 			{"EtherIpClientList", PsEtherIpClientList},
-			{"OpenVpnEnable", PsOpenVpnEnable},
-			{"OpenVpnGet", PsOpenVpnGet},
 			{"OpenVpnMakeConfig", PsOpenVpnMakeConfig},
-			{"SstpEnable", PsSstpEnable},
-			{"SstpGet", PsSstpGet},
 			{"ServerCertRegenerate", PsServerCertRegenerate},
 			{"VpnOverIcmpDnsEnable", PsVpnOverIcmpDnsEnable},
 			{"VpnOverIcmpDnsGet", PsVpnOverIcmpDnsGet},
@@ -7758,7 +7971,7 @@ bool CmdEvalIp(CONSOLE *c, wchar_t *str, void *param)
 }
 
 // Convert a string to port list
-LIST *StrToPortList(char *str)
+LIST *StrToPortList(char *str, bool limit_range)
 {
 	LIST *o;
 	TOKEN_LIST *t;
@@ -7793,7 +8006,7 @@ LIST *StrToPortList(char *str)
 			return NULL;
 		}
 		n = ToInt(s);
-		if (n == 0 || n >= 65536)
+		if (limit_range && (n == 0 || n >= 65536))
 		{
 			ReleaseList(o);
 			FreeToken(t);
@@ -7836,7 +8049,7 @@ UINT PsClusterSettingMember(CONSOLE *c, char *cmd_name, wchar_t *str, void *para
 		// "name", prompt_proc, prompt_param, eval_proc, eval_param
 		{"[server:port]", CmdPrompt, _UU("CMD_ClusterSettingMember_Prompt_HOST_1"), CmdEvalHostAndPort, NULL},
 		{"IP", PsClusterSettingMemberPromptIp, NULL, CmdEvalIp, NULL},
-		{"PORTS", PsClusterSettingMemberPromptPorts, NULL, CmdEvalPortList, NULL},
+		{"PORTS", PsClusterSettingMemberPromptPorts, NULL, CmdEvalPortList, (void *)true},
 		{"PASSWORD", CmdPromptChoosePassword, NULL, NULL, NULL},
 		{"WEIGHT", NULL, NULL, NULL, NULL},
 	};
@@ -7875,7 +8088,7 @@ UINT PsClusterSettingMember(CONSOLE *c, char *cmd_name, wchar_t *str, void *para
 
 		ports_str = GetParamStr(o, "PORTS");
 
-		ports = StrToPortList(ports_str);
+		ports = StrToPortList(ports_str, true);
 
 		t.NumPort = LIST_NUM(ports);
 		t.Ports = ZeroMalloc(sizeof(UINT) * t.NumPort);
@@ -7922,7 +8135,7 @@ bool CmdEvalPortList(CONSOLE *c, wchar_t *str, void *param)
 
 	s = CopyUniToStr(str);
 
-	o = StrToPortList(s);
+	o = StrToPortList(s, (bool)param);
 
 	if (o != NULL)
 	{
@@ -8606,23 +8819,32 @@ UINT PsServerCipherGet(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
 		return ret;
 	}
 
-	ciphers = GetCipherList();
+	UniFormat(tmp, sizeof(tmp), L" %S", t.String);
+	FreeRpcStr(&t);
+	Zero(&t, sizeof(RPC_STR));
 
 	c->Write(c, _UU("CMD_ServerCipherGet_SERVER"));
-
-	UniFormat(tmp, sizeof(tmp), L" %S", t.String);
 	c->Write(c, tmp);
 
-	c->Write(c, L"");
-	c->Write(c, _UU("CMD_ServerCipherGet_CIPHERS"));
+	ret = ScGetServerCipherList(ps->Rpc, &t);
 
-	for (i = 0;i < ciphers->NumTokens;i++)
+	if (ret == ERR_NO_ERROR)
 	{
-		UniFormat(tmp, sizeof(tmp), L" %S", ciphers->Token[i]);
-		c->Write(c, tmp);
-	}
+		ciphers = ParseToken(t.String, ";");
 
-	FreeRpcStr(&t);
+		FreeRpcStr(&t);
+
+		c->Write(c, L"");
+		c->Write(c, _UU("CMD_ServerCipherGet_CIPHERS"));
+
+		for (i = 0; i < ciphers->NumTokens; i++)
+		{
+			UniFormat(tmp, sizeof(tmp), L" %S", ciphers->Token[i]);
+			c->Write(c, tmp);
+		}
+
+		FreeToken(ciphers);
+	}
 
 	FreeParamValueList(o);
 
@@ -10503,6 +10725,137 @@ UINT PsLogFileGet(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
 	return ret;
 }
 
+// Add a WireGuard key (TODO: ability add multiple keys in a single call)
+UINT PsWgkAdd(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
+{
+	PS *ps = (PS *)param;
+	RPC_WGK t;
+	UINT ret;
+	LIST *o;
+	PARAM args[] =
+	{
+		{"[key]", CmdPrompt, _UU("CMD_WgkAdd_Prompt_[key]"), CmdEvalNotEmpty, NULL},
+		{"HUB", CmdPrompt, _UU("CMD_WgkAdd_Prompt_HUB"), NULL, NULL},
+		{"USER", CmdPrompt, _UU("CMD_WgkAdd_Prompt_USER"), NULL, NULL}
+	};
+
+	o = ParseCommandList(c, cmd_name, str, args, sizeof(args) / sizeof(args[0]));
+	if (o == NULL)
+	{
+		return ERR_INVALID_PARAMETER;
+	}
+
+	Zero(&t, sizeof(t));
+	t.Num = 1;
+	t.Wgks = ZeroMalloc(sizeof(WGK));
+
+	StrCpy(t.Wgks[0].Key, sizeof(t.Wgks[0].Key), GetParamStr(o, "[key]"));
+	StrCpy(t.Wgks[0].Hub, sizeof(t.Wgks[0].Hub), GetParamStr(o, "HUB"));
+	StrCpy(t.Wgks[0].User, sizeof(t.Wgks[0].User), GetParamStr(o, "USER"));
+
+	FreeParamValueList(o);
+
+	ret = ScAddWgk(ps->Rpc, &t);
+	if (ret != ERR_NO_ERROR)
+	{
+		CmdPrintError(c, ret);
+	}
+
+	FreeRpcWgk(&t);
+
+	return ret;
+}
+
+// Delete a WireGuard key (TODO: ability to delete multiple keys in a single call)
+UINT PsWgkDelete(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
+{
+	PS *ps = (PS *)param;
+	RPC_WGK t;
+	UINT ret;
+	LIST *o;
+	PARAM args[] =
+	{
+		{"[key]", CmdPrompt, _UU("CMD_WgkDelete_Prompt_[key]"), CmdEvalNotEmpty, NULL},
+	};
+
+	o = ParseCommandList(c, cmd_name, str, args, sizeof(args) / sizeof(args[0]));
+	if (o == NULL)
+	{
+		return ERR_INVALID_PARAMETER;
+	}
+
+	Zero(&t, sizeof(t));
+	t.Num = 1;
+	t.Wgks = ZeroMalloc(sizeof(WGK));
+
+	StrCpy(t.Wgks[0].Key, sizeof(t.Wgks[0].Key), GetParamStr(o, "[key]"));
+
+	FreeParamValueList(o);
+
+	ret = ScDeleteWgk(ps->Rpc, &t);
+	if (ret != ERR_NO_ERROR)
+	{
+		CmdPrintError(c, ret);
+	}
+
+	FreeRpcWgk(&t);
+
+	return ret;
+}
+
+// List the WireGuard keys
+UINT PsWgkEnum(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
+{
+	UINT ret = ERR_NO_ERROR;
+	PS *ps = (PS *)param;
+	RPC_WGK t;
+	LIST *o;
+
+	o = ParseCommandList(c, cmd_name, str, NULL, 0);
+	if (o == NULL)
+	{
+		return ERR_INVALID_PARAMETER;
+	}
+
+	Zero(&t, sizeof(t));
+
+	ret = ScEnumWgk(ps->Rpc, &t);
+	if (ret == ERR_NO_ERROR)
+	{
+		UINT i;
+		CT *ct = CtNew();
+		CtInsertColumn(ct, _UU("CMD_WgkEnum_Column_Key"), false);
+		CtInsertColumn(ct, _UU("CMD_WgkEnum_Column_Hub"), false);
+		CtInsertColumn(ct, _UU("CMD_WgkEnum_Column_User"), false);
+
+		for (i = 0; i < t.Num; ++i)
+		{
+			const WGK *wgk = &t.Wgks[i];
+			wchar_t *key, *hub, *user;
+
+			key = CopyStrToUni(wgk->Key);
+			hub = CopyStrToUni(wgk->Hub);
+			user = CopyStrToUni(wgk->User);
+
+			CtInsert(ct, key, hub, user);
+
+			Free(key);
+			Free(hub);
+			Free(user);
+		}
+
+		CtFree(ct, c);
+	}
+	else
+	{
+		CmdPrintError(c, ret);
+	}
+
+	FreeRpcWgk(&t);
+
+	return ret;
+}
+
 // Create a New Virtual HUB
 UINT PsHubCreate(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
 {
@@ -11085,6 +11438,53 @@ UINT PsOffline(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
 	return 0;
 }
 
+// Set the static IPv4 network parameters for the Virtual HUB
+UINT PsSetStaticNetwork(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
+{
+	LIST *o;
+	PS *ps = (PS *)param;
+	UINT ret = 0;
+	RPC_CREATE_HUB t;
+	PARAM args[] =
+	{
+		{"GATEWAY", CmdPrompt, _UU("CMD_SetStaticNetwork_Prompt_GATEWAY"), CmdEvalIp, NULL},
+		{"SUBNET", CmdPrompt, _UU("CMD_SetStaticNetwork_Prompt_SUBNET"), CmdEvalIp, NULL}
+	};
+
+	if (ps->HubName == NULL)
+	{
+		c->Write(c, _UU("CMD_Hub_Not_Selected"));
+		return ERR_INVALID_PARAMETER;
+	}
+
+	o = ParseCommandList(c, cmd_name, str, args, sizeof(args) / sizeof(args[0]));
+	if (o == NULL)
+	{
+		return ERR_INVALID_PARAMETER;
+	}
+
+	Zero(&t, sizeof(t));
+	StrCpy(t.HubName, sizeof(t.HubName), ps->HubName);
+	ret = ScGetHub(ps->Rpc, &t);
+	if (ret != ERR_NO_ERROR)
+	{
+		goto FINAL;
+	}
+
+	t.HubOption.DefaultGateway = StrToIP32(GetParamStr(o, "GATEWAY"));
+	t.HubOption.DefaultSubnet = StrToIP32(GetParamStr(o, "SUBNET"));
+
+	ret = ScSetHub(ps->Rpc, &t);
+FINAL:
+	if (ret != ERR_NO_ERROR)
+	{
+		CmdPrintError(c, ret);
+	}
+
+	FreeParamValueList(o);
+	return ret;
+}
+
 // Set the maximum number of concurrent connecting sessions of the Virtual HUB
 UINT PsSetMaxSession(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
 {
@@ -11361,6 +11761,12 @@ UINT PsOptionsGet(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
 		CtInsert(ct, _UU("CMD_OptionsGet_STATUS"), t.Online ? _UU("SM_HUB_ONLINE") : _UU("SM_HUB_OFFLINE"));
 
 		CtInsert(ct, _UU("CMD_OptionsGet_TYPE"), GetHubTypeStr(t.HubType));
+
+		IPToUniStr32(tmp, sizeof(tmp), t.HubOption.DefaultGateway);
+		CtInsert(ct, _UU("CMD_OptionsGet_GATEWAY"), tmp);
+
+		IPToUniStr32(tmp, sizeof(tmp), t.HubOption.DefaultSubnet);
+		CtInsert(ct, _UU("CMD_OptionsGet_SUBNET"), tmp);
 
 		CtFree(ct, c);
 	}
@@ -13578,6 +13984,238 @@ UINT PsCascadeCompressDisable(CONSOLE *c, char *cmd_name, wchar_t *str, void *pa
 	return 0;
 }
 
+UINT PsCascadeHttpHeaderAdd(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
+{
+	LIST *o;
+	PS *ps = (PS *)param;
+	UINT ret = ERR_NO_ERROR;
+	RPC_CREATE_LINK t;
+
+	// Parameter list that can be specified
+	PARAM args[] =
+	{
+		// "name", prompt_proc, prompt_param, eval_proc, eval_param
+		{"[name]", CmdPrompt, _UU("CMD_CascadeCreate_Prompt_Name"), CmdEvalNotEmpty, NULL},
+		{"NAME", CmdPrompt, _UU("CMD_CascadeHttpHeader_Prompt_Name"), CmdEvalNotEmpty, NULL},
+		{"DATA", CmdPrompt, _UU("CMD_CascadeHttpHeader_Prompt_Data"), NULL, NULL},
+	};
+
+	// If virtual HUB is not selected, it's an error
+	if (ps->HubName == NULL)
+	{
+		c->Write(c, _UU("CMD_Hub_Not_Selected"));
+		return ERR_INVALID_PARAMETER;
+	}
+
+	// Get the parameter list
+	o = ParseCommandList(c, cmd_name, str, args, sizeof(args) / sizeof(args[0]));
+	if (o == NULL)
+	{
+		return ERR_INVALID_PARAMETER;
+	}
+
+	// RPC call
+	Zero(&t, sizeof(t));
+	StrCpy(t.HubName, sizeof(t.HubName), ps->HubName);
+	t.ClientOption = ZeroMalloc(sizeof(CLIENT_OPTION));
+	UniStrCpy(t.ClientOption->AccountName, sizeof(t.ClientOption->AccountName), GetParamUniStr(o, "[name]"));
+	ret = ScGetLink(ps->Rpc, &t);
+
+	if (ret == ERR_NO_ERROR)
+	{
+		UINT i = 0;
+		TOKEN_LIST *tokens = NULL;
+		HTTP_HEADER *header = NULL;
+		char *name = GetParamStr(o, "NAME");
+
+		Trim(name);
+
+		header = NewHttpHeader("", "", "");
+
+		tokens = ParseToken(t.ClientOption->CustomHttpHeader, "\r\n");
+		for (i = 0; i < tokens->NumTokens; i++)
+		{
+			AddHttpValueStr(header, tokens->Token[i]);
+		}
+		FreeToken(tokens);
+
+		if (GetHttpValue(header, name) == NULL)
+		{
+			char s[HTTP_CUSTOM_HEADER_MAX_SIZE];
+			Format(s, sizeof(s), "%s: %s\r\n", name, GetParamStr(o, "DATA"));
+			EnSafeHttpHeaderValueStr(s, ' ');
+
+			if ((StrLen(s) + StrLen(t.ClientOption->CustomHttpHeader)) < sizeof(t.ClientOption->CustomHttpHeader)) {
+				StrCat(t.ClientOption->CustomHttpHeader, sizeof(s), s);
+				ret = ScSetLink(ps->Rpc, &t);
+			}
+			else
+			{
+				// Error has occurred
+				ret = ERR_TOO_MANT_ITEMS;
+			}
+		}
+		else
+		{
+			// Error has occurred
+			ret = ERR_OBJECT_EXISTS;
+		}
+
+		FreeHttpHeader(header);
+	}
+
+	if (ret != ERR_NO_ERROR)
+	{
+		// Error has occurred
+		CmdPrintError(c, ret);
+	}
+
+	FreeRpcCreateLink(&t);
+
+	// Release of the parameter list
+	FreeParamValueList(o);
+
+	return ret;
+}
+
+UINT PsCascadeHttpHeaderDelete(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
+{
+	LIST *o;
+	PS *ps = (PS *)param;
+	UINT ret = ERR_NO_ERROR;
+	RPC_CREATE_LINK t;
+
+	// Parameter list that can be specified
+	PARAM args[] =
+	{
+		// "name", prompt_proc, prompt_param, eval_proc, eval_param
+		{"[name]", CmdPrompt, _UU("CMD_CascadeCreate_Prompt_Name"), CmdEvalNotEmpty, NULL},
+		{"NAME", CmdPrompt, _UU("CMD_CascadeHttpHeader_Prompt_Name"), CmdEvalNotEmpty, NULL},
+	};
+
+	// If virtual HUB is not selected, it's an error
+	if (ps->HubName == NULL)
+	{
+		c->Write(c, _UU("CMD_Hub_Not_Selected"));
+		return ERR_INVALID_PARAMETER;
+	}
+
+	// Get the parameter list
+	o = ParseCommandList(c, cmd_name, str, args, sizeof(args) / sizeof(args[0]));
+	if (o == NULL)
+	{
+		return ERR_INVALID_PARAMETER;
+	}
+
+	// RPC call
+	Zero(&t, sizeof(t));
+	StrCpy(t.HubName, sizeof(t.HubName), ps->HubName);
+	t.ClientOption = ZeroMalloc(sizeof(CLIENT_OPTION));
+	UniStrCpy(t.ClientOption->AccountName, sizeof(t.ClientOption->AccountName), GetParamUniStr(o, "[name]"));
+	ret = ScGetLink(ps->Rpc, &t);
+
+	if (ret == ERR_NO_ERROR)
+	{
+		UINT i = 0;
+		TOKEN_LIST *tokens = NULL;
+		char *value = GetParamStr(o, "NAME");
+
+		Zero(t.ClientOption->CustomHttpHeader, sizeof(t.ClientOption->CustomHttpHeader));
+
+		tokens = ParseToken(t.ClientOption->CustomHttpHeader, "\r\n");
+
+		for (i = 0; i < tokens->NumTokens; i++)
+		{
+			if (StartWith(tokens->Token[i], value) == false)
+			{
+				StrCat(t.ClientOption->CustomHttpHeader, sizeof(t.ClientOption->CustomHttpHeader), tokens->Token[i]);
+				StrCat(t.ClientOption->CustomHttpHeader, 1, "\r\n");
+			}
+		}
+
+		ret = ScSetLink(ps->Rpc, &t);
+	}
+	else
+	{
+		// Error has occurred
+		CmdPrintError(c, ret);
+	}
+
+	FreeRpcCreateLink(&t);
+
+	// Release of the parameter list
+	FreeParamValueList(o);
+
+	return ret;
+}
+
+UINT PsCascadeHttpHeaderGet(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
+{
+	LIST *o;
+	PS *ps = (PS *)param;
+	UINT ret = ERR_NO_ERROR;
+	RPC_CREATE_LINK t;
+
+	// Parameter list that can be specified
+	PARAM args[] =
+	{
+		// "name", prompt_proc, prompt_param, eval_proc, eval_param
+		{"[name]", CmdPrompt, _UU("CMD_CascadeCreate_Prompt_Name"), CmdEvalNotEmpty, NULL},
+	};
+
+	// If virtual HUB is not selected, it's an error
+	if (ps->HubName == NULL)
+	{
+		c->Write(c, _UU("CMD_Hub_Not_Selected"));
+		return ERR_INVALID_PARAMETER;
+	}
+
+	// Get the parameter list
+	o = ParseCommandList(c, cmd_name, str, args, sizeof(args) / sizeof(args[0]));
+	if (o == NULL)
+	{
+		return ERR_INVALID_PARAMETER;
+	}
+
+	// RPC call
+	Zero(&t, sizeof(t));
+	StrCpy(t.HubName, sizeof(t.HubName), ps->HubName);
+	t.ClientOption = ZeroMalloc(sizeof(CLIENT_OPTION));
+	UniStrCpy(t.ClientOption->AccountName, sizeof(t.ClientOption->AccountName), GetParamUniStr(o, "[name]"));
+	ret = ScGetLink(ps->Rpc, &t);
+
+	// Release of the parameter list
+	FreeParamValueList(o);
+
+	if (ret == ERR_NO_ERROR)
+	{
+		wchar_t unistr[HTTP_CUSTOM_HEADER_MAX_SIZE];
+		TOKEN_LIST *tokens = NULL;
+		UINT i = 0;
+		CT *ct = CtNew();
+		CtInsertColumn(ct, _UU("CMD_CT_STD_COLUMN_1"), false);
+
+		tokens = ParseToken(t.ClientOption->CustomHttpHeader, "\r\n");
+
+		for (i = 0; i < tokens->NumTokens; i++)
+		{
+			StrToUni(unistr, sizeof(unistr), tokens->Token[i]);
+			CtInsert(ct, unistr);
+		}
+
+		CtFreeEx(ct, c, false);
+	}
+	else
+	{
+		// Error has occurred
+		CmdPrintError(c, ret);
+	}
+
+	FreeRpcCreateLink(&t);
+
+	return ret;
+}
+
 // Set the cascade connection method to the TCP/IP direct connection mode
 UINT PsCascadeProxyNone(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
 {
@@ -13591,7 +14229,7 @@ UINT PsCascadeProxyNone(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
 		// "name", prompt_proc, prompt_param, eval_proc, eval_param
 		{"[name]", CmdPrompt, _UU("CMD_CascadeCreate_Prompt_Name"), CmdEvalNotEmpty, NULL},
 	};
-	
+
 	// If virtual HUB is not selected, it's an error
 	if (ps->HubName == NULL)
 	{
@@ -14714,8 +15352,10 @@ void CmdPrintStatusToListViewEx(CT *ct, RPC_CLIENT_GET_CONNECTION_STATUS *s, boo
 
 	GetDateTimeStrEx64(tmp, sizeof(tmp), SystemToLocal64(s->StartTime), NULL);
 	CtInsert(ct, _UU("CM_ST_START_TIME"), tmp);
-	GetDateTimeStrEx64(tmp, sizeof(tmp), SystemToLocal64(s->FirstConnectionEstablishedTime), NULL);
-	CtInsert(ct, _UU("CM_ST_FIRST_ESTAB_TIME"), s->FirstConnectionEstablishedTime == 0 ? _UU("CM_ST_NONE") : tmp);
+	/* !!! Do not correct the spelling to keep the backward protocol compatibility !!!  */
+	GetDateTimeStrEx64(tmp, sizeof(tmp), SystemToLocal64(s->FirstConnectionEstablisiedTime), NULL);
+	/* !!! Do not correct the spelling to keep the backward protocol compatibility !!!  */
+	CtInsert(ct, _UU("CM_ST_FIRST_ESTAB_TIME"), s->FirstConnectionEstablisiedTime == 0 ? _UU("CM_ST_NONE") : tmp);
 
 	if (s->Connected)
 	{
@@ -14788,6 +15428,12 @@ void CmdPrintStatusToListViewEx(CT *ct, RPC_CLIENT_GET_CONNECTION_STATUS *s, boo
 		{
 			StrToUni(tmp, sizeof(tmp), s->UnderlayProtocol);
 			CtInsert(ct, _UU("CM_ST_UNDERLAY_PROTOCOL"), tmp);
+		}
+
+		if (IsEmptyStr(s->ProtocolDetails) == false)
+		{
+			StrToUni(tmp, sizeof(tmp), s->ProtocolDetails);
+			CtInsert(ct, _UU("CM_ST_PROTOCOL_DETAILS"), tmp);
 		}
 
 		CtInsert(ct, _UU("CM_ST_UDP_ACCEL_ENABLED"), (s->IsUdpAccelerationEnabled ? _UU("CM_ST_YES") : _UU("CM_ST_NO")));
@@ -21248,103 +21894,6 @@ UINT PsEtherIpClientList(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
 	return 0;
 }
 
-// Enable / disable the OpenVPN compatible server function
-UINT PsOpenVpnEnable(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
-{
-	LIST *o;
-	PS *ps = (PS *)param;
-	UINT ret = 0;
-	OPENVPN_SSTP_CONFIG t;
-	// Parameter list that can be specified
-	PARAM args[] =
-	{
-		// "name", prompt_proc, prompt_param, eval_proc, eval_param
-		{"[yes|no]", CmdPrompt, _UU("CMD_OpenVpnEnable_Prompt_[yes|no]"), CmdEvalNotEmpty, NULL},
-		{"PORTS", CmdPrompt, _UU("CMD_OpenVpnEnable_Prompt_PORTS"), CmdEvalNotEmpty, NULL},
-	};
-
-	o = ParseCommandList(c, cmd_name, str, args, sizeof(args) / sizeof(args[0]));
-	if (o == NULL)
-	{
-		return ERR_INVALID_PARAMETER;
-	}
-
-	Zero(&t, sizeof(t));
-
-	// RPC call
-	ret = ScGetOpenVpnSstpConfig(ps->Rpc, &t);
-
-	if (ret != ERR_NO_ERROR)
-	{
-		// An error has occured
-		CmdPrintError(c, ret);
-		FreeParamValueList(o);
-		return ret;
-	}
-
-	t.EnableOpenVPN = GetParamYes(o, "[yes|no]");
-	StrCpy(t.OpenVPNPortList, sizeof(t.OpenVPNPortList), GetParamStr(o, "PORTS"));
-
-	// RPC call
-	ret = ScSetOpenVpnSstpConfig(ps->Rpc, &t);
-
-	if (ret != ERR_NO_ERROR)
-	{
-		// An error has occured
-		CmdPrintError(c, ret);
-		FreeParamValueList(o);
-		return ret;
-	}
-
-	FreeParamValueList(o);
-
-	return 0;
-}
-
-// Get the current settings for the OpenVPN compatible server function
-UINT PsOpenVpnGet(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
-{
-	LIST *o;
-	PS *ps = (PS *)param;
-	UINT ret = 0;
-	OPENVPN_SSTP_CONFIG t;
-
-	o = ParseCommandList(c, cmd_name, str, NULL, 0);
-	if (o == NULL)
-	{
-		return ERR_INVALID_PARAMETER;
-	}
-
-	Zero(&t, sizeof(t));
-
-	// RPC call
-	ret = ScGetOpenVpnSstpConfig(ps->Rpc, &t);
-
-	if (ret != ERR_NO_ERROR)
-	{
-		// An error has occured
-		CmdPrintError(c, ret);
-		FreeParamValueList(o);
-		return ret;
-	}
-	else
-	{
-		wchar_t tmp[MAX_PATH];
-		CT *ct = CtNewStandard();
-
-		CtInsert(ct, _UU("CMD_OpenVpnGet_PRINT_Enabled"), _UU(t.EnableOpenVPN ? "SEC_YES" : "SEC_NO"));
-
-		StrToUni(tmp, sizeof(tmp), t.OpenVPNPortList);
-		CtInsert(ct, _UU("CMD_OpenVpnGet_PRINT_Ports"), tmp);
-
-		CtFree(ct, c);
-	}
-
-	FreeParamValueList(o);
-
-	return 0;
-}
-
 // Generate a OpenVPN sample configuration file that can connect to the OpenVPN compatible server function
 UINT PsOpenVpnMakeConfig(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
 {
@@ -21409,97 +21958,6 @@ UINT PsOpenVpnMakeConfig(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
 	FreeParamValueList(o);
 
 	return ret;
-}
-
-// Enable / disable the Microsoft SSTP VPN compatible server function
-UINT PsSstpEnable(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
-{
-	LIST *o;
-	PS *ps = (PS *)param;
-	UINT ret = 0;
-	OPENVPN_SSTP_CONFIG t;
-	// Parameter list that can be specified
-	PARAM args[] =
-	{
-		// "name", prompt_proc, prompt_param, eval_proc, eval_param
-		{"[yes|no]", CmdPrompt, _UU("CMD_SstpEnable_Prompt_[yes|no]"), CmdEvalNotEmpty, NULL},
-	};
-
-	o = ParseCommandList(c, cmd_name, str, args, sizeof(args) / sizeof(args[0]));
-	if (o == NULL)
-	{
-		return ERR_INVALID_PARAMETER;
-	}
-
-	Zero(&t, sizeof(t));
-
-	// RPC call
-	ret = ScGetOpenVpnSstpConfig(ps->Rpc, &t);
-
-	if (ret != ERR_NO_ERROR)
-	{
-		// An error has occured
-		CmdPrintError(c, ret);
-		FreeParamValueList(o);
-		return ret;
-	}
-
-	t.EnableSSTP = GetParamYes(o, "[yes|no]");
-
-	// RPC call
-	ret = ScSetOpenVpnSstpConfig(ps->Rpc, &t);
-
-	if (ret != ERR_NO_ERROR)
-	{
-		// An error has occured
-		CmdPrintError(c, ret);
-		FreeParamValueList(o);
-		return ret;
-	}
-
-	FreeParamValueList(o);
-
-	return 0;
-}
-
-// Get the current settings for the Microsoft SSTP VPN compatible server function
-UINT PsSstpGet(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
-{
-	LIST *o;
-	PS *ps = (PS *)param;
-	UINT ret = 0;
-	OPENVPN_SSTP_CONFIG t;
-
-	o = ParseCommandList(c, cmd_name, str, NULL, 0);
-	if (o == NULL)
-	{
-		return ERR_INVALID_PARAMETER;
-	}
-
-	Zero(&t, sizeof(t));
-
-	// RPC call
-	ret = ScGetOpenVpnSstpConfig(ps->Rpc, &t);
-
-	if (ret != ERR_NO_ERROR)
-	{
-		// An error has occured
-		CmdPrintError(c, ret);
-		FreeParamValueList(o);
-		return ret;
-	}
-	else
-	{
-		CT *ct = CtNewStandard();
-
-		CtInsert(ct, _UU("CMD_SstpEnable_PRINT_Enabled"), _UU(t.EnableSSTP ? "SEC_YES" : "SEC_NO"));
-
-		CtFree(ct, c);
-	}
-
-	FreeParamValueList(o);
-
-	return 0;
 }
 
 // Register to the VPN Server by creating a new self-signed certificate with the specified CN (Common Name)
@@ -22426,6 +22884,277 @@ UINT PsListenerEnable(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
 	return 0;
 }
 
+// Set UDP ports the server should listen on
+UINT PsPortsUDPSet(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
+{
+	LIST *o, *ports;
+	PS *ps = (PS *)param;
+	UINT ret;
+	RPC_PORTS t;
+	PARAM args[] =
+	{
+		{"[ports]", CmdPrompt, _UU("CMD_PortsUDPSet_[ports]"), CmdEvalPortList, (void *)false}
+	};
+
+	o = ParseCommandList(c, cmd_name, str, args, sizeof(args) / sizeof(args[0]));
+	if (o == NULL)
+	{
+		return ERR_INVALID_PARAMETER;
+	}
+
+	ports = StrToPortList(GetParamStr(o, "[ports]"), false);
+
+	FreeParamValueList(o);
+
+	t.Num = LIST_NUM(ports);
+	if (t.Num > 0)
+	{
+		UINT i;
+		t.Ports = Malloc(sizeof(UINT) * t.Num);
+
+		for (i = 0; i < t.Num; ++i)
+		{
+			t.Ports[i] = (UINT)LIST_DATA(ports, i);
+		}
+	}
+	else
+	{
+		t.Ports = NULL;
+	}
+
+	ReleaseList(ports);
+
+	ret = ScSetPortsUDP(ps->Rpc, &t);
+	if (ret != ERR_NO_ERROR)
+	{
+		CmdPrintError(c, ret);
+	}
+
+	Free(t.Ports);
+
+	return ret;
+}
+
+// List UDP ports the server is listening on
+UINT PsPortsUDPGet(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
+{
+	LIST *o;
+	PS *ps = (PS *)param;
+	UINT ret;
+	RPC_PORTS t;
+
+	o = ParseCommandList(c, cmd_name, str, NULL, 0);
+	if (o == NULL)
+	{
+		return ERR_INVALID_PARAMETER;
+	}
+
+	FreeParamValueList(o);
+
+	Zero(&t, sizeof(t));
+
+	ret = ScGetPortsUDP(ps->Rpc, &t);
+	if (ret == ERR_NO_ERROR)
+	{
+		wchar_t str[MAX_SIZE];
+		CT *ct = CtNewStandard();
+
+		Zero(str, sizeof(str));
+
+		if (t.Num > 0)
+		{
+			UINT i;
+			wchar_t buf[MAX_SIZE];
+
+			UniFormat(buf, sizeof(buf), L"%u", t.Ports[0]);
+			UniStrCat(str, sizeof(str), buf);
+
+			for (i = 1; i < t.Num; ++i)
+			{
+				UniFormat(buf, sizeof(buf), L", %u", t.Ports[i]);
+				UniStrCat(str, sizeof(str), buf);
+			}
+		}
+
+		CtInsert(ct, _UU("CMD_PortsUDPGet_Ports"), str);
+		CtFree(ct, c);
+	}
+	else
+	{
+		CmdPrintError(c, ret);
+	}
+
+	FreeRpcPorts(&t);
+
+	return ret;
+}
+
+// Configure an option for the specified protocol (TODO: ability to set multiple options in a single call)
+UINT PsProtoOptionsSet(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
+{
+	LIST *o;
+	PS *ps = (PS *)param;
+	UINT ret;
+	RPC_PROTO_OPTIONS t;
+	PARAM args[] =
+	{
+		{"[protocol]", CmdPrompt, _UU("CMD_ProtoOptionsSet_Prompt_[protocol]"), CmdEvalNotEmpty, NULL},
+		{"NAME", CmdPrompt, _UU("CMD_ProtoOptionsSet_Prompt_NAME"), CmdEvalNotEmpty, NULL},
+		{"VALUE", CmdPrompt, _UU("CMD_ProtoOptionsSet_Prompt_VALUE"), NULL, NULL}
+	};
+
+	o = ParseCommandList(c, cmd_name, str, args, sizeof(args) / sizeof(args[0]));
+	if (o == NULL)
+	{
+		return ERR_INVALID_PARAMETER;
+	}
+
+	Zero(&t, sizeof(t));
+	t.Protocol = CopyStr(GetParamStr(o, "[protocol]"));
+
+	ret = ScGetProtoOptions(ps->Rpc, &t);
+
+	if (ret == ERR_NO_ERROR)
+	{
+		UINT i;
+		bool found = false;
+
+		for (i = 0; i < t.Num; ++i)
+		{
+			PROTO_OPTION *option = &t.Options[i];
+			if (StrCmpi(option->Name, GetParamStr(o, "NAME")) != 0)
+			{
+				continue;
+			}
+
+			found = true;
+
+			switch (option->Type)
+			{
+			case PROTO_OPTION_STRING:
+				Free(option->String);
+				option->String = CopyStr(GetParamStr(o, "VALUE"));
+				break;
+			case PROTO_OPTION_BOOL:
+				option->Bool = GetParamYes(o, "VALUE");
+				break;
+			case PROTO_OPTION_UINT32:
+				option->UInt32 = GetParamInt(o, "VALUE");
+				break;
+			default:
+				ret = ERR_INTERNAL_ERROR;
+			}
+
+			if (ret == ERR_NO_ERROR)
+			{
+				ret = ScSetProtoOptions(ps->Rpc, &t);
+			}
+
+			break;
+		}
+
+		if (found == false)
+		{
+			ret = ERR_OBJECT_NOT_FOUND;
+		}
+	}
+
+	if (ret != ERR_NO_ERROR)
+	{
+		CmdPrintError(c, ret);
+	}
+
+	FreeRpcProtoOptions(&t);
+	FreeParamValueList(o);
+
+	return ret;
+}
+
+// List available options for the specified protocol
+UINT PsProtoOptionsGet(CONSOLE *c, char *cmd_name, wchar_t *str, void *param)
+{
+	LIST *o;
+	PS *ps = (PS *)param;
+	UINT ret;
+	RPC_PROTO_OPTIONS t;
+	PARAM args[] =
+	{
+		{"[protocol]", CmdPrompt, _UU("CMD_ProtoOptionsGet_Prompt_[protocol]"), CmdEvalNotEmpty, NULL}
+	};
+
+	o = ParseCommandList(c, cmd_name, str, args, sizeof(args) / sizeof(args[0]));
+	if (o == NULL)
+	{
+		return ERR_INVALID_PARAMETER;
+	}
+
+	Zero(&t, sizeof(t));
+	t.Protocol = CopyStr(GetParamStr(o, "[protocol]"));
+
+	FreeParamValueList(o);
+
+	ret = ScGetProtoOptions(ps->Rpc, &t);
+	if (ret == ERR_NO_ERROR)
+	{
+		UINT i;
+		CT *ct = CtNew();
+		CtInsertColumn(ct, _UU("CMD_ProtoOptionsGet_Column_Name"), false);
+		CtInsertColumn(ct, _UU("CMD_ProtoOptionsGet_Column_Type"), false);
+		CtInsertColumn(ct, _UU("CMD_ProtoOptionsGet_Column_Value"), false);
+		CtInsertColumn(ct, _UU("CMD_ProtoOptionsGet_Column_Description"), false);
+
+		for (i = 0; i < t.Num; ++i)
+		{
+			char description_str_key[MAX_SIZE];
+			const PROTO_OPTION *option = &t.Options[i];
+			wchar_t *value, *type, *name = CopyStrToUni(option->Name);
+
+			switch (option->Type)
+			{
+				case PROTO_OPTION_STRING:
+					type = L"String";
+					value = CopyStrToUni(option->String);
+					break;
+				case PROTO_OPTION_BOOL:
+					type = L"Boolean";
+					value = option->Bool ? L"True" : L"False";
+					break;
+				case PROTO_OPTION_UINT32:
+					type = L"32 bit unsigned integer";
+					char tmp[MAX_SIZE];
+					Format(tmp, sizeof(tmp), "%u", option->UInt32);
+					value = CopyStrToUni(tmp);
+					break;
+				default:
+					Debug("StGetProtoOptions(): unhandled option type %u!\n", option->Type);
+					Free(name);
+					continue;
+			}
+
+			Format(description_str_key, sizeof(description_str_key), "CMD_ProtoOptions_Description_%s_%s", t.Protocol, option->Name);
+
+			CtInsert(ct, name, type, value, _UU(description_str_key));
+
+			if (option->Type != PROTO_OPTION_BOOL)
+			{
+				Free(value);
+			}
+
+			Free(name);
+		}
+
+		CtFree(ct, c);
+	}
+	else
+	{
+		CmdPrintError(c, ret);
+	}
+
+	FreeRpcProtoOptions(&t);
+
+	return ret;
+}
+
 // Draw a row of console table
 void CtPrintRow(CONSOLE *c, UINT num, UINT *widths, wchar_t **strings, bool *rights, char separate_char)
 {
@@ -22653,7 +23382,7 @@ void CtEscapeCsv(wchar_t *dst, UINT size, wchar_t *src){
 	UINT i;
 	UINT len = UniStrLen(src);
 	UINT idx;
-	BOOL need_to_escape = false;
+	bool need_to_escape = false;
 	wchar_t tmp[2]=L"*";
 
 	// Check the input value
@@ -22663,7 +23392,6 @@ void CtEscapeCsv(wchar_t *dst, UINT size, wchar_t *src){
 	}
 
 	// If there is no character that need to be escaped in the input characters, copy it to the output
-	len = UniStrLen(src);
 	for (i=0; i<len; i++)
 	{
 		tmp[0] = src[i];
@@ -24141,19 +24869,13 @@ void Win32CmdDebug(bool is_uac)
 
 	UniPrint(_UU("CMD_DEBUG_PRINT"));
 
-	if (MsIsWin2000OrGreater() == false)
-	{
-		MsgBox(NULL, 0x00000040L, _UU("CMD_DEBUG_NOT_2000"));
-		goto LABEL_CLEANUP;
-	}
-
-	if ((MsIsVista() == false || is_uac) && MsIsAdmin() == false)
+	if (is_uac && MsIsAdmin() == false)
 	{
 		MsgBox(NULL, 0x00000040L, _UU("CMD_DEBUG_NOT_ADMIN"));
 		goto LABEL_CLEANUP;
 	}
 
-	if (MsIsVista() && MsIsAdmin() == false)
+	if (MsIsAdmin() == false)
 	{
 		void *process_handle = NULL;
 

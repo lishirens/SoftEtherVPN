@@ -1,7 +1,8 @@
 # SoftEther VPN String Table
-# Copyright (c) SoftEther VPN Project. All Rights Reserved.
-#
-# http://www.softether.co.jp/
+# Copyright (c) all contributors on SoftEther VPN project in GitHub.
+# Copyright (c) Daiyuu Nobori, SoftEther Project at University of Tsukuba, and SoftEther Corporation.
+# 
+# https://www.softether.org/
 # 
 # KOREAN TRANSLATION by Jioh L. Jung (ziozzang@gmail.com)
 # - Powered by Google Translator (From Japanese to Korean)
@@ -163,11 +164,11 @@ ERR_91 가상 레이어 3 스위치 연결이 끊어 수 없습니다. 세션을
 ERR_92 지정된 이름의 가상 레이어 3 스위치는 이미 존재합니다. 다른 이름을 지정하십시오.
 ERR_93 지정된 이름의 가상 레이어 3 스위치가 없습니다.
 ERR_94 지정된 이름이 잘못되었습니다. 사용할 수없는 문자가 포함되어 있는지 확인하십시오.
-ERR_95 가상 레이어 3 인터페이스의 추가에 실패했습니다.
-ERR_96 가상 레이어 3 인터페이스의 삭제에 실패했습니다.
+ERR_95 가상 레이어 3 인터페이스의 추가에 실패했습니다. Please check that the parameters are valid. Also please make sure that the Virtual Layer 3 switch is stopped. Adding or deleting interfaces are unable when the Virtual Layer 3 switch is running.
+ERR_96 가상 레이어 3 인터페이스의 삭제에 실패했습니다. Please check that the parameters are valid. Also please make sure that the Virtual Layer 3 switch is stopped. Adding or deleting interfaces are unable when the Virtual Layer 3 switch is running.
 ERR_97 지정된 가상 레이어 3 인터페이스가 연결된 가상 HUB에 연결하는 가상 레이어 3 인터페이스가 가상 레이어 3 스위치에 이미 존재합니다. 하나의 가상 레이어 3 스위치에서 동일한 가상 HUB에 연결하는 가상 레이어 3 인터페이스는 하나 밖에 정의 할 수 없습니다.
-ERR_98 라우팅 테이블 추가에 실패했습니다.
-ERR_99 라우팅 테이블의 삭제에 실패했습니다.
+ERR_98 라우팅 테이블 추가에 실패했습니다. Please check that the parameters are valid. Also please make sure that the Virtual Layer 3 switch is stopped. Adding or deleting routing table entries are unable when the Virtual Layer 3 switch is running.
+ERR_99 라우팅 테이블의 삭제에 실패했습니다. Please check that the parameters are valid. Also please make sure that the Virtual Layer 3 switch is stopped. Adding or deleting routing table entries are unable when the Virtual Layer 3 switch is running.
 ERR_100 지정된 라우팅 테이블이 이미 존재합니다.
 ERR_101 클라이언트와 서버 사이의 시계가 어긋나 있습니다. 시간 설정을 확인하십시오.
 ERR_102 이 가상 레이어 3 스위치를 시작할 수 없습니다. \r\n\r\n 가상 레이어 3 스위치를 시작하려면 최소한 1 개의 가상 인터페이스가 가상 레이어 3 스위치에 정의되어 있어야합니다.
@@ -403,6 +404,7 @@ PW_TYPE_1 표준 암호 인증
 PW_TYPE_2 RADIUS 또는 NT 도메인 인증
 PW_TYPE_3 클라이언트 인증서 인증
 PW_TYPE_4 스마트 카드 인증
+PW_TYPE_5				OpenSSL Engine Authentication
 
 PW_MSG_PROXY 프록시 서버 %S에서의 사용자 인증에 실패했습니다. 올바른 사용자 이름과 암호를 다시 입력하십시오.
 PW_TYPE_PROXY 프록시 서버 인증
@@ -478,7 +480,6 @@ OSS_MSG 소개 - SoftEther VPN Server에 대해 \r\n\r\n이 VPN Server는 츠쿠
 
 # NAT Traversal 경고
 NATT_MSG ** NAT Traversal 연결 - 안정성 저하 가능성이 있습니다 ** \r\n\r\nVPN Client는 VPN Server '%S'에 NAT 통과 (UDP 홀 펀칭) 모드로 연결했습니다. \r\n\r\nNAT 탐색하여 VPN Client는 NAT 및 방화벽 뒤에있는 VPN Server에 해당 NAT 및 방화벽에서 포트 포워딩 설정을 할 필요없이 연결 할 수 있습니다. \r\n\r\n 그러나 NAT traversal는 UDP를 기반으로 한 통신을 사용하기 때문에 VPN 세션이 불안정해질 원인이되는 경우가 있습니다. 예를 들어, 저렴한 NAT 라우터가 VPN Server와 VPN Client 사이에 존재하는 경우, NAT 탐색에서 VPN 터널은 5 분마다 절단 될 수 있습니다. 또한 저렴한 ISP가 대규모 NAT를 사용하는 경우에도 NAT traversal는 불안정 해집니다. 이것은 라우터와 ISP의 품질 문제이며, SoftEther VPN 문제가 없습니다. \r\n\r\n이를 해결하기 위해서는 NAT 통과를 사용하는 것이 아니라 직접 TCP/IP를 통해 VPN Server 리스너 포트에 VPN Client가 접속할 수 있도록합니다. 그러기 위해서는, VPN Server 리스너 포트가 인터넷에 공개 된 바와 같이, NAT의 포트 포워딩 설정을해야합니다. NAT의 포트 포워딩 설정 방법은 NAT의 관리자에게 문의하거나 NAT 제품의 설명서를 읽어 보시기 바랍니다. \r\n\r\nVPN Server가 TCP 포트를 인터넷에 공개하고 있음에도 불구하고이 메시지가 표시되는 경우 VPN Client의 연결 설정 화면에서 "NAT-T 무효"를 확인 하십시오. \r\n\r\n
-NATT_MSG2 ** NAT Traversal 연결 - 안정성 저하 가능성이 있습니다 ** \r\n\r\nVPN Client는 VPN Server '%S'에 NAT 통과 (UDP 홀 펀칭) 모드로 연결했습니다. \r\n\r\nNAT 탐색하여 VPN Client는 NAT 및 방화벽 뒤에있는 VPN Server에 해당 NAT 및 방화벽에서 포트 포워딩 설정을 할 필요없이 연결 할 수 있습니다. \r\n\r\n 그러나 NAT traversal는 UDP를 기반으로 한 통신을 사용하기 때문에 VPN 세션이 불안정해질 원인이되는 경우가 있습니다. 예를 들어, 저렴한 NAT 라우터가 VPN Server와 VPN Client 사이에 존재하는 경우, NAT 탐색에서 VPN 터널은 5 분마다 절단 될 수 있습니다. 또한 저렴한 ISP가 대규모 NAT를 사용하는 경우에도 NAT traversal는 불안정 해집니다. 이것은 라우터와 ISP의 품질 문제이며, SoftEther VPN 문제가 없습니다. \r\n\r\n이를 해결하기 위해서는 NAT 통과를 사용하는 것이 아니라 직접 TCP/IP를 통해 VPN Server 리스너 포트에 VPN Client가 접속할 수 있도록합니다. 그러기 위해서는, VPN Server 리스너 포트가 인터넷에 공개 된 바와 같이, NAT의 포트 포워딩 설정을해야합니다. NAT의 포트 포워딩 설정 방법은 NAT의 관리자에게 문의하거나 NAT 제품의 설명서를 읽어 보시기 바랍니다. \r\n\r\nVPN Server가 TCP 포트를 인터넷에 공개하고 있음에도 불구하고이 메시지가 표시되는 경우 VPN Client의 버전을 Build 9428 이상으로 업그레이드 한 후 VPN Client 연결 설정 화면에서 "NAT-T 무효"를 체크하십시오. \r\n\r\n
 
 
 # 가상 HUB 관리 옵션 관계
@@ -941,6 +942,8 @@ CM_STOP_INST_VLAN_1 이 컴퓨터에서 가상 LAN 카드의 설치 작업을 �
 CM_STOP_INST_VLAN_2 이 컴퓨터에서 가상 LAN 카드의 설치 작업을 수행하려면 "콘솔 세션"에 VPN 클라이언트 연결 관리자를 시작해야합니다. \r\n\r\n 현재이 컴퓨터는 %s가 설치되어 있으며, 현재 사용자가 콘솔 세션이 아닌 원격 세션 (세션 ID:%u)로 로그온합니다. \r\n 가상 LAN 카드의 설치 작업은 콘솔 세션에서 VPN 클라이언트 연결 관리자를 시작해야합니다. \r\n (현재 콘솔 세션 (세션 ID:0)은 사용자가 로그온하지 않습니다.) \r\n\r\n 사용자 전환 기능을 사용하거나 원격 데스크톱의/console 스위치 기능 를 사용하거나 컴퓨터의 로컬 콘솔 장치를 사용하여 컴퓨터에 로컬로 로그온 한 후 VPN 클라이언트 연결 관리자를 시작하고 가상 LAN 카드의 설치 작업을 수행합니다.
 CM_SHORTCUT_DESKTOP_MSG 연결 설정의 단축키를 사용하여 연결을 시작하려면 "콘솔 세션"에 바로 가기 파일을 시작해야합니다. \r\n\r\n 현재 사용자가 콘솔 세션이 아닌 원격 세션 (세션 ID:%u)로 로그온합니다.
 CM_HTTP_PROXY_WARNING HTTP 프록시 서버를 통해 연결이 선택되어 있습니다. \r\n\r\n 종종 HTTP 프록시 서버는 연결할 서버의 포트 번호로 HTTP 프로토콜 (TCP 80 번 포트) 및 HTTPS 프로토콜 (TCP 포트 443)의 2 종류의 TCP 포트에 연결 만 를 허용하고 있습니다. \r\n (프록시 서버가 임의의 TCP 포트에 대한 연결을 허용하는 경우도 있습니다.) \r\n\r\nHTTP 또는 HTTPS 포트 이외의 서버 포트에 연결을 금지하고있는 HTTP 프록시 서버를 통해 VPN 연결을 할 경우 연결된 VPN Server의 포트 번호는 443 (HTTPS 프로토콜)에 지정해야합니다. \r\n\r\n 통해 HTTP 프록시 서버가 80 번 또는 443 번 포트 이외의 연결을 허용하는지 여부를 확인하려면 HTTP 프록시 서버의 관리자에게 문의하십시오. \r\n\r\n 현재 연결된 VPN Server의 포트 번호는 %d가 지정되어 있지만 포트 번호를 443 (HTTPS 프로토콜)로 변경 하시겠습니까? \r\n (연결하는 VPN Server의 포트 443에서 연결을 기다리는 설정되어 있어야합니다.) \r\n 알 수없는 경우 시스템 관리자 또는 네트워크 관리자에게 문의하십시오.
+CM_HTTP_HEADER_COLUMN_0 Name
+CM_HTTP_HEADER_COLUMN_1 Value
 CM_PASSWORD_CHANGED 비밀번호가 변경되었습니다.
 CM_ACCOUNT_SETTING_FILE 연결 설정 파일 (* .VPN)|* .vpn|모든 파일 (*.*)|*.*
 CM_ACCOUNT_SAVE_TITLE 대상의 연결 설정 파일 이름을 입력하십시오.
@@ -1077,7 +1080,7 @@ SVC_HIDE_TRAY_MSG %S 사용자 모드 시작시 시스템 트레이 아이콘을
 
 
 # 서비스 관계 (UNIX)
-UNIX_SVC_HELP %S service program \nCopyright (c) SoftEther VPN Project. All Rights Reserved. \n \n %S command usage:\n %S start - Start the %S service \n %S stop - Stop the %S service if the service has been already started. \n \n
+UNIX_SVC_HELP			%S service program\nCopyright (c) all contributors on SoftEther VPN project in GitHub.\nCopyright (c) Daiyuu Nobori, SoftEther Project at University of Tsukuba, and SoftEther Corporation.\nAll Rights Reserved.\n\n%S command usage:\n %S start  - Start the %S service.\n %S stop   - Stop the %S service if the service has been already started.\n\n
 UNIX_SVC_STARTED The %S service has been started. \n
 UNIX_SVC_STOPPING Stopping the %S service... \n
 UNIX_SVC_STOPPED %S service has been stopped. \n
@@ -1750,6 +1753,7 @@ LS_SSL_START 연결 "%S"에 대한 SSL 통신이 시작되었습니다. 암호�
 LS_CONNECTION_ERROR 연결 "%S"는 이유로 "%s"(코드 %u)로 종료되었습니다.
 LS_FARMMEMBER_NOT_ADMIN 연결 "%S": 서버는 클러스터 멤버이지만, 클라이언트는 가상 HUB "%S"관리자 사용자 "%S"이외로 직접 연결하려고 시도했습니다. 클라이언트가 제공 한 사용자 이름은 "%S"입니다. 액세스는 허용되지 않습니다.
 LS_HUB_NOT_FOUND 연결 "%S": 클라이언트가 연결을 시도하는 가상 HUB "%S"는 서버에 존재하지 않습니다.
+LS_WG_KEY_NOT_FOUND Connection "%S": The WireGuard key is not associated with a user on the server.
 LS_IP_DENIED 연결 "%S": 클라이언트의 접근 IP 주소 "%S"는 가상 HUB에 정의 된 접근 IP 제한 목록에 의해 거부되었습니다.
 LS_LICENSE_ERROR 연결 "%S": 라이센스에 오류가 발생했기 때문에 클라이언트는 서버에 연결할 수 없습니다.
 LS_BETA_EXPIRES 라이센스 오류가 발생했습니다. 베타 사용 기간이 종료하고 있습니다. 새로운 베타 버전 또는 완성판을 http://selinks.org/에서 다운로드하십시오.
@@ -1770,6 +1774,25 @@ LS_LICENSE_NOT_VPNSERVER 연결 "%S": 라이센스 오류가 발생했습니다.
 LS_LICENSE_NOT_VPNCLUSTER 연결 "%S": 라이센스 오류가 발생했습니다. 이 VPN Server는 현재 클러스터링 기능을 사용할 수없는 종류의 라이센스가 등록되어 있지만 클러스터 모드로 실행 중에 VPN Client가 연결을 시도했습니다. VPN Server를 다시 시작해야합니다.
 LS_LICENSE_VIOLATION 연결 "%S": VPN Server에서 라이센스 위반이 발생하고 있기 때문에 연결을 받아 들일 수 없습니다.
 LS_LICENSE_VIOLATION_DETECTED 라이센스 위반을 감지했습니다. 다른 VPN Server가 이 VPN Server와 동일한 서버 ID "%I64u"으로 동작합니다. 클러스터에 동일한 라이센스를 사용하여 두 개 이상의 VPN Server가 있을 수 있습니다. 각 VPN Server의 라이센스 정보를 확인하십시오.
+LS_API_AUTH_OK			HTTPS API client "%r:%u" (%S): Administration mode: "%S": The embedded HTTPS web server accepted the successful login. Username: "%S", Method: "%S", Path: "%S"
+LS_API_AUTH_ERROR		HTTPS API client "%r:%u" (%S): The embedded HTTPS web server refused a login attempt. Username: "%S", Method: "%S", Path: "%S"
+LS_API_RPC_CALL			HTTPS API client "%r:%u" (%S): The client called a JSON-API. Method: "%S", Returned error code: %u (0 = success), Returned error message: "%s"
+
+
+# (Proto 로그)
+LP_PREFIX_SESSION [%s] %r:%u -> %r:%u (%s): 
+LP_SESSION_CREATED Session created.
+LP_SESSION_DELETED Session deleted.
+
+
+# (WireGuard 로그)
+LW_PREFIX_SESSION	[WireGuard] %r:%u -> %r:%u: 
+LW_KEYPAIR_EXPIRED	Current keypair (%x -> %x) is expired!
+LW_KEYPAIR_UNKNOWN	The packet was encrypted with an unknown keypair!
+LW_DECRYPT_FAIL		Decryption failure!
+LW_REPLAY_ATTACK	Replay attack detected!
+LW_FLOOD_ATTACK		Flood attack detected!
+LW_HUB_DISCONNECT	The administrator of the Virtual Hub has disconnected this session.
 
 
 # (OpenVPN 로그)
@@ -1780,15 +1803,11 @@ LO_NEW_CHANNEL 새로운 채널을 만들었습니다.
 LO_CHANNEL_ESTABLISHED_NEWKEY 채널이 설정 상태가되었습니다 (원인:리키 완료).
 LO_OPTION_STR_RECV 받은 옵션 문자열:"%S"
 LO_OPTION_STR_SEND 보내는 옵션 문자열:"%S"
-LO_NEW_SESSION 새 세션을 만들었습니다. 프로토콜:%S
 LO_INITIATE_REKEY 이 채널의 리키를 시작합니다.
 LO_CHANNEL_ESTABLISHED 채널이 설정 상태가되었습니다 .
 LO_PUSH_REPLY 응답 옵션 문자열 전체:"%S"
 LO_CHANNEL_FAILED 채널의 접속 처리에 실패했습니다.
 LO_CHANNEL_DISCONNECTED_BY_HUB 가상 HUB 관리자가 VPN 세션이 끊어 졌기 때문에이 OpenVPN 채널을 끊습니다.
-LO_DELETE_SESSION 세션을 삭제합니다.
-LO_START OpenVPN 서버 모듈을 시작했습니다.
-LO_STOP OpenVPN 서버 모듈을 중지했습니다.
 
 
 # IPsec (로그)
@@ -1875,13 +1894,15 @@ LH_AUTH_PASSWORD 암호 인증
 LH_AUTH_PLAIN_PASSWORD 외부 서버 인증
 LH_AUTH_CERT 인증서 인증
 LH_AUTH_TICKET 티켓 인증
+LH_AUTH_WIREGUARD_KEY WireGuard public key authentication
+LH_AUTH_OPENVPN_CERT OpenVPN certificate authentication
 LH_AUTH_RADIUS_NOT_SUPPORT 연결 "%S"사용자 "%S"의 인증 방법으로 RADIUS 인증 또는 Active Directory 인증 (NT 도메인 인증)이 지정 되었으나, 현재 VPN Server 버전은 "%S"이기 때문에 RADIUS 인증 또는 Active Directory 인증 (NT 도메인 인증)을 사용할 수 없습니다. 연결이 거부됩니다.
 LH_AUTH_RADIUS_NOT_SUPPORT_ON_OPEN_SOURCE 연결 "%S"사용자 "%S"의 인증 방법으로 RADIUS 인증 또는 Active Directory 인증 (NT 도메인 인증)이 지정되었습니다 만, RADIUS 인증 또는 Active Directory 인증 (NT 도메인 인증)을 사용할 수 수 없습니다. 이 기능은 오픈 소스 버전 SoftEther VPN은 아직 구현되어 있지 않습니다. 연결이 거부됩니다.
 LH_AUTH_CERT_NOT_SUPPORT_ON_OPEN_SOURCE 연결 "%S"사용자 "%S"의 인증 방법으로 인증서 인증을 지정했지만 인증서 인증을 사용 할 수 없습니다. 이 기능은 오픈 소스 버전 SoftEther VPN은 아직 구현되어 있지 않습니다. 연결이 거부됩니다.
 LH_AUTH_OK 연결 "%S"사용자 "%S"로 성공적으로 인증되었습니다.
 LH_AUTH_OK_CERT 가상 HUB 보안 계정 관리자는 사용자 "%S"가 로그인 할 때 인증서로 다음 인증서를 VPN Client에서 접수하고 그 내용을 승인했습니다:%s
 LH_AUTH_NG_CERT 가상 HUB 보안 계정 관리자는 사용자 "%S"가 로그인 할 때 인증서로 다음 인증서를 VPN Client에서 접수했지만,이 인증서는 가상 HUB의 잘못된 인증서 목록에 등록 되는 내용과 일치하는 거부했습니다:%s
-LH_AUTH_NG 연결 "%S": 사용자 인증에 실패했습니다. 제시된 사용자 이름은 "%S"였습니다.
+LH_AUTH_NG Connection "%S": User authentication failed. The user name that has been provided was "%S", from %S.
 LH_LOCAL_ONLY 연결 "%S"사용자 "%S"암호가 비어을위한 원격에서 로그인이 거부되었습니다.
 LH_POLICY_ACCESS_NG 연결 "%S"사용자 "%S"는 보안 정책에 의해 액세스가 거부되어 있습니다.
 LH_USER_EXPIRES 연결 "%S"사용자 "%S"의 유효 기간이 만료되어 액세스가 거부되었습니다.
@@ -1964,11 +1985,15 @@ LA_CREATE_LISTENER 새로운 TCP 리스너 (포트 번호 %u)를 만들었습니
 LA_DELETE_LISTENER TCP 리스너 (포트 번호 %u)을 삭제했습니다.
 LA_ENABLE_LISTENER TCP 리스너 (포트 번호 %u)를 활성화했습니다.
 LA_DISABLE_LISTENER TCP 리스너 (포트 번호 %u)를 비활성화했습니다.
+LA_SET_PORTS_UDP UDP ports have been set: %S.
+LA_SET_PROTO_OPTIONS %S options have been set.
 LA_SET_SERVER_PASSWORD 서버 관리자 암호를 설정했습니다.
 LA_SET_FARM_SETTING 클러스터링 설정을 변경했습니다.
 LA_SET_SERVER_CERT 서버 인증서를 설정했습니다.
 LA_REGENERATE_SERVER_CERT 서버 인증서를 다시 생성했습니다. 새로운 CN:"%S"
 LA_SET_SERVER_CIPHER 서버의 새로운 암호화 알고리즘 명을 설정했습니다. 새로운 암호화 알고리즘 명은 "%S"입니다.
+LA_ADD_WGK Added %u WireGuard key(s).
+LA_DELETE_WGK Deleted %u WireGuard key(s).
 LA_CREATE_HUB 새로운 가상 HUB "%S"를 만들었습니다.
 LA_SET_HUB 가상 HUB의 설정을 변경했습니다.
 LA_DELETE_HUB 가상 HUB "%S"를 삭제했습니다.
@@ -2317,10 +2342,20 @@ STATIC2 호스트 이름 (&H):
 STATIC3 포트 번호 (&A):
 STATIC4 사용자 이름 (&U):
 STATIC5 비밀번호 (&P):
+B_HTTP_HEADER Custom HTTP header values
 IDOK & OK
 IDCANCEL 취소
 STATIC6 (옵션)
 STATIC7 (옵션)
+
+
+PREFIX D_CM_PROXY_HTTP_HEADER
+CAPTION Custom Proxy HTTP Header Values
+B_NEW New
+B_DELETE Delete
+B_CLEAR Clear
+IDOK &OK
+IDCANCEL Cancel
 
 
 PREFIX D_CM_DETAIL
@@ -2417,7 +2452,7 @@ STATIC7 인터넷 연결 유지 기능 (&N)
 
 PREFIX D_ABOUT
 S_INFO1 SoftEther VPN %u.0 (Ver %u %02u, Build %u)
-S_INFO2 An Open-Source VPN Software for Academic Purpose, under the GPLv2 License \r\nCopyright (c) 2012- %u SoftEther Project at University of Tsukuba, Japan. All Rights Reserved. \r\nWeb Site:http://www.softether.org/\r\n%S
+S_INFO2				Licensed under the Apache License, Version 2.0.\r\nCopyright (c) 2012-%u all contributors on SoftEther VPN project in GitHub. All Rights Reserved.\r\nWeb Site: http://www.softether.org/\r\n%S
 S_INFO3 This product includes the following software components:\r\nBitVisor:Copyright (c) 2007, 2008 University of Tsukuba. Copyright (C) 2007, 2008 National Institute of Information and Communications Technology. All rights reserved./Microsoft (R) C Runtime Library:(c) 2007 Microsoft Corporation. All Rights Reserved./PKCS # 11 Cryptographic Token Interface (Cryptoki):Copyright (c) RSA Security Inc./WinPcap:Copyright (c) 2001 - 2003 NetGroup, Politecnico di Torino (Italy ). All rights reserved./libedit:Copyright (c) 1992, 1993 The Regents of the University of California. All rights reserved./libiconv:Copyright (C) 2007 Free Software Foundation, Inc./ncurses:Copyright (c) 1998 -2005, 2006 Free Software Foundation, Inc./OpenSSL:Copyright (c) 1998-2011 The OpenSSL Project. All rights reserved. This product includes software developed by the OpenSSL Project for use in the OpenSSL Toolkit (http://www. openssl.org/) This product includes cryptographic software written by Eric Young (eay@cryptsoft.com)/zlib:(C) 1995-2004 Jean-loup Gailly and Mark Adler/Special Thanks to:Software Laboratory, Academic Computing Communication Center, Industrial Liaison and Cooperative Research Center and Professor Yasushi Shinjo in University of Tsukuba, Japan.
 S_INFO4 이 소프트웨어는 츠쿠바 대학 SoftEther VPN 프로젝트에서 개발 된 프리웨어입니다. 본 소프트웨어는 어떠한 보증이없는 상태로 제공되는 것이며, 개발 및 배포자는 사용의 결과 손해에 대해 책임을지지 않습니다. \r\n\r\nSoftEther VPN 소프트웨어는 일본 경제 산업 성 소프트웨어 연구 개발 프로젝트의 결과물입니다. IPA (독립 행정법 인 정보 처리 추진기구)의 미답 소프트웨어 창조 사업에 채택되어 개발되었습니다. 자세한 내용은 http://www.ipa.go.jp/를 참조하십시오.
 IDCANCEL & OK
@@ -2521,6 +2556,8 @@ B_CREATE_LISTENER 새로 만들기 (&R)
 B_DELETE_LISTENER 삭제 (&T)
 B_START 시작 (&G)
 B_STOP 정지 (&P)
+S_UDP Multiple UDP ports can be specified by splitting them with a space or a comma. Leave empty to disable the UDP listener.
+B_APPLY Apply
 STATIC3 서버 정보의 확인 및 설정 (&N)
 B_SSL 암호화 및 통신 관계의 설정 (&W)
 B_STATUS 서버 상태보기 (&V)
@@ -3832,9 +3869,6 @@ CAPTION OpenVPN/MS-SSTP 설정
 S_TITLE OpenVPN/MS-SSTP VPN 서버 기능 설정
 S_1 OpenVPN 사의 OpenVPN 소프트웨어 제품과 동일한 VPN 서버 기능을 탑재하고 있습니다. \r\n\r\nOpenVPN 클라이언트에서이 VPN Server에 연결할 수 있습니다.
 R_OPENVPN & OpenVPN 서버 기능을 활성화하려면
-S_UDP OpenVPN 서비스를 제공 및 UDP 포트:
-B_DEFAULT 기본값 복원 (&D)
-S_UDP2 UDP 포트는 여러 지정할 수 있습니다. 복수 지정하려면 공백 또는 쉼표로 구분하십시오. \r\nOpenVPN 서버 기능은 TCP 포트에서도 사용할 수 있습니다. 이 경우 VPN Server에 현재 생성되어있는 모든 TCP 리스너 포트에서 OpenVPN 프로토콜이 지원됩니다.
 S_TOOL OpenVPN 클라이언트 샘플 설정 파일 자동 생성 도구
 S_TOOL2 원래 OpenVPN 클라이언트를 사용하기 위해서는 설정 파일을 수동으로 작성해야하며 이것은 난이도가 높은 작업입니다. 그러나 다음 버튼을 클릭하면이 VPN Server에 연결할 수있는 기본적인 OpenVPN 클라이언트의 설정 파일을 자동으로 생성 할 수 있습니다.
 B_CONFIG OpenVPN 클라이언트의 샘플 구성 파일을 생성 (&C)
@@ -4431,7 +4465,7 @@ CMD_VPNCMD_HOST_2 연결된 VPN Client를 실행하는 컴퓨터의 IP 주소 �
 CMD_VPNCMD_HOST_3 연결된 호스트 이름 또는 IP 주소:
 CMD_VPNCMD_HUB_1 서버에 가상 HUB 관리 모드로 접속하는 경우에는 가상 HUB 이름을 입력하십시오. \n 서버 관리 모드로 접속하는 경우는 아무것도 입력하지 않고 Enter를 누르십시오.
 CMD_VPNCMD_HUB_2 연결된 가상 HUB 이름을 입력:
-CMD_VPNCMD_ABOUT SoftEther VPN 명령 줄 관리 유틸리티 (vpncmd 명령) \n %S \n %S \nCopyright (c) SoftEther VPN Project. All Rights Reserved. \n
+CMD_VPNCMD_ABOUT SoftEther VPN 명령 줄 관리 유틸리티 (vpncmd 명령)\nDeveloper Edition\n%S\n%S\nCopyright (c) all contributors on SoftEther VPN project in GitHub.\nCopyright (c) Daiyuu Nobori, SoftEther Project at University of Tsukuba, and SoftEther Corporation.\nAll rights reserved.\n
 CMD_VPNCMD_PASSWORD_1 액세스가 거부되었습니다. 암호가 잘못되었거나 연결 관리 모드가 정확하지 않을 수 있습니다. 암호를 다시 입력 할 수 있습니다. 취소하려면 Ctrl + D를 누르십시오.
 CMD_VPNCMD_PASSWORD_2 비밀번호:
 CMD_VPNCMD_ERROR 오류가 발생했습니다. (오류 코드:%u) \n %s
@@ -4511,6 +4545,52 @@ CMD_ListenerDisable_Help 현재 서버에 등록되어있는 TCP 리스너가 �
 CMD_ListenerDisable_Args ListenerDisable [port]
 CMD_ListenerDisable_[port] 중지 TCP/IP 리스너의 포트 번호를 정수로 지정합니다.
 CMD_ListenerDisable_PortPrompt 시작하는 TCP/IP 리스너 포트 번호:
+
+
+# PortsUDPSet command
+CMD_PortsUDPSet			Sets the UDP ports that the server should listen on
+CMD_PortsUDPSet_Help	This command can be used to specify a single or multiple UDP ports the server should listen on. \nYou can specify a port that is used by another process, however the server will not be able to use it until the port becomes free. \nSpecify a port number that is within the range of 1 to 65535. \nYou can list the ports that are currently set with the PortsUDPGet command. \nTo execute this command, you must have VPN Server administrator privileges.
+CMD_PortsUDPSet_Args	PortsUDPSet [ports]
+CMD_PortsUDPSet_[ports]	Multiple UDP ports can be specified by splitting them with a space or a comma, for example: "443, 992, 1194, 5555". \nSpecify "0" to disable the UDP listener. \n\nPorts: 
+
+
+# PortsUDPGet command
+CMD_PortsUDPGet			Lists the UDP ports that the server is listening on
+CMD_PortsUDPGet_Help	This command can be used to retrieve the UDP ports the server is listening on. \nYou can set the ports with the PortsUDPSet command.
+CMD_PortsUDPGet_Args	PortsUDPGet
+CMD_PortsUDPGet_Ports	UDP ports
+
+
+# ProtoOptionsSet 명령
+CMD_ProtoOptionsSet						Sets an option's value for the specified protocol
+CMD_ProtoOptionsSet_Help				This command can be used to change an option's value for a specific protocol. \nYou can retrieve the options using the ProtoOptionsGet command. \nTo execute this command, you must have VPN Server administrator privileges.
+CMD_ProtoOptionsSet_Args				ProtoOptionsSet [protocol] [/NAME:option_name] [/VALUE:string/true/false]
+CMD_ProtoOptionsSet_[protocol]			Protocol name.
+CMD_ProtoOptionsSet_NAME				Option name.
+CMD_ProtoOptionsSet_VALUE				Option value. Make sure to write a value that is accepted by the specified protocol!
+CMD_ProtoOptionsSet_Prompt_[protocol]	Protocol: 
+CMD_ProtoOptionsSet_Prompt_NAME			Option: 
+CMD_ProtoOptionsSet_Prompt_VALUE		Value: 
+
+
+# ProtoOptionsGet 명령
+CMD_ProtoOptionsGet						Lists the options for the specified protocol
+CMD_ProtoOptionsGet_Help				This command can be used to retrieve the options for a specific protocol. \nDetailed info (e.g. value type) will be shown. \nYou can change an option's value with the ProtoOptionsSet command.
+CMD_ProtoOptionsGet_Args				ProtoOptionsGet [protocol]
+CMD_ProtoOptionsGet_[protocol]			Protocol name.
+CMD_ProtoOptionsGet_Prompt_[protocol]	Protocol: 
+CMD_ProtoOptionsGet_Column_Name			Name
+CMD_ProtoOptionsGet_Column_Type			Type
+CMD_ProtoOptionsGet_Column_Value		Value
+CMD_ProtoOptionsGet_Column_Description	Description
+
+# ProtoOptions
+CMD_ProtoOptions_Description_OpenVPN_DefaultClientOption			When OpenVPN is compiled without OCC code, it doesn't send the options string to the server. The original OpenVPN server still works, because the configuration is static. SoftEther VPN is heuristic and wants to support as many different configurations as possible. This option allows to define the string that is sent to clients built without OCC code, so that they can successfully connect.
+CMD_ProtoOptions_Description_OpenVPN_Obfuscation					This may help an OpenVPN client bypass firewalls that are aware of the protocol and block it. The same XOR mask has to be applied client-side, otherwise it will not be able to connect with certain obfuscation methods!
+CMD_ProtoOptions_Description_OpenVPN_ObfuscationMask				Mask used to XOR the bytes in the packet (used for certain obfuscation modes).
+CMD_ProtoOptions_Description_OpenVPN_PingSendInterval				Interval in milliseconds between each ping packet transmission.
+CMD_ProtoOptions_Description_OpenVPN_PushDummyIPv4AddressOnL2Mode	There's a bug that manifests under certain circumstances on Linux. It causes the OpenVPN client to disconnect unless the TAP device is UP. This option tells the server to push a dummy IPv4 address (RFC7600) to the client, so that the TAP adapter is forced to be UP.
+CMD_ProtoOptions_Description_OpenVPN_Timeout						Time in milliseconds after which the session is forcifully interrupted if no packets are received from the client in the meantime.
 
 
 # ServerPasswordSet 명령
@@ -4653,22 +4733,6 @@ CMD_ServerCipherSet_Help VPN Server와 연결된 클라이언트 사이의 통�
 CMD_ServerCipherSet_Args ServerCipherSet [name]
 CMD_ServerCipherSet_[name] 설정해야 루루 암호화 및 전자 서명 알고리즘을 지정합니다. 사용 가능한 알고리즘 목록은 ServerCipherGet 명령에서 얻을 수 있습니다.
 CMD_ServerCipherSet_PROMPT_NAME 지정하는 암호화 알고리즘 명:
-
-# TUNDownOnDisconnectEnable command
-CMD_TUNDownOnDisconnectEnable	Enable the Turn TUN Interface Down on Client Disconnect Function.
-CMD_TUNDownOnDisconnectEnable_Help	This allows you to enable Turn TUN Interface Down on Client Disconnect Function.
-CMD_TUNDownOnDisconnectEnable_Args	TUNDownOnDisconnectEnable
-
-# TUNDownOnDisconnectDisable command
-CMD_TUNDownOnDisconnectDisable	Disable the Turn TUN Interface Down on Client Disconnect Function.
-CMD_TUNDownOnDisconnectDisable_Help	This allows you to disable Turn TUN Interface Down on Client Disconnect Function.
-CMD_TUNDownOnDisconnectDisable_Args	TUNDownOnDisconnectDisable
-
-# TUNDownOnDisconnectGet command
-CMD_TUNDownOnDisconnectGet		Get status of the Turn TUN Interface Down on Client Disconnect Function.
-CMD_TUNDownOnDisconnectGet_Help	This allows you to get status of the Turn TUN Interface Down on Client Disconnect Function.
-CMD_TUNDownOnDisconnectGet_Args	TUNDownOnDisconnectGet
-CMD_TUNDownOnDisconnectGet_COLUMN1	Put TUN down on disconnect
 
 # KeepEnable 명령
 CMD_KeepEnable 인터넷 연결 유지 기능 활성화
@@ -4937,6 +5001,35 @@ CMD_LogFileGet_SAVE_FAILED 지정된 파일에 쓸 수 없습니다.
 CMD_LogFileGet_FILESIZE 로그 파일의 파일 크기:%u
 
 
+# WgkAdd 명령
+CMD_WgkAdd				Add a WireGuard key
+CMD_WgkAdd_Help			This command can be used to add a WireGuard key to the allowed key list. \nTo execute this command, you must have VPN Server administrator privileges.
+CMD_WgkAdd_Args			WgkAdd [key] [/HUB:hub] [/USER:user]
+CMD_WgkAdd_[key]		WireGuard key. Make sure it is the public one!
+CMD_WgkAdd_HUB			Hub the key will be associated to.
+CMD_WgkAdd_USER			User the key will be associated to, in the specified hub.
+CMD_WgkAdd_Prompt_[key]	Key: 
+CMD_WgkAdd_Prompt_HUB	Hub: 
+CMD_WgkAdd_Prompt_USER	User: 
+
+
+# WgkDelete 명령
+CMD_WgkDelete				Delete a WireGuard key
+CMD_WgkDelete_Help			This command can be used to delete a WireGuard key from the allowed key list. \nTo execute this command, you must have VPN Server administrator privileges.
+CMD_WgkDelete_Args			WgkDelete [key]
+CMD_WgkDelete_[key]			WireGuard key.
+CMD_WgkDelete_Prompt_[key]	Key: 
+
+
+# WgkEnum 명령
+CMD_WgkEnum				List the WireGuard keys
+CMD_WgkEnum_Help		This command retrieves the WireGuard keys that are allowed to connect to the server, along with the associated Virtual Hub and user. \nYou can add a key with the WgkAdd command. \nYou can delete a key with the WgkDelete command. \nTo execute this command, you must have VPN Server administrator privileges.
+CMD_WgkEnum_Args		WgkEnum
+CMD_WgkEnum_Column_Key	Key
+CMD_WgkEnum_Column_Hub	Hub
+CMD_WgkEnum_Column_User	User
+
+
 # HubCreate 명령
 CMD_HubCreate 새로운 가상 HUB 만들기
 CMD_HubCreate_Help VPN Server에 새로운 가상 HUB를 만듭니다. \n 만든 가상 HUB는 즉시 작동을 시작합니다. \nVPN Server가 클러스터에서 실행중인 경우이 명령은 클러스터 컨트롤러에만 적용됩니다. 또한 새로운 가상 HUB는 동적 가상 HUB 역할을합니다. HubSetStatic 명령에서 정적 가상 HUB 변경 될 수 있습니다. 이미 VPN Server에 존재하는 가상 HUB 목록을 검색하려면 HubList 명령을 사용합니다. \n이 명령을 실행하려면 VPN Server 관리자 권한이 있어야합니다. \n 또한이 명령은 VPN Bridge 및 클러스터 구성원 서버로 작동하는 VPN Server에서 작동하지 않습니다. \n 또한 클러스터에서 클러스터 컨트롤러에 가상 HUB 작성 명령을 실행하려면 HubCreateStatic 명령 또는 HubCreateDynamic 명령을 사용하십시오 (클러스터 컨트롤러에 HubCreate 명령을 사용하면 HubCreateDynamic 명령과 동등하게 동작 합니다).
@@ -5014,6 +5107,16 @@ CMD_Offline_Help 현재 관리하고있는 가상 HUB가 온라인 상태 인 �
 CMD_Offline_Args Offline
 
 
+# SetStaticNetwork 명령
+CMD_SetStaticNetwork Set Virtual Hub static IPv4 network parameters
+CMD_SetStaticNetwork_Help Set the static IPv4 network parameters for the Virtual Hub. They are used when DHCP is not available (e.g. WireGuard sessions). \nYou can get the current settings by using the OptionsGet command.
+CMD_SetStaticNetwork_Args SetStaticNetwork [/GATEWAY:gateway] [/SUBNET:subnet]
+CMD_SetStaticNetwork_GATEWAY Specify the IP address of the gateway that will be used for internet communication.
+CMD_SetStaticNetwork_SUBNET Specify the subnet mask, required to determine the size of the local VPN network.
+CMD_SetStaticNetwork_Prompt_GATEWAY Gateway: 
+CMD_SetStaticNetwork_Prompt_SUBNET Subnet mask: 
+
+
 # SetMaxSession 명령
 CMD_SetMaxSession 가상 HUB 최대 동시 연결 세션 수를 설정하려면
 CMD_SetMaxSession_Help 현재 관리하고있는 가상 HUB의 최대 동시 세션 수를 설정합니다. 최대 동시 세션 수를 초과 한 세션이 VPN Client 및 VPN Bridge에서 연결된 경우 최대 동시 세션 수를 초과 한 시점에서 더 이상 클라이언트는 연결할 수 없습니다. 이 최대 동시 세션 수의 제한 로컬 브리지 가상 NAT 계단식 등에 의해 가상 HUB에 생성 된 세션은 포함되지 않습니다. \n 현재 최대 동시 세션 수 설정은 OptionsGet 명령에서 얻을 수 있습니다. \n이 명령은 VPN Bridge에서는 실행되지 않습니다. \n이 명령은 클러스터로 작동하는 VPN Server의 가상 HUB에서는 실행되지 않습니다.
@@ -5050,7 +5153,8 @@ CMD_OptionsGet_ENUM 익명 사용자에 대한 가상 HUB의 열거
 CMD_OptionsGet_MAXSESSIONS 최대 동시 세션 수
 CMD_OptionsGet_STATUS 상태
 CMD_OptionsGet_TYPE 가상 HUB의 종류
-
+CMD_OptionsGet_GATEWAY Default gateway
+CMD_OptionsGet_SUBNET Default subnet
 
 
 # RadiusServerSet 명령
@@ -5288,6 +5392,35 @@ CMD_CascadeCompressDisable 계단식 통신시 데이터 압축 해제
 CMD_CascadeCompressDisable_Help 현재 관리하고있는 가상 HUB에 등록되어있는 계단식 지정하고 계단식가 VPN Server 사이에서 VPN 연결을 행하고 통신을 할 때 VPN Server 사이의 통신 내용을 압축 하지 않도록 설정합니다. \n이 명령은 클러스터로 작동하는 VPN Server의 가상 HUB에서는 실행되지 않습니다.
 CMD_CascadeCompressDisable_Args CascadeCompressDisable [name]
 CMD_CascadeCompressDisable_[name] 설정을 변경 계단식의 이름을 지정합니다.
+
+
+# CascadeHttpHeader* commands
+CMD_CascadeHttpHeader_Prompt_Name	Value name (part before the colon): 
+CMD_CascadeHttpHeader_Prompt_Data	Value data (part after the colon): 
+
+
+# CascadeHttpHeaderAdd command
+CMD_CascadeHttpHeaderAdd	Add a custom value in the HTTP header sent to the proxy server
+CMD_CascadeHttpHeaderAdd_Help	Use this to add a custom value in the HTTP header sent to the proxy server. A custom HTTP header can be used to bypass certain restrictions imposed on the network or to avoid speed limitations applied by the QoS.
+CMD_CascadeHttpHeaderAdd_Args	CascadeHttpHeaderAdd [name] [/NAME:name] [/DATA:data]
+CMD_CascadeHttpHeaderAdd_[name]	Specify the name of the Cascade Connection whose setting you want to change.
+CMD_CascadeHttpHeaderAdd_NAME	Specify the name of the custom value (the part before the colon character).
+CMD_CascadeHttpHeaderAdd_DATA	Specify the data of the custom value (the part after the colon character).
+
+
+# CascadeHttpHeaderDelete command
+CMD_CascadeHttpHeaderDelete	Delete a custom value in the HTTP header sent to the proxy server
+CMD_CascadeHttpHeaderDelete_Help	Use this to delete a custom value in the HTTP header sent to the proxy server. A custom HTTP header can be used to bypass certain restrictions imposed on the network or to avoid speed limitations applied by the QoS.
+CMD_CascadeHttpHeaderDelete_Args	CascadeHttpHeaderDelete [name] [/NAME:name]
+CMD_CascadeHttpHeaderDelete_[name]	Specify the name of the Cascade Connection whose setting you want to change.
+CMD_CascadeHttpHeaderDelete_NAME	Specify the name of the custom value (the part before the colon character).
+
+
+# CascadeHttpHeaderGet command
+CMD_CascadeHttpHeaderGet	Get the list of custom values in the HTTP header sent to the proxy server
+CMD_CascadeHttpHeaderGet_Help	Use this to get the list of custom values in the HTTP header sent to the proxy server. A custom HTTP header can be used to bypass certain restrictions imposed on the network or to avoid speed limitations applied by the QoS.
+CMD_CascadeHttpHeaderGet_Args	CascadeHttpHeaderGet [name]
+CMD_CascadeHttpHeaderGet_[name]	Specify the name of the Cascade Connection whose setting you want to get.
 
 
 # CascadeProxyNone 명령
@@ -6219,23 +6352,6 @@ CMD_EtherIpClientList_Help EtherIP/L2TPv3 over IPsec 서버 기능의 클라이�
 CMD_EtherIpClientList_Args EtherIpClientList
 
 
-# OpenVpnEnable 명령
-CMD_OpenVpnEnable OpenVPN 호환 서버 기능을 활성화/비활성화
-CMD_OpenVpnEnable_Help SoftEther VPN Server는 OpenVPN 사의 OpenVPN 소프트웨어 제품과 동일한 VPN 서버 기능이 탑재되어 있습니다. OpenVPN 서버 기능을 활성화하면 OpenVPN 클라이언트에서 OpenVPN 서버에 연결 할 수 있습니다. \n \nOpenVPN 호환 서버 기능으로 가상 HUB에 연결하는 경우 사용자 이름 지정 방법 및 기본 가상 HUB 선택 규칙은 IPsec 서버 기능과 유사합니다. 자세한 내용은 IPsecEnable 명령의 도움말을 참조하십시오. \n \n이 명령을 실행하려면 VPN Server 관리자 권한이 있어야합니다. \n이 명령은 VPN Bridge에서는 실행되지 않습니다. \n이 명령은 클러스터로 작동하는 VPN Server의 가상 HUB에서는 실행되지 않습니다.
-CMD_OpenVpnEnable_Args OpenVpnEnable [yes|no] [/PORTS:udp_port_list]
-CMD_OpenVpnEnable_[yes|no] OpenVPN 호환 서버 기능을 활성화하려면 yes, 무효로하는 경우 no를 지정합니다.
-CMD_OpenVpnEnable_PORTS OpenVPN 서비스를 제공하는 UDP 포트 목록을 지정하십시오. UDP 포트는 여러 지정할 수 있습니다. 복수 지정하는 경우는 1194, 2001, 2010, 2012와 같이 콤마 (,)로 구분하십시오. OpenVPN은 표준에서 UDP 1194 포트를 사용하지만 다른 임의의 UDP 포트를 지정할 수 있습니다.
-CMD_OpenVpnEnable_Prompt_[yes|no] OpenVPN 호환 서버 기능을 활성화 (yes/no):
-CMD_OpenVpnEnable_Prompt_PORTS UDP 포트 번호 목록 (표준 1194/복수 지정 가능):
-
-
-# OpenVpnGet 명령
-CMD_OpenVpnGet OpenVPN 호환 서버 기능의 현재 설정을 가져
-CMD_OpenVpnGet_Help 현재 OpenVPN 호환 서버 기능의 설정을 검색하고 표시합니다. \n \n이 명령을 실행하려면 VPN Server 관리자 권한이 있어야합니다. \n이 명령은 VPN Bridge에서는 실행되지 않습니다. \n이 명령은 클러스터로 작동하는 VPN Server의 가상 HUB에서는 실행되지 않습니다.
-CMD_OpenVpnGet_Args OpenVpnGet
-CMD_OpenVpnGet_PRINT_Enabled OpenVPN 호환 서버 기능이 활성화
-CMD_OpenVpnGet_PRINT_Ports UDP 포트 번호 목록
-
 # OpenVpnMakeConfig 명령
 CMD_OpenVpnMakeConfig OpenVPN 호환 서버 기능에 연결 가능한 샘플의 OpenVPN 설정 파일 생성
 CMD_OpenVpnMakeConfig_Help 원래 OpenVPN 클라이언트를 사용하기 위해서는 설정 파일을 수동으로 작성해야하지만, 이것은 난이도가 높은 작업입니다. 그러나이 명령을 사용하면이 VPN Server에 연결할 수있는 기본적인 OpenVPN 클라이언트의 설정 파일을 자동으로 생성 할 수 있습니다. \n \n이 명령을 실행하려면 VPN Server 관리자 권한이 있어야합니다. \n이 명령은 VPN Bridge에서는 실행되지 않습니다. \n이 명령은 클러스터로 작동하는 VPN Server의 가상 HUB에서는 실행되지 않습니다.
@@ -6246,24 +6362,9 @@ CMD_OpenVpnMakeConfig_OK 예제 구성 파일 "%s"파일에 저장했습니다. 
 CMD_OpenVpnMakeConfig_ERROR 예제 구성 파일 "%s"파일에 저장할 수 없습니다. 파일 이름이 잘못되었을 수 있습니다. \n
 
 
-# SstpEnable 명령
-CMD_SstpEnable Microsoft SSTP VPN 호환 서버 기능을 활성화/비활성화
-CMD_SstpEnable_Help SoftEther VPN Server는 Microsoft 사의 Windows Server 2008/2012 제품에 탑재 된 MS-SSTP VPN 서버 기능과 호환 기능이 탑재되어 있습니다. Microsoft SSTP VPN 호환 서버 기능을 활성화하면 Windows Vista/7/8/RT에 내장 된 MS-SSTP 클라이언트에서이 VPN Server에 연결할 수 있도록합니다. \n \n [주의] \nVPN Server의 SSL 인증서의 CN 값이 클라이언트 측에서 지정하는 호스트 이름과 일치하며 그 인증서를 신뢰할 수 있어야합니다. 자세한 내용은 Microsoft 문서를 참조하십시오. \n 지정된 CN 값을 가지는 새로운 SSL 인증서 (자체 서명 인증서)를 생성하여 VPN Server의 현재 인증서로 대체하기 위해서는 ServerCertRegenerate 명령을 사용하십시오. 이 경우 해당 인증서를 SSTP VPN 클라이언트 컴퓨터의 신뢰할 수있는 루트 인증서로 등록해야합니다. 이러한 번거 로움 않으려면 대신 VeriSign이나 GlobalSign 사 등의 상용 인증서 공급자의 SSL 인증서 취득을 검토하십시오. \n \nMicrosoft SSTP VPN 호환 서버 기능으로 가상 HUB에 연결하는 경우 사용자 이름 지정 방법 및 기본 가상 HUB 선택 규칙은 IPsec 서버 기능과 유사합니다. 자세한 내용은 IPsecEnable 명령의 도움말을 참조하십시오. \n \n이 명령을 실행하려면 VPN Server 관리자 권한이 있어야합니다. \n이 명령은 VPN Bridge에서는 실행되지 않습니다. \n이 명령은 클러스터로 작동하는 VPN Server의 가상 HUB에서는 실행되지 않습니다.
-CMD_SstpEnable_Args SstpEnable [yes|no]
-CMD_SstpEnable_[yes|no] Microsoft SSTP VPN 호환 서버 기능을 활성화하려면 yes, 무효로하는 경우 no를 지정합니다.
-CMD_SstpEnable_Prompt_[yes|no] SSTP VPN 호환 서버 기능을 활성화 (yes/no):
-CMD_SstpEnable_PRINT_Enabled SSTP VPN 호환 서버 기능이 활성화
-
-
-# SstpGet 명령
-CMD_SstpGet Microsoft SSTP VPN 호환 서버 기능의 현재 설정을 가져
-CMD_SstpGet_Help 현재 Microsoft SSTP VPN 호환 서버 기능의 설정을 검색하고 표시합니다. \n \n이 명령을 실행하려면 VPN Server 관리자 권한이 있어야합니다. \n이 명령은 VPN Bridge에서는 실행되지 않습니다. \n이 명령은 클러스터로 작동하는 VPN Server의 가상 HUB에서는 실행되지 않습니다.
-CMD_SstpGet_Args SstpGet
-
-
 # ServerCertRegenerate 명령
 CMD_ServerCertRegenerate 지정된 CN (Common Name)을 가진 자체 서명 인증서를 새로 만든 VPN Server에 등록
-CMD_ServerCertRegenerate_Help SoftEther VPN Server의 SSL-VPN 기능을 제공하는 서버 인증서를 새로 생성하는 인증서로 대체합니다. 새로운 인증서는 자체 서명 인증서로 생성되며, CN (Common Name) 값을 임의의 문자열로 설정할 수 있습니다. \n \n이 명령은 Microsoft SSTP VPN 호환 서버 기능을 사용하고자하는 경우에 유용합니다. 왜냐하면 SSTP VPN 클라이언트 (Windows Vista/7/8/RT에 내장) 연결 대상 VPN Server가 제시하는 SSL 인증서의 CN (Common Name) 값이 연결 대상으로 지정되는 호스트 이름 문자 열과 정확히 일치 여부를 확인하고 만약 일치하지 않을 경우 연결을 취소 할 수 있습니다. \n 자세한 내용은 SstpEnable 명령의 도움말을 참조하십시오. \n \n이 명령은 기존의 VPN Server의 SSL 인증서를 삭제합니다. ServerCertGet 명령 및 ServerKeyGet 명령을 사용하여 현재 인증서와 개인 키를 백업 해 둘 것을 권장합니다. \n \n이 명령을 실행하려면 VPN Server 관리자 권한이 있어야합니다. \n이 명령은 VPN Bridge에서는 실행되지 않습니다.
+CMD_ServerCertRegenerate_Help SoftEther VPN Server의 SSL-VPN 기능을 제공하는 서버 인증서를 새로 생성하는 인증서로 대체합니다. 새로운 인증서는 자체 서명 인증서로 생성되며, CN (Common Name) 값을 임의의 문자열로 설정할 수 있습니다. \n \n이 명령은 Microsoft SSTP VPN 호환 서버 기능을 사용하고자하는 경우에 유용합니다. 왜냐하면 SSTP VPN 클라이언트 (Windows Vista/7/8/RT에 내장) 연결 대상 VPN Server가 제시하는 SSL 인증서의 CN (Common Name) 값이 연결 대상으로 지정되는 호스트 이름 문자 열과 정확히 일치 여부를 확인하고 만약 일치하지 않을 경우 연결을 취소 할 수 있습니다. \n \n이 명령은 기존의 VPN Server의 SSL 인증서를 삭제합니다. ServerCertGet 명령 및 ServerKeyGet 명령을 사용하여 현재 인증서와 개인 키를 백업 해 둘 것을 권장합니다. \n \n이 명령을 실행하려면 VPN Server 관리자 권한이 있어야합니다. \n이 명령은 VPN Bridge에서는 실행되지 않습니다.
 CMD_ServerCertRegenerate_Args ServerCertRegenerate [CN]
 CMD_ServerCertRegenerate_[CN] 새로 생성하는 자체 서명 인증서 Common Name (CN) 값을 지정합니다.
 CMD_ServerCertRegenerate_Prompt_CN Common Name (CN) 값:
@@ -6589,6 +6690,35 @@ CMD_AccountCompressDisable_Args AccountCompressDisable [name]
 CMD_AccountCompressDisable_[name] 설정을 변경하려면 연결 설정의 이름을 지정합니다.
 
 
+# AccountHttpHeader* commands
+CMD_AccountHttpHeader_Prompt_Name	Value name (part before the colon): 
+CMD_AccountHttpHeader_Prompt_Data	Value data (part after the colon): 
+
+
+# AccountHttpHeaderAdd command
+CMD_AccountHttpHeaderAdd	Add a custom value in the HTTP header sent to the proxy server
+CMD_AccountHttpHeaderAdd_Help	Use this to add a custom value in the HTTP header sent to the proxy server. A custom HTTP header can be used to bypass certain restrictions imposed on the network or to avoid speed limitations applied by the QoS.
+CMD_AccountHttpHeaderAdd_Args	AccountHttpHeaderAdd [name] [/NAME:name] [/DATA:data]
+CMD_AccountHttpHeaderAdd_[name]	Specify the name of the VPN Connection Setting whose setting you want to change.
+CMD_AccountHttpHeaderAdd_NAME	Specify the name of the custom value (the part before the colon character).
+CMD_AccountHttpHeaderAdd_DATA	Specify the data of the custom value (the part after the colon character).
+
+
+# AccountHttpHeaderDelete command
+CMD_AccountHttpHeaderDelete	Delete a custom value in the HTTP header sent to the proxy server
+CMD_AccountHttpHeaderDelete_Help	Use this to delete a custom value in the HTTP header sent to the proxy server. A custom HTTP header can be used to bypass certain restrictions imposed on the network or to avoid speed limitations applied by the QoS.
+CMD_AccountHttpHeaderDelete_Args	AccountHttpHeaderDelete [name] [/NAME:name]
+CMD_AccountHttpHeaderDelete_[name]	Specify the name of the VPN Connection Setting whose setting you want to change.
+CMD_AccountHttpHeaderDelete_NAME	Specify the name of the custom value (the part before the colon character).
+
+
+# AccountHttpHeaderGet command
+CMD_AccountHttpHeaderGet	Get the list of custom values in the HTTP header sent to the proxy server
+CMD_AccountHttpHeaderGet_Help	Use this to get the list of custom values in the HTTP header sent to the proxy server. A custom HTTP header can be used to bypass certain restrictions imposed on the network or to avoid speed limitations applied by the QoS.
+CMD_AccountHttpHeaderGet_Args	AccountHttpHeaderGet [name]
+CMD_AccountHttpHeaderGet_[name]	Specify the name of the VPN Connection Setting whose setting you want to get.
+
+
 # AccountProxyNone 명령
 CMD_AccountProxyNone 연결 설정의 연결 방법을 직접 TCP/IP 연결 설정
 CMD_AccountProxyNone_Help VPN Client에 등록되어있는 연결 설정을 지정하고 연결 설정 VPN Server에 연결할 때 사용하는 연결 방법을 [직접 TCP/IP 연결을 설정하고 프록시 서버를 경유하지 않도록 합니다.
@@ -6649,9 +6779,9 @@ CMD_AccountRetryOnServerCertEnable_[name]	Specify the name of the VPN Connection
 
 
 # AccountRetryOnServerCertDisable command
-CMD_AccountRetryOnServerCertDisable	Enable VPN connection retry if server certificate is invalid
+CMD_AccountRetryOnServerCertDisable	Disable VPN connection retry if server certificate is invalid
 CMD_AccountRetryOnServerCertDisable_Help	When a VPN Connection Setting registered on the VPN Client is specified and that VPN Connection Setting connects to a VPN Server, use this to disable the option to retry connection if Server certificate cannot be trusted.
-CMD_AccountRetryOnServerCertDisable_Args	AccountRetryOnServerCertEnable [name]
+CMD_AccountRetryOnServerCertDisable_Args	AccountRetryOnServerCertDisable [name]
 CMD_AccountRetryOnServerCertDisable_[name]	Specify the name of the VPN Connection Setting whose setting you want to change.
 
 
@@ -6766,6 +6896,11 @@ CMD_AccountSecureCertSet_[name] 설정을 변경하려면 연결 설정의 이�
 CMD_AccountSecureCertSet_CERTNAME 스마트 카드에 저장되어있는 인증서 개체의 이름을 지정합니다.
 CMD_AccountSecureCertSet_KEYNAME 스마트 카드에 저장되어있는 비밀 열쇠 오브젝트의 이름을 지정합니다./CERTNAME에 지정된 인증서에 대응하고있을 필요가 있습니다.
 CMD_AccountSecureCertSet_PROMPT_CERTNAME 스마트 카드에서 인증서 개체의 이름:
+
+
+# PcAccountOpensslEngineCertSet
+CMD_AccountOpensslCertSet_PROMPT_KEYNAME Specify the openssl engine specific key name: 
+CMD_AccountOpensslCertSet_PROMPT_ENGINENAME Specify the openssl engine name: 
 CMD_AccountSecureCertSet_PROMPT_KEYNAME 스마트 카드의 비밀 열쇠 오브젝트의 이름:
 
 
@@ -6836,6 +6971,23 @@ CMD_RemoteDisable_Args RemoteDisable
 # 여기에서 아래는 VPN Tools의 명령 #
 # #
 ################################################## #
+
+
+# GenX25519 명령
+CMD_GenX25519				Create new X25519 keypair
+CMD_GenX25519_Help			Use this to create a new X25519 keypair, which can be used for WireGuard. \nBoth the private and public key will be shown. \nThe public key can be shared and is used to identify a peer. \nAlso, it can always be retrieved from the private key using the GetPublicX25519 command. \nThe private key should be kept in a secure place and never be shared. \nIt cannot be recovered once lost.
+CMD_GenX25519_ARGS			GenX25519
+CMD_GenX25519_PRIVATE_KEY	Private key: 
+CMD_GenX25519_PUBLIC_KEY	Public key: 
+
+
+# GetPublicX25519 명령
+CMD_GetPublicX25519				Retrieve public X25519 key from a private one
+CMD_GetPublicX25519_Help		Use this if you have a private X25519 key and want to get its corresponding public key.
+CMD_GetPublicX25519_ARGS    	GetPublicX25519 [private]
+CMD_GetPublicX25519_[private]	The private X25519 key you want to get the corresponding public key of.
+CMD_GetPublicX25519_PRIVATE_KEY	Private key: 
+CMD_GetPublicX25519_PUBLIC_KEY	Public key: 
 
 
 # MakeCert 명령
@@ -6973,7 +7125,7 @@ CMD_Check_Args Check
 
 # 시스템 검사기 관계
 # (일부 이상한 문자열이 포함되어 있지만 문자 코드 변환 확인 용입니다)
-CHECK_TITLE -------------------------------------------------- \nSoftEther VPN 동작 환경 검사 도구 \n \nCopyright (c) SoftEther VPN Project \nAll Rights Reserved. \n \n
+CHECK_TITLE -------------------------------------------------- \nSoftEther VPN 동작 환경 검사 도구 \n\nCopyright (c) all contributors on SoftEther VPN project in GitHub.\nCopyright (c) Daiyuu Nobori, SoftEther Project at University of Tsukuba, and SoftEther Corporation.\nAll Rights Reserved.\n\n
 CHECK_NOTE 이 작동 환경 검사 도구를 실행 한 시스템이 테스트를 통과 한 경우 SoftEther VPN 소프트웨어가 작동 할 가능성이 높습니다. 체크에 시간이 걸릴 수 있습니다. 기다리십시오... \n \n
 CHECK_EXEC_TAG '%s'의 체크 중... \n
 CHECK_PASS [합격] ○
@@ -7043,6 +7195,8 @@ SW_WEB2_TITLE 파일 지정
 SW_UNINSTALLINFO_URL http://selinks.org/
 SW_UNINSTALLINFO_PUBLISHER SoftEther VPN Project
 
+SW_KB3033929_REQUIRED						In Windows 7 and Windows Server 2008 R2, some SoftEther VPN functions require the Microsoft's Windows Update module KB3033929 installed.\r\n\r\nIf KB3033929 is not installed in your Windows, please install it from Windows Update or Microsoft website before installing SoftEther VPN.
+
 
 SW_COMPONENTS_ABOUT_TAG '%s'는
 SW_COMPONENTS_REQUIRE_ADMIN 설치하려면 관리자 권한이 있어야합니다
@@ -7061,7 +7215,6 @@ SW_DIR_DST_IS_SYSTEM_MODE 지정된 디렉토리에 이미 소프트웨어가 �
 SW_DIR_DST_IS_USER_MODE 지정된 디렉토리에 이미 소프트웨어가 사용자 모드로 설치되어 있습니다. \r\n\r\n 다른 디렉토리를 지정하십시오.
 SW_SYSTEM_MODE_ALREADY_INSTALLED 소프트웨어 '%s'는 이미이 컴퓨터 시스템 모드로 설치되어 있습니다. \r\n\r\n 동일한 컴퓨터에 동일한 구성 요소를 시스템 모드와 사용자 모드에서 설치하는 경우 충돌이 발생할 수 있습니다. \r\n\r\n 정말 사용자 모드에서 설치를 실행 하시겠습니까?
 
-SW_NOT_INSTALL_SRC 설치 프로그램이 설치 소스 이외에서 시작되었습니다. \r\n\r\n 설치를 계속할 수 없습니다.
 SW_SETUPLOG_CORRUPTED setuplog.dat 파일이 손상되어 있습니다.
 SW_MSI_UNINSTALL_FAILED %s의 이전 버전 (제품 코드:"%S")을 Windows Installer에서 제거하려고했지만 제거에 실패했습니다. \r\n\r\n이 버전을 수동으로 제거하고 다시 설치 프로그램을 시작하십시오.
 SW_MSI_UNINSTALL_REBOOT_REQUIRED %s의 이전 버전을 Windows Installer에서 제거했습니다. 컴퓨터를 다시 시작해야합니다. \r\n\r\n "완료"를 클릭하여 수동으로 컴퓨터를 다시 시작한 다음 다시 설치 프로그램을 시작하십시오.
@@ -7217,7 +7370,6 @@ SM_SNAT_IS_RAW		Raw IP mode NAT is Active
 LO_CLIENT_CERT		Client certificate received (subject: CN="%s"), will use certificate authentication.
 LO_CLIENT_UNVERIFIED_CERT	Client certificate was provided but did not pass verification (error="%S"), will use password authentication.
 LO_CLIENT_NO_CERT	Client certificate is not provided, will use password authentication.
-LH_AUTH_OPENVPN_CERT	OpenVPN certificate authentication
 CMD_AccessAddEx_REDIRECTURL	The specified URL will be mandatory replied to the client as a response for TCP connecting request packets which matches the conditions of this access list entry via this Virtual Hub. To use this setting, you can enforce the web browser of the VPN Client computer to show the specified web site when that web browser tries to access the specific IP address.
 CMD_AccessAddEx6_REDIRECTURL	The specified URL will be mandatory replied to the client as a response for TCP connecting request packets which matches the conditions of this access list entry via this Virtual Hub. To use this setting, you can enforce the web browser of the VPN Client computer to show the specified web site when that web browser tries to access the specific IP address.
 CMD_TrafficServer_NOHUP		When "yes" is specified, the server process never stops without regard to any input from the console. It is convenient when you want to run the TrafficServer endlessly.

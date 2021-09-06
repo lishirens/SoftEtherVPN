@@ -1,117 +1,33 @@
 // SoftEther VPN Source Code - Developer Edition Master Branch
 // Cedar Communication Module
-// 
-// SoftEther VPN Server, Client and Bridge are free software under GPLv2.
-// 
-// Copyright (c) Daiyuu Nobori.
-// Copyright (c) SoftEther VPN Project, University of Tsukuba, Japan.
-// Copyright (c) SoftEther Corporation.
-// 
-// All Rights Reserved.
-// 
-// http://www.softether.org/
-// 
-// Author: Daiyuu Nobori, Ph.D.
-// Comments: Tetsuo Sugiyama, Ph.D.
-// 
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// version 2 as published by the Free Software Foundation.
-// 
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License version 2
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-// CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-// SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-// 
-// THE LICENSE AGREEMENT IS ATTACHED ON THE SOURCE-CODE PACKAGE
-// AS "LICENSE.TXT" FILE. READ THE TEXT FILE IN ADVANCE TO USE THE SOFTWARE.
-// 
-// 
-// THIS SOFTWARE IS DEVELOPED IN JAPAN, AND DISTRIBUTED FROM JAPAN,
-// UNDER JAPANESE LAWS. YOU MUST AGREE IN ADVANCE TO USE, COPY, MODIFY,
-// MERGE, PUBLISH, DISTRIBUTE, SUBLICENSE, AND/OR SELL COPIES OF THIS
-// SOFTWARE, THAT ANY JURIDICAL DISPUTES WHICH ARE CONCERNED TO THIS
-// SOFTWARE OR ITS CONTENTS, AGAINST US (SOFTETHER PROJECT, SOFTETHER
-// CORPORATION, DAIYUU NOBORI OR OTHER SUPPLIERS), OR ANY JURIDICAL
-// DISPUTES AGAINST US WHICH ARE CAUSED BY ANY KIND OF USING, COPYING,
-// MODIFYING, MERGING, PUBLISHING, DISTRIBUTING, SUBLICENSING, AND/OR
-// SELLING COPIES OF THIS SOFTWARE SHALL BE REGARDED AS BE CONSTRUED AND
-// CONTROLLED BY JAPANESE LAWS, AND YOU MUST FURTHER CONSENT TO
-// EXCLUSIVE JURISDICTION AND VENUE IN THE COURTS SITTING IN TOKYO,
-// JAPAN. YOU MUST WAIVE ALL DEFENSES OF LACK OF PERSONAL JURISDICTION
-// AND FORUM NON CONVENIENS. PROCESS MAY BE SERVED ON EITHER PARTY IN
-// THE MANNER AUTHORIZED BY APPLICABLE LAW OR COURT RULE.
-// 
-// USE ONLY IN JAPAN. DO NOT USE THIS SOFTWARE IN ANOTHER COUNTRY UNLESS
-// YOU HAVE A CONFIRMATION THAT THIS SOFTWARE DOES NOT VIOLATE ANY
-// CRIMINAL LAWS OR CIVIL RIGHTS IN THAT PARTICULAR COUNTRY. USING THIS
-// SOFTWARE IN OTHER COUNTRIES IS COMPLETELY AT YOUR OWN RISK. THE
-// SOFTETHER VPN PROJECT HAS DEVELOPED AND DISTRIBUTED THIS SOFTWARE TO
-// COMPLY ONLY WITH THE JAPANESE LAWS AND EXISTING CIVIL RIGHTS INCLUDING
-// PATENTS WHICH ARE SUBJECTS APPLY IN JAPAN. OTHER COUNTRIES' LAWS OR
-// CIVIL RIGHTS ARE NONE OF OUR CONCERNS NOR RESPONSIBILITIES. WE HAVE
-// NEVER INVESTIGATED ANY CRIMINAL REGULATIONS, CIVIL LAWS OR
-// INTELLECTUAL PROPERTY RIGHTS INCLUDING PATENTS IN ANY OF OTHER 200+
-// COUNTRIES AND TERRITORIES. BY NATURE, THERE ARE 200+ REGIONS IN THE
-// WORLD, WITH DIFFERENT LAWS. IT IS IMPOSSIBLE TO VERIFY EVERY
-// COUNTRIES' LAWS, REGULATIONS AND CIVIL RIGHTS TO MAKE THE SOFTWARE
-// COMPLY WITH ALL COUNTRIES' LAWS BY THE PROJECT. EVEN IF YOU WILL BE
-// SUED BY A PRIVATE ENTITY OR BE DAMAGED BY A PUBLIC SERVANT IN YOUR
-// COUNTRY, THE DEVELOPERS OF THIS SOFTWARE WILL NEVER BE LIABLE TO
-// RECOVER OR COMPENSATE SUCH DAMAGES, CRIMINAL OR CIVIL
-// RESPONSIBILITIES. NOTE THAT THIS LINE IS NOT LICENSE RESTRICTION BUT
-// JUST A STATEMENT FOR WARNING AND DISCLAIMER.
-// 
-// 
-// SOURCE CODE CONTRIBUTION
-// ------------------------
-// 
-// Your contribution to SoftEther VPN Project is much appreciated.
-// Please send patches to us through GitHub.
-// Read the SoftEther VPN Patch Acceptance Policy in advance:
-// http://www.softether.org/5-download/src/9.patch
-// 
-// 
-// DEAR SECURITY EXPERTS
-// ---------------------
-// 
-// If you find a bug or a security vulnerability please kindly inform us
-// about the problem immediately so that we can fix the security problem
-// to protect a lot of users around the world as soon as possible.
-// 
-// Our e-mail address for security reports is:
-// softether-vpn-security [at] softether.org
-// 
-// Please note that the above e-mail address is not a technical support
-// inquiry address. If you need technical assistance, please visit
-// http://www.softether.org/ and ask your question on the users forum.
-// 
-// Thank you for your cooperation.
-// 
-// 
-// NO MEMORY OR RESOURCE LEAKS
-// ---------------------------
-// 
-// The memory-leaks and resource-leaks verification under the stress
-// test has been passed before release this source code.
 
 
 // Logging.c
 // Log storaging module
 
-#include "CedarPch.h"
+#include "Logging.h"
+
+#include "Admin.h"
+#include "Client.h"
+#include "Nat.h"
+#include "Proto_EtherIP.h"
+#include "Proto_IKE.h"
+#include "Proto_PPP.h"
+#include "Remote.h"
+#include "SecureNAT.h"
+#include "Server.h"
+
+#include "Mayaqua/DNS.h"
+#include "Mayaqua/Internat.h"
+#include "Mayaqua/FileIO.h"
+#include "Mayaqua/Memory.h"
+#include "Mayaqua/Microsoft.h"
+#include "Mayaqua/Object.h"
+#include "Mayaqua/Tick64.h"
+#include "Mayaqua/Str.h"
+#include "Mayaqua/Table.h"
+#include "Mayaqua/Unix.h"
+#include "Mayaqua/Win32.h"
 
 static char *delete_targets[] =
 {
@@ -120,11 +36,11 @@ static char *delete_targets[] =
 	"backup.vpn_server.config",
 	"backup.vpn_gate_svc.config",
 	"backup.etherlogger.config",
-	"packet_log",
-	"etherlogger_log",
+	HUB_PACKET_LOG_DIR,
+	EL_PACKET_LOG_DIR,
 	"secure_nat_log",
-	"security_log",
-	"server_log",
+	HUB_SECURITY_LOG_DIR,
+	SERVER_LOG_DIR,
 	"bridge_log",
 	"packet_log_archive",
 	"azure_log",
@@ -281,7 +197,7 @@ void FreeEraseFileList(LIST *o)
 		return;
 	}
 
-	for (i = 0;i < LIST_NUM(o);i++)
+	for (i = 0; i < LIST_NUM(o); i++)
 	{
 		ERASE_FILE *f = LIST_DATA(o, i);
 		Free(f->FullPath);
@@ -306,7 +222,7 @@ void EnumEraseFile(LIST *o, char *dirname)
 	// Enumeration
 	dir = EnumDir(dirname);
 
-	for (i = 0;i < dir->NumFiles;i++)
+	for (i = 0; i < dir->NumFiles; i++)
 	{
 		DIRENT *e = dir->File[i];
 		Format(tmp, sizeof(tmp), "%s/%s", dirname, e->FileName);
@@ -351,7 +267,7 @@ LIST *GenerateEraseFileList(ERASER *e)
 	o = NewListFast(CompareEraseFile);
 
 	// Scan for each directory
-	for (i = 0;i < sizeof(delete_targets) / sizeof(delete_targets[0]);i++)
+	for (i = 0; i < sizeof(delete_targets) / sizeof(delete_targets[0]); i++)
 	{
 		char dirname[MAX_PATH];
 		Format(dirname, sizeof(dirname), "%s/%s", e->DirName, delete_targets[i]);
@@ -391,7 +307,7 @@ void EraserMain(ERASER *e)
 	o = GenerateEraseFileList(e);
 
 	// Try to delete one by one in order from oldest file
-	for (i = 0;i < LIST_NUM(o);i++)
+	for (i = 0; i < LIST_NUM(o); i++)
 	{
 		ERASE_FILE *f = LIST_DATA(o, i);
 
@@ -525,7 +441,7 @@ ERASER *NewEraser(LOG *log, UINT64 min_size)
 
 	e = ZeroMalloc(sizeof(ERASER));
 
-	GetExeDir(dir, sizeof(dir));
+	GetLogDir(dir, sizeof(dir));
 
 	e->Log = log;
 	e->MinFreeSpace = min_size;
@@ -732,7 +648,7 @@ void EtherIPLog(ETHERIP_SERVER *s, char *name, ...)
 	IPToStr(client_ip, sizeof(client_ip), &s->ClientIP);
 
 	UniFormat(prefix, sizeof(prefix), _UU("LE_PREFIX"), s->Id,
-		server_ip, s->ServerPort, client_ip, s->ClientPort);
+	          server_ip, s->ServerPort, client_ip, s->ClientPort);
 
 	va_start(args, name);
 	UniFormatArgs(buf2, sizeof(buf2), _UU(name), args);
@@ -777,17 +693,17 @@ void IPsecLog(IKE_SERVER *ike, IKE_CLIENT *c, IKE_SA *ike_sa, IPSECSA *ipsec_sa,
 		if (ipsec_sa != NULL)
 		{
 			UniFormat(prefix, sizeof(prefix), _UU("LI_PREFIX_IPSEC"),
-				ipsec_sa->Id, c->Id, client_ip, c->ClientPort, server_ip, c->ServerPort);
+			          ipsec_sa->Id, c->Id, client_ip, c->ClientPort, server_ip, c->ServerPort);
 		}
 		else if (ike_sa != NULL)
 		{
 			UniFormat(prefix, sizeof(prefix), _UU("LI_PREFIX_IKE"),
-				ike_sa->Id, c->Id, client_ip, c->ClientPort, server_ip, c->ServerPort);
+			          ike_sa->Id, c->Id, client_ip, c->ClientPort, server_ip, c->ServerPort);
 		}
 		else
 		{
 			UniFormat(prefix, sizeof(prefix), _UU("LI_PREFIX_CLIENT"),
-				c->Id, client_ip, c->ClientPort, server_ip, c->ServerPort);
+			          c->Id, client_ip, c->ClientPort, server_ip, c->ServerPort);
 		}
 	}
 
@@ -861,7 +777,7 @@ void WriteHubLog(HUB *h, wchar_t *str)
 	}
 
 	if (syslog_status == SYSLOG_SERVER_AND_HUB_SECURITY_LOG
-		|| syslog_status == SYSLOG_SERVER_AND_HUB_ALL_LOG)
+	        || syslog_status == SYSLOG_SERVER_AND_HUB_ALL_LOG)
 	{
 		SiWriteSysLog(s, "SECURITY_LOG", h->Name, str);
 	}
@@ -938,8 +854,8 @@ bool PacketLog(HUB *hub, SESSION *src_session, SESSION *dest_session, PKT *packe
 		return true;
 	}
 
-	if (memcmp(hub->HubMacAddr, packet->MacAddressSrc, 6) == 0 ||
-		memcmp(hub->HubMacAddr, packet->MacAddressDest, 6) == 0)
+	if (Cmp(hub->HubMacAddr, packet->MacAddressSrc, 6) == 0 ||
+		Cmp(hub->HubMacAddr, packet->MacAddressDest, 6) == 0)
 	{
 		return true;
 	}
@@ -1133,8 +1049,8 @@ UINT CalcPacketLoggingLevelEx(HUB_LOG *g, PKT *packet)
 			ret = MAX(ret, g->PacketLogConfig[PACKET_LOG_TCP]);
 
 			if (packet->L4.TCPHeader->Flag & TCP_SYN ||
-				packet->L4.TCPHeader->Flag & TCP_RST ||
-				packet->L4.TCPHeader->Flag & TCP_FIN)
+			        packet->L4.TCPHeader->Flag & TCP_RST ||
+			        packet->L4.TCPHeader->Flag & TCP_FIN)
 			{
 				// TCP SYN LOG
 				ret = MAX(ret, g->PacketLogConfig[PACKET_LOG_TCP_CONN]);
@@ -1163,10 +1079,10 @@ UINT CalcPacketLoggingLevelEx(HUB_LOG *g, PKT *packet)
 				ret = MAX(ret, g->PacketLogConfig[PACKET_LOG_TCP_CONN]);
 				break;
 
- 			case L7_DNS:
- 				// DNS request
- 				ret = MAX(ret, g->PacketLogConfig[PACKET_LOG_TCP_CONN]);
- 				break;
+			case L7_DNS:
+				// DNS request
+				ret = MAX(ret, g->PacketLogConfig[PACKET_LOG_TCP_CONN]);
+				break;
 			}
 
 			break;
@@ -1190,8 +1106,8 @@ UINT CalcPacketLoggingLevelEx(HUB_LOG *g, PKT *packet)
 			ret = MAX(ret, g->PacketLogConfig[PACKET_LOG_TCP]);
 
 			if (packet->L4.TCPHeader->Flag & TCP_SYN ||
-				packet->L4.TCPHeader->Flag & TCP_RST ||
-				packet->L4.TCPHeader->Flag & TCP_FIN)
+			        packet->L4.TCPHeader->Flag & TCP_RST ||
+			        packet->L4.TCPHeader->Flag & TCP_FIN)
 			{
 				// TCP SYN LOG
 				ret = MAX(ret, g->PacketLogConfig[PACKET_LOG_TCP_CONN]);
@@ -1215,10 +1131,10 @@ UINT CalcPacketLoggingLevelEx(HUB_LOG *g, PKT *packet)
 				ret = MAX(ret, g->PacketLogConfig[PACKET_LOG_TCP_CONN]);
 				break;
 
- 			case L7_DNS:
- 				// DNS request
- 				ret = MAX(ret, g->PacketLogConfig[PACKET_LOG_TCP_CONN]);
- 				break;
+			case L7_DNS:
+				// DNS request
+				ret = MAX(ret, g->PacketLogConfig[PACKET_LOG_TCP_CONN]);
+				break;
 			}
 
 			break;
@@ -1273,12 +1189,12 @@ char *BuildHttpLogStr(HTTPLOG *h)
 			if (h->Port == 80)
 			{
 				Format(url, sizeof(url), "http://%s%s",
-					h->Hostname, h->Path);
+				       h->Hostname, h->Path);
 			}
 			else
 			{
 				Format(url, sizeof(url), "http://%s:%u%s",
-					h->Hostname, h->Port, h->Path);
+				       h->Hostname, h->Port, h->Path);
 			}
 		}
 		else
@@ -1286,12 +1202,12 @@ char *BuildHttpLogStr(HTTPLOG *h)
 			if (h->Port == 443)
 			{
 				Format(url, sizeof(url), "https://%s/",
-					h->Hostname);
+				       h->Hostname);
 			}
 			else
 			{
 				Format(url, sizeof(url), "https://%s:%u/",
-					h->Hostname, h->Port);
+				       h->Hostname, h->Port);
 			}
 		}
 	}
@@ -1349,16 +1265,23 @@ void AddLogBufToStr(BUF *b, char *name, char *value)
 void MakeSafeLogStr(char *str)
 {
 	UINT i, len;
+	bool is_http = false;
 	// Validate arguments
 	if (str == NULL)
 	{
 		return;
 	}
 
+	if (str[0] == 'h' && str[1] == 't' && str[2] == 't' && str[3] == 'p' &&
+	        ((str[4] == 's' && str[5] == ':') || (str[4] == ':')))
+	{
+		is_http = true;
+	}
+
 	EnPrintableAsciiStr(str, '?');
 
 	len = StrLen(str);
-	for (i = 0;i < len;i++)
+	for (i = 0; i < len; i++)
 	{
 		if (str[i] == ',')
 		{
@@ -1366,7 +1289,10 @@ void MakeSafeLogStr(char *str)
 		}
 		else if (str[i] == ' ')
 		{
-			str[i] = '_';
+			if (is_http == false)
+			{
+				str[i] = '_';
+			}
 		}
 	}
 }
@@ -1380,6 +1306,7 @@ char *PacketLogParseProc(RECORD *rec)
 	TOKEN_LIST *t;
 	char tmp[MAX_SIZE];
 	bool tcp_conn;
+	UINT i;
 	// Validate arguments
 	if (rec == NULL)
 	{
@@ -1436,9 +1363,9 @@ char *PacketLogParseProc(RECORD *rec)
 				// ARP request packet
 				t->Token[7] = CopyStr("Request");
 				if (Endian16(p->L3.ARPv4Header->HardwareType) == ARP_HARDWARE_TYPE_ETHERNET &&
-					p->L3.ARPv4Header->HardwareSize == 6 &&
-					Endian16(p->L3.ARPv4Header->ProtocolType) == MAC_PROTO_IPV4 &&
-					p->L3.ARPv4Header->ProtocolSize == 4)
+				        p->L3.ARPv4Header->HardwareSize == 6 &&
+				        Endian16(p->L3.ARPv4Header->ProtocolType) == MAC_PROTO_IPV4 &&
+				        p->L3.ARPv4Header->ProtocolSize == 4)
 				{
 					char src_mac[16];
 					char src_ip[16];
@@ -1451,7 +1378,7 @@ char *PacketLogParseProc(RECORD *rec)
 					IPToStr(src_ip, sizeof(src_ip), &src_ip_st);
 					IPToStr(dst_ip, sizeof(dst_ip), &dst_ip_st);
 					snprintf(tmp, sizeof(tmp), "Who has %s? Please Tell %s(%s)",
-						dst_ip, src_mac, src_ip);
+					         dst_ip, src_mac, src_ip);
 					t->Token[14] = CopyStr(tmp);
 				}
 				break;
@@ -1460,9 +1387,9 @@ char *PacketLogParseProc(RECORD *rec)
 				// ARP response packet
 				t->Token[7] = CopyStr("Response");
 				if (Endian16(p->L3.ARPv4Header->HardwareType) == ARP_HARDWARE_TYPE_ETHERNET &&
-					p->L3.ARPv4Header->HardwareSize == 6 &&
-					Endian16(p->L3.ARPv4Header->ProtocolType) == MAC_PROTO_IPV4 &&
-					p->L3.ARPv4Header->ProtocolSize == 4)
+				        p->L3.ARPv4Header->HardwareSize == 6 &&
+				        Endian16(p->L3.ARPv4Header->ProtocolType) == MAC_PROTO_IPV4 &&
+				        p->L3.ARPv4Header->ProtocolSize == 4)
 				{
 					char src_mac[16];
 					char src_ip[16];
@@ -1475,7 +1402,7 @@ char *PacketLogParseProc(RECORD *rec)
 					IPToStr(src_ip, sizeof(src_ip), &src_ip_st);
 					IPToStr(dst_ip, sizeof(dst_ip), &dst_ip_st);
 					snprintf(tmp, sizeof(tmp), "%s has %s",
-						src_mac, src_ip);
+					         src_mac, src_ip);
 					t->Token[14] = CopyStr(tmp);
 				}
 				break;
@@ -1579,9 +1506,9 @@ char *PacketLogParseProc(RECORD *rec)
 						IPToStr32(ip4, sizeof(ip4), p->L7.DHCPv4Header->RelayIP);
 
 						snprintf(tmp, sizeof(tmp),
-							"TransactionId=%u ClientIP=%s YourIP=%s ServerIP=%s RelayIP=%s",
-							Endian32(p->L7.DHCPv4Header->TransactionId),
-							ip1, ip2, ip3, ip4);
+						         "TransactionId=%u ClientIP=%s YourIP=%s ServerIP=%s RelayIP=%s",
+						         Endian32(p->L7.DHCPv4Header->TransactionId),
+						         ip1, ip2, ip3, ip4);
 
 						t->Token[14] = CopyStr(tmp);
 					}
@@ -1610,26 +1537,26 @@ char *PacketLogParseProc(RECORD *rec)
 
 						{
 							Format(tmp, sizeof(tmp), "InitiatorCookie=%I64u ResponderCookie=%I64u "
-								"Version=0x%x ExchangeType=0x%x Flag=0x%x MessageId=%u MessageSize=%u",
-								Endian64(p->L7.IkeHeader->InitiatorCookie),
-								Endian64(p->L7.IkeHeader->ResponderCookie),
-								p->L7.IkeHeader->Version,
-								p->L7.IkeHeader->ExchangeType,
-								p->L7.IkeHeader->Flag,
-								Endian32(p->L7.IkeHeader->MessageId),
-								Endian32(p->L7.IkeHeader->MessageSize));
+							       "Version=0x%x ExchangeType=0x%x Flag=0x%x MessageId=%u MessageSize=%u",
+							       Endian64(p->L7.IkeHeader->InitiatorCookie),
+							       Endian64(p->L7.IkeHeader->ResponderCookie),
+							       p->L7.IkeHeader->Version,
+							       p->L7.IkeHeader->ExchangeType,
+							       p->L7.IkeHeader->Flag,
+							       Endian32(p->L7.IkeHeader->MessageId),
+							       Endian32(p->L7.IkeHeader->MessageSize));
 
 							t->Token[14] = CopyStr(tmp);
 						}
 					}
 					break;
-  
- 				case L7_DNS:
- 					// DNS query
- 					t->Token[6] = CopyStr("DNSv4");
- 					t->Token[7] = CopyStr("DNS_Query");
- 					t->Token[14] = CopyStr(p->DnsQueryHost);
- 					break;
+
+				case L7_DNS:
+					// DNS query
+					t->Token[6] = CopyStr("DNSv4");
+					t->Token[7] = CopyStr("DNS_Query");
+					t->Token[14] = CopyStr(p->DnsQueryHost);
+					break;
 
 				default:
 					// Unknown Packet
@@ -1666,144 +1593,151 @@ char *PacketLogParseProc(RECORD *rec)
 			switch (p->TypeL4)
 			{
 			case L4_ICMPV6:
+			{
+				char info[MAX_SIZE];
+				ICMPV6_HEADER_INFO *icmp = &p->ICMPv6HeaderPacketInfo;
+				ICMPV6_OPTION_LIST *ol = &icmp->OptionList;
+
+				Zero(info, sizeof(info));
+
+				// ICMPv6 packet
+				t->Token[6] = CopyStr("ICMPv6");
+
+				switch (icmp->Type)
 				{
-					char info[MAX_SIZE];
-					ICMPV6_HEADER_INFO *icmp = &p->ICMPv6HeaderPacketInfo;
-					ICMPV6_OPTION_LIST *ol = &icmp->OptionList;
+				case ICMPV6_TYPE_ECHO_REQUEST:
+					// Echo request
+					t->Token[7] = CopyStr("Echo Request");
+					snprintf(tmp, sizeof(tmp), "EchoDataSize=%u ", icmp->EchoDataSize);
+					StrCat(info, sizeof(info), tmp);
+					break;
 
-					Zero(info, sizeof(info));
+				case ICMPV6_TYPE_ECHO_RESPONSE:
+					// Echo response
+					t->Token[7] = CopyStr("Echo Reply");
+					snprintf(tmp, sizeof(tmp), "EchoDataSize=%u ", icmp->EchoDataSize);
+					StrCat(info, sizeof(info), tmp);
+					break;
 
-					// ICMPv6 packet
-					t->Token[6] = CopyStr("ICMPv6");
+				case ICMPV6_TYPE_ROUTER_SOLICIATION:
+				{
+					ICMPV6_ROUTER_SOLICIATION_HEADER *h = icmp->Headers.RouterSoliciationHeader;
+					// Router Solicitation
+					t->Token[7] = CopyStr("Router Soliciation");
 
-					switch (icmp->Type)
+					if (h != NULL)
 					{
-					case ICMPV6_TYPE_ECHO_REQUEST:
-						// Echo request
-						t->Token[7] = CopyStr("Echo Request");
-						snprintf(tmp, sizeof(tmp), "EchoDataSize=%u ", icmp->EchoDataSize);
-						StrCat(info, sizeof(info), tmp);
-						break;
-
-					case ICMPV6_TYPE_ECHO_RESPONSE:
-						// Echo response
-						t->Token[7] = CopyStr("Echo Reply");
-						snprintf(tmp, sizeof(tmp), "EchoDataSize=%u ", icmp->EchoDataSize);
-						StrCat(info, sizeof(info), tmp);
-						break;
-
-					case ICMPV6_TYPE_ROUTER_SOLICIATION:
-						{
-							ICMPV6_ROUTER_SOLICIATION_HEADER *h = icmp->Headers.RouterSoliciationHeader;
-							// Router Solicitation
-							t->Token[7] = CopyStr("Router Soliciation");
-
-							if (h != NULL)
-							{
-								// No additional information
-							}
-						}
-						break;
-
-					case ICMPV6_TYPE_ROUTER_ADVERTISEMENT:
-						{
-							ICMPV6_ROUTER_ADVERTISEMENT_HEADER *h = icmp->Headers.RouterAdvertisementHeader;
-							// Router Advertisement
-							t->Token[7] = CopyStr("Router Advertisement");
-
-							if (h != NULL)
-							{
-								snprintf(tmp, sizeof(tmp), "CurHopLimit=%u "
-									"Flags=0x%02X Lifetime=%u ",
-									h->CurHopLimit, h->Flags, Endian16(h->Lifetime));
-								StrCat(info, sizeof(info), tmp);
-							}
-						}
-						break;
-
-					case ICMPV6_TYPE_NEIGHBOR_SOLICIATION:
-						{
-							ICMPV6_NEIGHBOR_SOLICIATION_HEADER *h = icmp->Headers.NeighborSoliciationHeader;
-							// Neighbor Solicitation
-							t->Token[7] = CopyStr("Neighbor Soliciation");
-
-							if (h != NULL)
-							{
-								char tmp2[MAX_SIZE];
-
-								IP6AddrToStr(tmp2, sizeof(tmp2), &h->TargetAddress);
-
-								snprintf(tmp, sizeof(tmp), "TargetAddress=%s ",
-									tmp2);
-								StrCat(info, sizeof(info), tmp);
-							}
-						}
-						break;
-
-					case ICMPV6_TYPE_NEIGHBOR_ADVERTISEMENT:
-						{
-							ICMPV6_NEIGHBOR_ADVERTISEMENT_HEADER *h = icmp->Headers.NeighborAdvertisementHeader;
-							// Neighbor Advertisement
-							t->Token[7] = CopyStr("Neighbor Advertisement");
-
-							if (h != NULL)
-							{
-								char tmp2[MAX_SIZE];
-
-								IP6AddrToStr(tmp2, sizeof(tmp2), &h->TargetAddress);
-
-								snprintf(tmp, sizeof(tmp), "TargetAddress=%s Flags=0x%02X ",
-									tmp2, h->Flags);
-								StrCat(info, sizeof(info), tmp);
-							}
-						}
-						break;
-
-					default:
-						{
-							snprintf(tmp, sizeof(tmp), "Type=%u", icmp->Type);
-							t->Token[7] = CopyStr(tmp);
-						}
-						break;
-					}
-
-					// Option data
-					if (ol->SourceLinkLayer != NULL)
-					{
-						char tmp2[MAX_SIZE];
-						BinToStr(tmp2, sizeof(tmp2), ol->SourceLinkLayer->Address, 6);
-						snprintf(tmp, sizeof(tmp), "SourceLinkLayer=%s ", tmp2);
-						StrCat(info, sizeof(info), tmp);
-					}
-					if (ol->TargetLinkLayer != NULL)
-					{
-						char tmp2[MAX_SIZE];
-						BinToStr(tmp2, sizeof(tmp2), ol->TargetLinkLayer->Address, 6);
-						snprintf(tmp, sizeof(tmp), "TargetLinkLayer=%s ", tmp2);
-						StrCat(info, sizeof(info), tmp);
-					}
-					if (ol->Prefix != NULL)
-					{
-						char tmp2[MAX_SIZE];
-						IP6AddrToStr(tmp2, sizeof(tmp2), &ol->Prefix->Prefix);
-						snprintf(tmp, sizeof(tmp), "Prefix=%s/%u PrefixFlag=0x%02X ", tmp2,
-							ol->Prefix->SubnetLength, ol->Prefix->Flags);
-						StrCat(info, sizeof(info), tmp);
-					}
-					if (ol->Mtu != NULL)
-					{
-						snprintf(tmp, sizeof(tmp), "Mtu=%u ", Endian32(ol->Mtu->Mtu));
-						StrCat(info, sizeof(info), tmp);
-					}
-
-					Trim(info);
-
-					if (IsEmptyStr(info) == false)
-					{
-						t->Token[14] = CopyStr(info);
+						// No additional information
 					}
 				}
 				break;
+
+				case ICMPV6_TYPE_ROUTER_ADVERTISEMENT:
+				{
+					ICMPV6_ROUTER_ADVERTISEMENT_HEADER *h = icmp->Headers.RouterAdvertisementHeader;
+					// Router Advertisement
+					t->Token[7] = CopyStr("Router Advertisement");
+
+					if (h != NULL)
+					{
+						snprintf(tmp, sizeof(tmp), "CurHopLimit=%u "
+						         "Flags=0x%02X Lifetime=%u ",
+						         h->CurHopLimit, h->Flags, Endian16(h->Lifetime));
+						StrCat(info, sizeof(info), tmp);
+					}
+				}
+				break;
+
+				case ICMPV6_TYPE_NEIGHBOR_SOLICIATION:
+				{
+					ICMPV6_NEIGHBOR_SOLICIATION_HEADER *h = icmp->Headers.NeighborSoliciationHeader;
+					// Neighbor Solicitation
+					t->Token[7] = CopyStr("Neighbor Soliciation");
+
+					if (h != NULL)
+					{
+						char tmp2[MAX_SIZE];
+
+						IP6AddrToStr(tmp2, sizeof(tmp2), &h->TargetAddress);
+
+						snprintf(tmp, sizeof(tmp), "TargetAddress=%s ",
+						         tmp2);
+						StrCat(info, sizeof(info), tmp);
+					}
+				}
+				break;
+
+				case ICMPV6_TYPE_NEIGHBOR_ADVERTISEMENT:
+				{
+					ICMPV6_NEIGHBOR_ADVERTISEMENT_HEADER *h = icmp->Headers.NeighborAdvertisementHeader;
+					// Neighbor Advertisement
+					t->Token[7] = CopyStr("Neighbor Advertisement");
+
+					if (h != NULL)
+					{
+						char tmp2[MAX_SIZE];
+
+						IP6AddrToStr(tmp2, sizeof(tmp2), &h->TargetAddress);
+
+						snprintf(tmp, sizeof(tmp), "TargetAddress=%s Flags=0x%02X ",
+						         tmp2, h->Flags);
+						StrCat(info, sizeof(info), tmp);
+					}
+				}
+				break;
+
+				default:
+				{
+					snprintf(tmp, sizeof(tmp), "Type=%u", icmp->Type);
+					t->Token[7] = CopyStr(tmp);
+				}
+				break;
+				}
+
+				// Option data
+				if (ol->SourceLinkLayer != NULL)
+				{
+					char tmp2[MAX_SIZE];
+					BinToStr(tmp2, sizeof(tmp2), ol->SourceLinkLayer->Address, 6);
+					snprintf(tmp, sizeof(tmp), "SourceLinkLayer=%s ", tmp2);
+					StrCat(info, sizeof(info), tmp);
+				}
+				if (ol->TargetLinkLayer != NULL)
+				{
+					char tmp2[MAX_SIZE];
+					BinToStr(tmp2, sizeof(tmp2), ol->TargetLinkLayer->Address, 6);
+					snprintf(tmp, sizeof(tmp), "TargetLinkLayer=%s ", tmp2);
+					StrCat(info, sizeof(info), tmp);
+				}
+				for (i = 0; i < ICMPV6_OPTION_PREFIXES_MAX_COUNT; i++)
+				{
+					if (ol->Prefix[i] != NULL)
+					{
+						char tmp2[MAX_SIZE];
+						IP6AddrToStr(tmp2, sizeof(tmp2), &ol->Prefix[i]->Prefix);
+						snprintf(tmp, sizeof(tmp), "Prefix=%s/%u PrefixFlag=0x%02X ", tmp2,
+						         ol->Prefix[i]->SubnetLength, ol->Prefix[i]->Flags);
+						StrCat(info, sizeof(info), tmp);
+					}
+					else
+					{
+						break;
+					}
+				}
+				if (ol->Mtu != NULL)
+				{
+					snprintf(tmp, sizeof(tmp), "Mtu=%u ", Endian32(ol->Mtu->Mtu));
+					StrCat(info, sizeof(info), tmp);
+				}
+
+				Trim(info);
+
+				if (IsEmptyStr(info) == false)
+				{
+					t->Token[14] = CopyStr(info);
+				}
+			}
+			break;
 
 			case L4_TCP:
 				// TCP packet
@@ -1882,26 +1816,26 @@ char *PacketLogParseProc(RECORD *rec)
 
 						{
 							Format(tmp, sizeof(tmp), "InitiatorCookie=%I64u ResponderCookie=%I64u "
-								"Version=0x%x ExchangeType=0x%x Flag=0x%x MessageId=%u MessageSize=%u",
-								Endian64(p->L7.IkeHeader->InitiatorCookie),
-								Endian64(p->L7.IkeHeader->ResponderCookie),
-								p->L7.IkeHeader->Version,
-								p->L7.IkeHeader->ExchangeType,
-								p->L7.IkeHeader->Flag,
-								Endian32(p->L7.IkeHeader->MessageId),
-								Endian32(p->L7.IkeHeader->MessageSize));
+							       "Version=0x%x ExchangeType=0x%x Flag=0x%x MessageId=%u MessageSize=%u",
+							       Endian64(p->L7.IkeHeader->InitiatorCookie),
+							       Endian64(p->L7.IkeHeader->ResponderCookie),
+							       p->L7.IkeHeader->Version,
+							       p->L7.IkeHeader->ExchangeType,
+							       p->L7.IkeHeader->Flag,
+							       Endian32(p->L7.IkeHeader->MessageId),
+							       Endian32(p->L7.IkeHeader->MessageSize));
 
 							t->Token[14] = CopyStr(tmp);
 						}
 					}
 					break;
-  
- 				case L7_DNS:
- 					// DNS query
- 					t->Token[6] = CopyStr("DNSv6");
- 					t->Token[7] = CopyStr("DNS_Query");
- 					t->Token[14] = CopyStr(p->DnsQueryHost);
- 					break;
+
+				case L7_DNS:
+					// DNS query
+					t->Token[6] = CopyStr("DNSv6");
+					t->Token[7] = CopyStr("DNS_Query");
+					t->Token[14] = CopyStr(p->DnsQueryHost);
+					break;
 
 				default:
 					t->Token[6] = CopyStr("UDPv6");
@@ -2071,7 +2005,7 @@ char *GenCsvLine(TOKEN_LIST *t)
 	}
 
 	b = NewBuf();
-	for (i = 0;i < t->NumTokens;i++)
+	for (i = 0; i < t->NumTokens; i++)
 	{
 		if (t->Token[i] != NULL)
 		{
@@ -2113,11 +2047,9 @@ void ReplaceForCsv(char *str)
 		return;
 	}
 
-	// If there are blanks, trim it
-	Trim(str);
 	len = StrLen(str);
 
-	for (i = 0;i < len;i++)
+	for (i = 0; i < len; i++)
 	{
 		// Convert the comma to underscore
 		if (str[i] == ',')
@@ -2252,7 +2184,7 @@ void MakeLogFileNameStringFromTick(LOG *g, char *str, UINT size, UINT64 tick, UI
 	if (g->CacheFlag)
 	{
 		if (g->LastTick == tick &&
-			g->LastSwitchType == switch_type)
+		        g->LastSwitchType == switch_type)
 		{
 			StrCpy(str, size, g->LastStr);
 			return;
@@ -2266,12 +2198,12 @@ void MakeLogFileNameStringFromTick(LOG *g, char *str, UINT size, UINT64 tick, UI
 	{
 	case LOG_SWITCH_SECOND:	// Secondly basis
 		snprintf(str, size, "_%04u%02u%02u_%02u%02u%02u",
-			st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
+		         st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
 		break;
 
 	case LOG_SWITCH_MINUTE:	// Minutely basis
 		snprintf(str, size, "_%04u%02u%02u_%02u%02u",
-			st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute);
+		         st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute);
 		break;
 
 	case LOG_SWITCH_HOUR:	// Hourly basis
@@ -2287,7 +2219,7 @@ void MakeLogFileNameStringFromTick(LOG *g, char *str, UINT size, UINT64 tick, UI
 		break;
 
 	default:				// Without switching
-		snprintf(str, size, "%s");
+		StrCpy(str, size, "");
 		break;
 	}
 
@@ -2362,16 +2294,16 @@ bool MakeLogFileName(LOG *g, char *name, UINT size, char *dir, char *prefix, UIN
 		}
 	}
 
-	if (strcmp(old_datestr, tmp) != 0)
+	if (StrCmp(old_datestr, tmp) != 0)
 	{
 		ret = true;
 		StrCpy(old_datestr, MAX_SIZE, tmp);
 	}
 
 	snprintf(name, size, "%s%s%s%s%s.log", dir,
-		StrLen(dir) == 0 ? "" : "/",
-		prefix, tmp, tmp2
-		);
+	         StrLen(dir) == 0 ? "" : "/",
+	         prefix, tmp, tmp2
+	        );
 
 	return ret;
 }
@@ -2631,7 +2563,7 @@ static bool LogThreadWriteGeneral(LOG *log_object, BUF *buffer, IO **io, bool *l
 	LockLog(log_object);
 	{
 		*log_date_changed = MakeLogFileName(log_object, file_name, sizeof(file_name),
-			log_object->DirName, log_object->Prefix, rec->Tick, log_object->SwitchType, log_object->CurrentLogNumber, current_logfile_datename);
+		                                    log_object->DirName, log_object->Prefix, rec->Tick, log_object->SwitchType, log_object->CurrentLogNumber, current_logfile_datename);
 
 		if (*log_date_changed)
 		{
@@ -2639,12 +2571,12 @@ static bool LogThreadWriteGeneral(LOG *log_object, BUF *buffer, IO **io, bool *l
 
 			log_object->CurrentLogNumber = 0;
 			MakeLogFileName(log_object, file_name, sizeof(file_name),
-				log_object->DirName, log_object->Prefix, rec->Tick, log_object->SwitchType, 0, current_logfile_datename);
-			for (i = 0;;i++)
+			                log_object->DirName, log_object->Prefix, rec->Tick, log_object->SwitchType, 0, current_logfile_datename);
+			for (i = 0;; i++)
 			{
 				char tmp[MAX_SIZE];
 				MakeLogFileName(log_object, tmp, sizeof(tmp),
-					log_object->DirName, log_object->Prefix, rec->Tick, log_object->SwitchType, i, current_logfile_datename);
+				                log_object->DirName, log_object->Prefix, rec->Tick, log_object->SwitchType, i, current_logfile_datename);
 
 				if (IsFileExists(tmp) == false)
 				{
@@ -2662,7 +2594,7 @@ static bool LogThreadWriteGeneral(LOG *log_object, BUF *buffer, IO **io, bool *l
 		if (StrCmp(current_file_name, file_name) != 0)
 		{
 			// If a log file is currently opened and writing to another log
-			// file is needed for this time, write the contents of the 
+			// file is needed for this time, write the contents of the
 			//buffer and close the log file. Write the contents of the buffer
 			if (*io != NULL)
 			{

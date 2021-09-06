@@ -1,72 +1,40 @@
 version: '{build}'
 
-image:
-  - Visual Studio 2015
-  - Visual Studio 2017
-  - Ubuntu1604
-  - Ubuntu1804
+image: Ubuntu1804
 
 configuration: Release
 
 skip_branch_with_pr: true
 clone_depth: 1
 
+skip_commits:
+  files:
+    - .travis.yml
+    - .gitlab-ci.yml
+    - .azure-pipelines.yml
+    - .cirrus.yml
+
 init:
   - ps: Update-AppveyorBuild -Version "build-$env:APPVEYOR_BUILD_NUMBER-$($env:APPVEYOR_REPO_COMMIT.substring(0,7))"
 
-install: git submodule update --init --recursive
+install:
+  - sudo apt-get -y install libsodium-dev
+before_build:
+  - sh: "if [ ${APPVEYOR_REPO_TAG} == \"true\" ]; then .ci/appveyor-create-release-tarball.sh\nfi"
+  - git submodule update --init --recursive
+  - ./configure
+build_script:
+  - make package -C build -j $(nproc || sysctl -n hw.ncpu || echo 4)
+  - .ci/memory-leak-test.sh
+test_script:
+  - .ci/appveyor-deb-install-test.sh
+  - sudo apt-get update && sudo apt-get -y install autoconf libtool liblzo2-dev libpam-dev fping unzip liblz4-dev # openvpn build deps
+  - sudo .ci/start-se-openvpn.sh
+  - sudo .ci/run-openvpn-tests.sh
 
-for:
--
-  matrix:
-    only:
-      - image: Visual Studio 2015
-  build_script:
-    - src\BuildAll.cmd
-    - exit %errorlevel%
-  artifacts:
-    - path: output\pkg\*\*
-      name: Windows
--
-  matrix:
-    only:
-      - image: Visual Studio 2017
-  init:
-    - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
-  before_build:
-    - configure
-  build_script:
-    - nmake
-  after_build:
-    - 7z a "%APPVEYOR_BUILD_FOLDER%\build\%APPVEYOR_PROJECT_NAME%_%APPVEYOR_BUILD_VERSION%_Windows_x64_%CONFIGURATION%.zip" "%APPVEYOR_BUILD_FOLDER%\build\*.exe"
-    - 7z a "%APPVEYOR_BUILD_FOLDER%\build\%APPVEYOR_PROJECT_NAME%_%APPVEYOR_BUILD_VERSION%_Windows_x64_%CONFIGURATION%.zip" "%APPVEYOR_BUILD_FOLDER%\build\hamcore.se2"
-  artifacts:
-    - path: build\%APPVEYOR_PROJECT_NAME%_%APPVEYOR_BUILD_VERSION%_Windows_x64_%CONFIGURATION%.zip
-      name: Windows
--
-  matrix:
-    only:
-      - image: Ubuntu1604
-  before_build:
-    - ./configure
-  build_script:
-    - make package -C tmp -j $(nproc || sysctl -n hw.ncpu || echo 4)
-  after_build:
-    - .ci/appveyor_afterbuild.sh
-  artifacts:
-    - path: build/*.deb
-      name: Ubuntu
--
-  matrix:
-    only:
-      - image: Ubuntu1804
-  before_build:
-    - ./configure
-  build_script:
-    - make package -C tmp -j $(nproc || sysctl -n hw.ncpu || echo 4)
-    - .ci/memory-leak-test.sh
-  after_build:
-    - .ci/appveyor_afterbuild.sh
-  artifacts:
-    - path: build/*.deb
-      name: Ubuntu
+deploy:
+  description: 'automatic release'
+  provider: GitHub
+  auth_token: $(github_token)
+  on:
+    APPVEYOR_REPO_TAG: true

@@ -1,131 +1,197 @@
 // SoftEther VPN Source Code - Developer Edition Master Branch
 // Cedar Communication Module
-// 
-// SoftEther VPN Server, Client and Bridge are free software under GPLv2.
-// 
-// Copyright (c) Daiyuu Nobori.
-// Copyright (c) SoftEther VPN Project, University of Tsukuba, Japan.
-// Copyright (c) SoftEther Corporation.
-// 
-// All Rights Reserved.
-// 
-// http://www.softether.org/
-// 
-// Author: Daiyuu Nobori, Ph.D.
-// Comments: Tetsuo Sugiyama, Ph.D.
-// 
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// version 2 as published by the Free Software Foundation.
-// 
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License version 2
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-// CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-// SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-// 
-// THE LICENSE AGREEMENT IS ATTACHED ON THE SOURCE-CODE PACKAGE
-// AS "LICENSE.TXT" FILE. READ THE TEXT FILE IN ADVANCE TO USE THE SOFTWARE.
-// 
-// 
-// THIS SOFTWARE IS DEVELOPED IN JAPAN, AND DISTRIBUTED FROM JAPAN,
-// UNDER JAPANESE LAWS. YOU MUST AGREE IN ADVANCE TO USE, COPY, MODIFY,
-// MERGE, PUBLISH, DISTRIBUTE, SUBLICENSE, AND/OR SELL COPIES OF THIS
-// SOFTWARE, THAT ANY JURIDICAL DISPUTES WHICH ARE CONCERNED TO THIS
-// SOFTWARE OR ITS CONTENTS, AGAINST US (SOFTETHER PROJECT, SOFTETHER
-// CORPORATION, DAIYUU NOBORI OR OTHER SUPPLIERS), OR ANY JURIDICAL
-// DISPUTES AGAINST US WHICH ARE CAUSED BY ANY KIND OF USING, COPYING,
-// MODIFYING, MERGING, PUBLISHING, DISTRIBUTING, SUBLICENSING, AND/OR
-// SELLING COPIES OF THIS SOFTWARE SHALL BE REGARDED AS BE CONSTRUED AND
-// CONTROLLED BY JAPANESE LAWS, AND YOU MUST FURTHER CONSENT TO
-// EXCLUSIVE JURISDICTION AND VENUE IN THE COURTS SITTING IN TOKYO,
-// JAPAN. YOU MUST WAIVE ALL DEFENSES OF LACK OF PERSONAL JURISDICTION
-// AND FORUM NON CONVENIENS. PROCESS MAY BE SERVED ON EITHER PARTY IN
-// THE MANNER AUTHORIZED BY APPLICABLE LAW OR COURT RULE.
-// 
-// USE ONLY IN JAPAN. DO NOT USE THIS SOFTWARE IN ANOTHER COUNTRY UNLESS
-// YOU HAVE A CONFIRMATION THAT THIS SOFTWARE DOES NOT VIOLATE ANY
-// CRIMINAL LAWS OR CIVIL RIGHTS IN THAT PARTICULAR COUNTRY. USING THIS
-// SOFTWARE IN OTHER COUNTRIES IS COMPLETELY AT YOUR OWN RISK. THE
-// SOFTETHER VPN PROJECT HAS DEVELOPED AND DISTRIBUTED THIS SOFTWARE TO
-// COMPLY ONLY WITH THE JAPANESE LAWS AND EXISTING CIVIL RIGHTS INCLUDING
-// PATENTS WHICH ARE SUBJECTS APPLY IN JAPAN. OTHER COUNTRIES' LAWS OR
-// CIVIL RIGHTS ARE NONE OF OUR CONCERNS NOR RESPONSIBILITIES. WE HAVE
-// NEVER INVESTIGATED ANY CRIMINAL REGULATIONS, CIVIL LAWS OR
-// INTELLECTUAL PROPERTY RIGHTS INCLUDING PATENTS IN ANY OF OTHER 200+
-// COUNTRIES AND TERRITORIES. BY NATURE, THERE ARE 200+ REGIONS IN THE
-// WORLD, WITH DIFFERENT LAWS. IT IS IMPOSSIBLE TO VERIFY EVERY
-// COUNTRIES' LAWS, REGULATIONS AND CIVIL RIGHTS TO MAKE THE SOFTWARE
-// COMPLY WITH ALL COUNTRIES' LAWS BY THE PROJECT. EVEN IF YOU WILL BE
-// SUED BY A PRIVATE ENTITY OR BE DAMAGED BY A PUBLIC SERVANT IN YOUR
-// COUNTRY, THE DEVELOPERS OF THIS SOFTWARE WILL NEVER BE LIABLE TO
-// RECOVER OR COMPENSATE SUCH DAMAGES, CRIMINAL OR CIVIL
-// RESPONSIBILITIES. NOTE THAT THIS LINE IS NOT LICENSE RESTRICTION BUT
-// JUST A STATEMENT FOR WARNING AND DISCLAIMER.
-// 
-// 
-// SOURCE CODE CONTRIBUTION
-// ------------------------
-// 
-// Your contribution to SoftEther VPN Project is much appreciated.
-// Please send patches to us through GitHub.
-// Read the SoftEther VPN Patch Acceptance Policy in advance:
-// http://www.softether.org/5-download/src/9.patch
-// 
-// 
-// DEAR SECURITY EXPERTS
-// ---------------------
-// 
-// If you find a bug or a security vulnerability please kindly inform us
-// about the problem immediately so that we can fix the security problem
-// to protect a lot of users around the world as soon as possible.
-// 
-// Our e-mail address for security reports is:
-// softether-vpn-security [at] softether.org
-// 
-// Please note that the above e-mail address is not a technical support
-// inquiry address. If you need technical assistance, please visit
-// http://www.softether.org/ and ask your question on the users forum.
-// 
-// Thank you for your cooperation.
-// 
-// 
-// NO MEMORY OR RESOURCE LEAKS
-// ---------------------------
-// 
-// The memory-leaks and resource-leaks verification under the stress
-// test has been passed before release this source code.
 
 
 // Proto_SSTP.c
 // SSTP (Microsoft Secure Socket Tunneling Protocol) protocol stack
 
-#include "CedarPch.h"
+#include "Proto_SSTP.h"
 
-static bool g_no_sstp = false;
+#include "Connection.h"
+#include "Proto_PPP.h"
+#include "Server.h"
 
-// Get the SSTP disabling flag
-bool GetNoSstp()
+#include "Mayaqua/HTTP.h"
+#include "Mayaqua/Kernel.h"
+#include "Mayaqua/Memory.h"
+#include "Mayaqua/Str.h"
+#include "Mayaqua/Tick64.h"
+
+const PROTO_IMPL *SstpGetProtoImpl()
 {
+	static const PROTO_IMPL impl =
+	{
+		SstpName,
+		SstpOptions,
+		NULL,
+		SstpInit,
+		SstpFree,
+		NULL,
+		SstpProcessData,
+		NULL
+	};
 
-	return g_no_sstp;
+	return &impl;
 }
 
-// Set the SSTP disabling flag
-void SetNoSstp(bool b)
+const char *SstpName()
 {
-	g_no_sstp = b;
+	return "SSTP";
+}
+
+const PROTO_OPTION *SstpOptions()
+{
+	static const PROTO_OPTION options[] =
+	{
+		{ .Name = NULL, .Type = PROTO_OPTION_UNKNOWN }
+	};
+
+	return options;
+}
+
+bool SstpInit(void **param, const LIST *options, CEDAR *cedar, INTERRUPT_MANAGER *im, SOCK_EVENT *se, const char *cipher, const char *hostname)
+{
+	if (param == NULL || options == NULL || cedar == NULL || im == NULL || se == NULL)
+	{
+		return false;
+	}
+
+	Debug("SstpInit(): cipher: %s, hostname: %s\n", cipher, hostname);
+
+	*param = NewSstpServer(cedar, im, se, cipher, hostname);
+
+	return true;
+}
+
+void SstpFree(void *param)
+{
+	FreeSstpServer(param);
+}
+
+bool SstpProcessData(void *param, TCP_RAW_DATA *in, FIFO *out)
+{
+	FIFO *recv_fifo;
+	bool disconnected = false;
+	SSTP_SERVER *server = param;
+
+	if (server == NULL || in == NULL || out == NULL)
+	{
+		return false;
+	}
+
+	if (server->Status == SSTP_SERVER_STATUS_NOT_INITIALIZED)
+	{
+		HTTP_HEADER *header;
+		char *header_str, date_str[MAX_SIZE];
+
+		GetHttpDateStr(date_str, sizeof(date_str), SystemTime64());
+
+		header = NewHttpHeader("HTTP/1.1", "200", "OK");
+		AddHttpValue(header, NewHttpValue("Content-Length", "18446744073709551615"));
+		AddHttpValue(header, NewHttpValue("Server", "Microsoft-HTTPAPI/2.0"));
+		AddHttpValue(header, NewHttpValue("Date", date_str));
+
+		header_str = HttpHeaderToStr(header);
+
+		FreeHttpHeader(header);
+
+		if (header_str == NULL)
+		{
+			return false;
+		}
+
+		WriteFifo(out, header_str, StrLen(header_str));
+
+		Free(header_str);
+
+		Copy(&server->ClientIp, &in->SrcIP, sizeof(server->ClientIp));
+		server->ClientPort = in->SrcPort;
+		Copy(&server->ServerIp, &in->DstIP, sizeof(server->ServerIp));
+		server->ServerPort = in->DstPort;
+
+		server->Status = SSTP_SERVER_STATUS_REQUEST_PENGING;
+
+		return true;
+	}
+
+	recv_fifo = in->Data;
+
+	while (recv_fifo->size >= 4)
+	{
+		UCHAR *first4;
+		bool ok = false;
+		UINT read_size = 0;
+
+		// Read 4 bytes from the beginning of the received queue.
+		first4 = ((UCHAR *)recv_fifo->p) + recv_fifo->pos;
+		if (first4[0] == SSTP_VERSION_1)
+		{
+			const USHORT len = READ_USHORT(first4 + 2) & 0xFFF;
+			if (len >= 4)
+			{
+				ok = true;
+
+				if (recv_fifo->size >= len)
+				{
+					UCHAR *data;
+					BLOCK *b;
+
+					read_size = len;
+					data = Malloc(read_size);
+
+					ReadFifo(recv_fifo, data, read_size);
+
+					b = NewBlock(data, read_size, 0);
+
+					InsertQueue(server->RecvQueue, b);
+				}
+			}
+		}
+
+		if (read_size == 0)
+		{
+			break;
+		}
+
+		if (ok == false)
+		{
+			// Bad packet received, trigger disconnection.
+			disconnected = true;
+			break;
+		}
+	}
+
+	// Process the timer interrupt
+	SstpProcessInterrupt(server);
+
+	if (server->Disconnected)
+	{
+		disconnected = true;
+	}
+
+	while (true)
+	{
+		BLOCK *b = GetNext(server->SendQueue);
+		if (b == NULL)
+		{
+			break;
+		}
+
+		// Discard the data block if the transmission queue's size is greater than ~2.5 MB.
+		if (b->PriorityQoS || (FifoSize(out) <= MAX_BUFFERING_PACKET_SIZE))
+		{
+			WriteFifo(out, b->Buf, b->Size);
+		}
+
+		FreeBlock(b);
+	}
+
+	if (disconnected)
+	{
+		return false;
+	}
+
+	return true;
 }
 
 // Process the SSTP control packet reception
@@ -289,6 +355,7 @@ void SstpSendPacket(SSTP_SERVER *s, SSTP_PACKET *p)
 // Process the timer interrupt
 void SstpProcessInterrupt(SSTP_SERVER *s)
 {
+	UINT64 sstpTimeout = SSTP_TIMEOUT;
 	// Validate arguments
 	if (s == NULL)
 	{
@@ -373,7 +440,12 @@ void SstpProcessInterrupt(SSTP_SERVER *s)
 		}
 	}
 
-	if ((s->LastRecvTick + (UINT64)SSTP_TIMEOUT) <= s->Now)
+	if (s->TubeRecv != NULL && s->TubeRecv->DataTimeout > sstpTimeout)
+	{
+		sstpTimeout = s->TubeRecv->DataTimeout;
+	}
+
+	if ((s->LastRecvTick + sstpTimeout) <= s->Now)
 	{
 		// Disconnect the SSTP because a timeout occurred
 		SstpAbort(s);
@@ -931,38 +1003,27 @@ void SstpFreePacket(SSTP_PACKET *p)
 }
 
 // Create a SSTP server
-SSTP_SERVER *NewSstpServer(CEDAR *cedar, IP *client_ip, UINT client_port, IP *server_ip,
-						   UINT server_port, SOCK_EVENT *se,
-						   char *client_host_name, char *crypt_name)
+SSTP_SERVER *NewSstpServer(CEDAR *cedar, INTERRUPT_MANAGER *im, SOCK_EVENT *se, const char *cipher, const char *hostname)
 {
 	SSTP_SERVER *s = ZeroMalloc(sizeof(SSTP_SERVER));
 
-	s->LastRecvTick = Tick64();
+	s->Status = SSTP_SERVER_STATUS_NOT_INITIALIZED;
 
-	StrCpy(s->ClientHostName, sizeof(s->ClientHostName), client_host_name);
-	StrCpy(s->ClientCipherName, sizeof(s->ClientCipherName), crypt_name);
+	s->Now = Tick64();
+	s->LastRecvTick = s->Now;
 
 	s->Cedar = cedar;
-	AddRef(s->Cedar->ref);
+	s->Interrupt = im;
+	s->SockEvent = se;
+
+	StrCpy(s->ClientHostName, sizeof(s->ClientHostName), hostname);
+	StrCpy(s->ClientCipherName, sizeof(s->ClientCipherName), cipher);
 
 	NewTubePair(&s->TubeSend, &s->TubeRecv, 0);
 	SetTubeSockEvent(s->TubeSend, se);
 
-	s->Now = Tick64();
-
-	Copy(&s->ClientIp, client_ip, sizeof(IP));
-	s->ClientPort = client_port;
-	Copy(&s->ServerIp, server_ip, sizeof(IP));
-	s->ServerPort = server_port;
-
-	s->SockEvent = se;
-
-	AddRef(s->SockEvent->ref);
-
 	s->RecvQueue = NewQueueFast();
 	s->SendQueue = NewQueueFast();
-
-	s->Interrupt = NewInterruptManager();
 
 	return s;
 }
@@ -1009,242 +1070,8 @@ void FreeSstpServer(SSTP_SERVER *s)
 	ReleaseQueue(s->RecvQueue);
 	ReleaseQueue(s->SendQueue);
 
-	ReleaseSockEvent(s->SockEvent);
-
-	FreeInterruptManager(s->Interrupt);
-
-	ReleaseCedar(s->Cedar);
-
 	ReleaseTube(s->TubeSend);
 	ReleaseTube(s->TubeRecv);
 
 	Free(s);
 }
-
-// Handle the communication of SSTP protocol
-bool ProcessSstpHttps(CEDAR *cedar, SOCK *s, SOCK_EVENT *se)
-{
-	UINT tmp_size = 65536;
-	UCHAR *tmp_buf;
-	FIFO *recv_fifo;
-	FIFO *send_fifo;
-	SSTP_SERVER *sstp;
-	bool ret = false;
-	// Validate arguments
-	if (cedar == NULL || s == NULL || se == NULL)
-	{
-		return false;
-	}
-
-	tmp_buf = Malloc(tmp_size);
-	recv_fifo = NewFifo();
-	send_fifo = NewFifo();
-
-	sstp = NewSstpServer(cedar, &s->RemoteIP, s->RemotePort, &s->LocalIP, s->LocalPort, se,
-		s->RemoteHostname, s->CipherName);
-
-	while (true)
-	{
-		UINT r;
-		bool is_disconnected = false;
-		bool state_changed = false;
-
-		// Receive data over SSL
-		while (true)
-		{
-			r = Recv(s, tmp_buf, tmp_size, true);
-			if (r == 0)
-			{
-				// SSL is disconnected
-				is_disconnected = true;
-				break;
-			}
-			else if (r == SOCK_LATER)
-			{
-				// Data is not received any more
-				break;
-			}
-			else
-			{
-				// Queue the received data
-				WriteFifo(recv_fifo, tmp_buf, r);
-				state_changed = true;
-			}
-		}
-
-		while (recv_fifo->size >= 4)
-		{
-			UCHAR *first4;
-			UINT read_size = 0;
-			bool ok = false;
-			// Read 4 bytes from the beginning of the receive queue
-			first4 = ((UCHAR *)recv_fifo->p) + recv_fifo->pos;
-			if (first4[0] == SSTP_VERSION_1)
-			{
-				USHORT len = READ_USHORT(first4 + 2) & 0xFFF;
-				if (len >= 4)
-				{
-					ok = true;
-
-					if (recv_fifo->size >= len)
-					{
-						UCHAR *data;
-						BLOCK *b;
-
-						read_size = len;
-						data = Malloc(read_size);
-
-						ReadFifo(recv_fifo, data, read_size);
-
-						b = NewBlock(data, read_size, 0);
-
-						InsertQueue(sstp->RecvQueue, b);
-					}
-				}
-			}
-
-			if (read_size == 0)
-			{
-				break;
-			}
-
-			if (ok == false)
-			{
-				// Disconnect the connection since a bad packet received
-				is_disconnected = true;
-				break;
-			}
-		}
-
-		// Process the timer interrupt
-		SstpProcessInterrupt(sstp);
-
-		if (sstp->Disconnected)
-		{
-			is_disconnected = true;
-		}
-
-		// Put the transmission data that SSTP module has generated into the transmission queue
-		while (true)
-		{
-			BLOCK *b = GetNext(sstp->SendQueue);
-
-			if (b == NULL)
-			{
-				break;
-			}
-
-			// When transmit a data packet, If there are packets of more than about
-			// 2.5 MB in the transmission queue of the TCP, discard without transmission
-			if (b->PriorityQoS || (send_fifo->size <= MAX_BUFFERING_PACKET_SIZE))
-			{
-				WriteFifo(send_fifo, b->Buf, b->Size);
-			}
-
-			FreeBlock(b);
-		}
-
-		// Data is transmitted over SSL
-		while (send_fifo->size != 0)
-		{
-			r = Send(s, ((UCHAR *)send_fifo->p) + send_fifo->pos, send_fifo->size, true);
-			if (r == 0)
-			{
-				// SSL is disconnected
-				is_disconnected = true;
-				break;
-			}
-			else if (r == SOCK_LATER)
-			{
-				// Can not send any more
-				break;
-			}
-			else
-			{
-				// Advance the transmission queue by the amount of the transmitted
-				ReadFifo(send_fifo, NULL, r);
-				state_changed = true;
-			}
-		}
-
-		if (is_disconnected)
-		{
-			// Disconnected
-			break;
-		}
-
-		// Wait for the next state change
-		if (state_changed == false)
-		{
-			UINT select_time = SELECT_TIME;
-			UINT r = GetNextIntervalForInterrupt(sstp->Interrupt);
-			WaitSockEvent(se, MIN(r, select_time));
-		}
-	}
-
-	if (sstp != NULL && sstp->EstablishedCount >= 1)
-	{
-		ret = true;
-	}
-
-	FreeSstpServer(sstp);
-
-	ReleaseFifo(recv_fifo);
-	ReleaseFifo(send_fifo);
-	Free(tmp_buf);
-
-	YieldCpu();
-	Disconnect(s);
-
-	return ret;
-}
-
-// Accept the SSTP connection
-bool AcceptSstp(CONNECTION *c)
-{
-	SOCK *s;
-	HTTP_HEADER *h;
-	char date_str[MAX_SIZE];
-	bool ret;
-	bool ret2 = false;
-	SOCK_EVENT *se;
-	// Validate arguments
-	if (c == NULL)
-	{
-		return false;
-	}
-
-	s = c->FirstSock;
-
-	GetHttpDateStr(date_str, sizeof(date_str), SystemTime64());
-
-	// Return a response
-	h = NewHttpHeader("HTTP/1.1", "200", "OK");
-	AddHttpValue(h, NewHttpValue("Content-Length", "18446744073709551615"));
-	AddHttpValue(h, NewHttpValue("Server", "Microsoft-HTTPAPI/2.0"));
-	AddHttpValue(h, NewHttpValue("Date", date_str));
-
-	ret = PostHttp(s, h, NULL, 0);
-
-	FreeHttpHeader(h);
-
-	if (ret)
-	{
-		SetTimeout(s, INFINITE);
-
-		se = NewSockEvent();
-
-		JoinSockToSockEvent(s, se);
-
-		Debug("ProcessSstpHttps Start.\n");
-		ret2 = ProcessSstpHttps(c->Cedar, s, se);
-		Debug("ProcessSstpHttps End.\n");
-
-		ReleaseSockEvent(se);
-	}
-
-	Disconnect(s);
-
-	return ret2;
-}
-

@@ -1,10 +1,13 @@
-add_executable(hamcorebuilder hamcorebuilder.c)
-
-set_target_properties(hamcorebuilder
-  PROPERTIES
-  ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/tmp"
-  LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/tmp"
-  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/tmp"
+add_executable(hamcorebuilder
+  main.c
+  FileSystem.c
+  FileSystem.h
 )
 
-target_link_libraries(hamcorebuilder cedar mayaqua)
+if(WIN32)
+  target_compile_definitions(hamcorebuilder PRIVATE "OS_WINDOWS")
+endif()
+
+target_include_directories(hamcorebuilder PRIVATE "${TOP_DIRECTORY}/3rdparty/tinydir")
+
+target_link_libraries(hamcorebuilder PRIVATE libhamcore)

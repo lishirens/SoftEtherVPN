@@ -1,7 +1,8 @@
 ﻿# SoftEther VPN String Table
-# Copyright (c) SoftEther VPN Project. All Rights Reserved.
+# Copyright (c) all contributors on SoftEther VPN project in GitHub.
+# Copyright (c) Daiyuu Nobori, SoftEther Project at University of Tsukuba, and SoftEther Corporation.
 #
-# http://www.softether.co.jp/
+# https://www.softether.org/
 #
 # Contributors:
 # - YF (https://github.com/yfdyh000)
@@ -160,11 +161,11 @@ ERR_91					無法斷開虛擬 3 層交換機會話。要刪除會話，請停止
 ERR_92					具有指定名稱的虛擬 3 層交換機已存在。指定一個不同的名稱。
 ERR_93					找不到指定的虛擬 3 層交換機。
 ERR_94					指定的名稱無效。檢查名稱是否有不能使用的字元
-ERR_95					無法添加虛擬 3 層介面。
-ERR_96					無法刪除虛擬 3 層介面。
+ERR_95					無法添加虛擬 3 層介面。Please check that the parameters are valid. Also please make sure that the Virtual Layer 3 switch is stopped. Adding or deleting interfaces are unable when the Virtual Layer 3 switch is running.
+ERR_96					無法刪除虛擬 3 層介面。Please check that the parameters are valid. Also please make sure that the Virtual Layer 3 switch is stopped. Adding or deleting interfaces are unable when the Virtual Layer 3 switch is running.
 ERR_97					與指定虛擬 3 層交換介面的目標虛擬 HUB 連接的虛擬 3 層介面已在虛擬 3 層交換機中存在。不能在同一個虛擬 3 層交換機中定義超過一個連接到同一個虛擬 HUB 的虛擬 3 層介面。
-ERR_98					無法添加路由表項。
-ERR_99					無法刪除路由表項。
+ERR_98					無法添加路由表項。Please check that the parameters are valid. Also please make sure that the Virtual Layer 3 switch is stopped. Adding or deleting routing table entries are unable when the Virtual Layer 3 switch is running.
+ERR_99					無法刪除路由表項。Please check that the parameters are valid. Also please make sure that the Virtual Layer 3 switch is stopped. Adding or deleting routing table entries are unable when the Virtual Layer 3 switch is running.
 ERR_100					指定的路由表項已存在。
 ERR_101					用戶端和伺服器的時鐘彼此不同步。檢查時間設置。
 ERR_102					無法啟動此虛擬 3 層交換機。 要啟動虛擬 3 層交換機，必須在虛擬 3 層交換機定義至少一個虛擬介面。
@@ -403,6 +404,7 @@ PW_TYPE_1				標準密碼驗證
 PW_TYPE_2				RADIUS 或 NT 域驗證
 PW_TYPE_3				用戶端證書認證
 PW_TYPE_4				智慧卡身份驗證
+PW_TYPE_5				OpenSSL Engine 驗證
 
 PW_MSG_PROXY			代理伺服器 %S 使用者身份驗證失敗。請重新輸入正確的用戶名和密碼。
 PW_TYPE_PROXY			代理伺服器認證
@@ -454,14 +456,11 @@ WINVER_ERROR_PC_REMOTE	遠端伺服器
 
 
 # 開源版本的警告
-OSS_MSG					歡迎來到 SoftEther VPN 伺服器學術版 !\r\n\r\n此 VPN 伺服器作為日本筑波大學的一個學術研究由免費軟體發展的，且由，開源 (GPL) SoftEther 項目 (http://www.softether.org/) 為公眾利益免費發佈的。\r\n\r\nSoftEther VPN 軟體是作為筑波大學和 SoftEther 公司之間的聯合研究合同的一部分而發佈給公眾的。SoftEther VPN 軟體的開發和發佈僅為學術研究目的。因此，對 SoftEther VPN 軟體不提供支援服務，即使它包含錯誤或漏洞。用戶將對使用 SoftEther VPN 的結果承擔責任。 SoftEther VPN 的開發者和發行者都將永遠不會為任何後果或損失承擔責任。\r\n\r\n在您同意上述啟示後，使用 SoftEther VPN 伺服器享受 VPN 通信。\r\n\r\n對於 SoftEther VPN 的更多細節，請參閱 http://www.softether.org/。\r\n\r\n
+OSS_MSG					歡迎來到 SoftEther VPN 伺服器學術版 !\r\n\r\n此 VPN 伺服器作為日本筑波大學的一個學術研究由免費軟體發展的，且由，開源 SoftEther 項目 (http://www.softether.org/) 為公眾利益免費發佈的。\r\n\r\nSoftEther VPN 軟體是作為筑波大學和 SoftEther 公司之間的聯合研究合同的一部分而發佈給公眾的。SoftEther VPN 軟體的開發和發佈僅為學術研究目的。因此，對 SoftEther VPN 軟體不提供支援服務，即使它包含錯誤或漏洞。用戶將對使用 SoftEther VPN 的結果承擔責任。 SoftEther VPN 的開發者和發行者都將永遠不會為任何後果或損失承擔責任。\r\n\r\n在您同意上述啟示後，使用 SoftEther VPN 伺服器享受 VPN 通信。\r\n\r\n對於 SoftEther VPN 的更多細節，請參閱 http://www.softether.org/。\r\n\r\n
 
 
 # NAT Traversal warning
 NATT_MSG				** 使用 NAT 穿透 (UDP 打洞) - 它可能是不穩定的 **\r\n\r\n此 VPN 用戶端通過使用 NAT 穿透 (UDP 打洞) 技術連接到 VPN 伺服器 '%S'。\r\n\r\nNAT 穿透允許位於 NAT 盒後面的 VPN 伺服器接受來自 NAT 盒中的、沒有任何埠映射設置的 VPN 用戶端的 VPN 連接。\r\n\r\n然而，基於 NAT 穿透的 VPN 會話有時會變得不穩定，因為 NAT 穿透使用的是基於 UDP 的協定。例如，如果在 VPN 伺服器和 VPN 用戶端之間有一個不好的 NAT 盒子， VPN 隧道每 5 分鐘斷開一次。一些大規模 NAT 閘道使用便宜的網際網路服務供應商，有時會造成 NAT 穿透的同樣問題。這是路由器或網際網路服務供應商的問題。這不是 SoftEther VPN 軟體的問題。\r\n\r\n為了解決這個不穩定的隧道問題，您應該直接連接到 VPN 伺服器的 TCP 監聽埠，而不是使用 NAT 穿透功能。要使用 TCP 直接連接到 VPN 伺服器， VPN 伺服器的監聽埠必須通過在 NAT 盒的埠映射設置暴露到網際網路上。請詢問 NAT 盒的管理員或參閱 NAT 盒的手冊在 NAT 盒上添加埠映射設置。\r\n\r\n如果此消息仍是 VPN 伺服器暴露了一個 TCP 埠到網際網路後，檢查 VPN 用戶端連接設置螢幕上的 "禁用 NAT-T" 核取方塊。\r\n\r\n
-NATT_MSG2				** 使用 NAT 穿透 (UDP 打洞) - 它可能是不穩定的 **\r\n\r\n此 VPN 用戶端通過使用 NAT 穿透 (UDP 打洞) 技術連接到 VPN 伺服器 '%S'。\r\n\r\nNAT 穿透允許位於 NAT 盒後面的 VPN 伺服器接受來自 NAT 盒中的、沒有任何埠映射設置的 VPN 用戶端的 VPN 連接。\r\n\r\n然而，基於 NAT 穿透的 VPN 會話有時會變得不穩定，因為 NAT 穿透使用的是基於 UDP 的協定。例如，如果在 VPN 伺服器和 VPN 用戶端之間有一個不好的 NAT 盒子， VPN 隧道每 5 分鐘斷開一次。一些大規模 NAT 閘道使用便宜的網際網路服務供應商，有時會造成 NAT 穿透的同樣問題。這是路由器或網際網路服務供應商的問題。這不是 SoftEther VPN 軟體的問題。\r\n\r\n為了解決這個不穩定的隧道問題，您應該直接連接到 VPN 伺服器的 TCP 監聽埠，而不是使用 NAT 穿透功能。要使用 TCP 直接連接到 VPN 伺服器， VPN 伺服器的監聽埠必須通過在 NAT 盒的埠映射設置暴露到網際網路上。請詢問 NAT 盒的管理員或參閱 NAT 盒的手冊在 NAT 盒上添加埠映射設置。\r\n\r\n如果此消息仍是 VPN 伺服器暴露了一個 TCP 埠到網際網路後，檢查 VPN 用戶端連接設置螢幕上的 "禁用 NAT-T" 核取方塊、而你的 VPN 用戶端升級到 Build 9428 或更高版本。\r\n\r\n
-
-
 
 
 #虛擬 HUB 管理選項
@@ -948,6 +947,8 @@ CM_STOP_INST_VLAN_1		要想在此電腦上安裝虛擬網路介面卡，您必�
 CM_STOP_INST_VLAN_2		要想在此電腦上安裝虛擬網路介面卡，您必須在“控制台會話”下啟動 VPN Client 管理器。\r\n\r\n目前，此電腦上已安裝 %s，且用戶已登入遠端會話 (會話ID: %u) 而不是控制台進程。\r\n若要安裝虛擬網路介面卡，必須在“控制台會話”下啟動 VPN Client 管理器。\r\n(目前用戶並未登入到控制台會話 (會話ID: 0)。) \r\n\r\n首先使用切換用戶功能從本地登入到電腦，或在遠端桌面使用 “/console” 論據功能，或切換電腦的本地控制台設備，之後啟動 VPN Client 管理器，並安裝虛擬網路介面卡。
 CM_SHORTCUT_DESKTOP_MSG	若要使用 VPN 連接設置快捷方式啟動連接，您必須在“控制台會話”下運行快捷方式檔。\r\n\r\n目前用戶作為遠端會話 (會話ID: %u) 登入而不是控制台會話。
 CM_HTTP_PROXY_WARNING	已選擇“通過 HTTP 代理伺服器連接”。\r\n\r\n一般情況下，HTTP 伺服器只允許兩種 TCP 埠作為連接到目標伺服器的埠號: HTTP 協議 (TCP 埠號 80) 和 HTTPS 協議 (TCP 埠號 443)。\r\n(同樣，也有的代理伺服器提供更寬泛的 TCP 埠供連接使用。) \r\n\r\n當通過一台禁用除 HTTP 埠或 HTTPS 埠的 HTTP 代理伺服器建立 VPN 連接時，您必須指定 443 (HTTPS 協定) 作為目標 VPN Server 的埠號。\r\n\r\n要檢查您當前使用的 HTTP 代理伺服器是否允許 80 或 443 意外的埠，請與 HTTP 代理伺服器的管理員聯繫。\r\n\r\n目前 %d 指定為目標 VPN Server 的埠號。您是否要更改埠號為 443 (HTTPS 協議) ?\r\n(您所連接的 VPN Server 的 443 埠必須被設為監聽狀態並且空閒。) \r\n如果您無法確定，請與系統管理員或網路系統管理員聯繫。
+CM_HTTP_HEADER_COLUMN_0	Name
+CM_HTTP_HEADER_COLUMN_1	Value
 CM_PASSWORD_CHANGED		密碼已更改。
 CM_ACCOUNT_SETTING_FILE	VPN 連接設置檔案 (*.VPN)|*.vpn|所有檔案 (*.*)|*.*
 CM_ACCOUNT_SAVE_TITLE	輸入要匯出的 VPN 連接設置檔案的檔案名
@@ -1086,7 +1087,7 @@ SVC_HIDE_TRAY_MSG		啟動 %S 使用者模式時將隱藏工作列圖示。\r\n�
 
 
 #關於服務 (UNIX)
-UNIX_SVC_HELP			%S service program\nCopyright (c) SoftEther VPN Project. All Rights Reserved.\n\n%S command usage:\n %S start  - Start the %S service.\n %S stop   - Stop the %S service if the service has been already started.\n\n
+UNIX_SVC_HELP			%S service program\nCopyright (c) all contributors on SoftEther VPN project in GitHub.\nCopyright (c) Daiyuu Nobori, SoftEther Project at University of Tsukuba, and SoftEther Corporation.\nAll Rights Reserved.\n\n%S command usage:\n %S start  - Start the %S service.\n %S stop   - Stop the %S service if the service has been already started.\n\n
 UNIX_SVC_STARTED		The %S service has been started.\n
 UNIX_SVC_STOPPING		Stopping the %S service ...\n
 UNIX_SVC_STOPPED		%S service has been stopped.\n
@@ -1785,6 +1786,7 @@ LS_SSL_START			連接 "%S" 的 SSL 通信已啟動。加密演算法名為 "%S"�
 LS_CONNECTION_ERROR		連接 "%S"因原因 "%s" (代碼 %u)已終止。
 LS_FARMMEMBER_NOT_ADMIN	連接 "%S": 服務端是群集成員，但用戶端在非管理員 (%S) 使用者情況下，嘗試直接與虛擬 HUB "%S" 連接。用戶端用戶名為 "%S"。訪問被拒絕。
 LS_HUB_NOT_FOUND		連接 "%S": 客戶端正在嘗試連接的虛擬 HUB "%S" 在服務端上不存在。
+LS_WG_KEY_NOT_FOUND		Connection "%S": The WireGuard key is not associated with a user on the server.
 LS_IP_DENIED			連接 "%S": 基於虛擬 HUB 上定義的源 IP 訪問限制列表，用戶端的源 IP 位址 "%S" 被拒絕。
 LS_LICENSE_ERROR		連接 "%S": 因為發生許可證相關錯誤，用戶端無法連接到服務端。
 LS_BETA_EXPIRES			SoftEther VPN Server 測試版已過期。測試版使用期限已到。請從 http://selinks.org/ 下載新的測試版或完整版。
@@ -1805,9 +1807,28 @@ LS_LICENSE_NOT_VPNSERVER	連接 "%S": 許可證錯誤。VPN Client 嘗試連接�
 LS_LICENSE_NOT_VPNCLUSTER	連接 "%S": 許可證錯誤。此 VPN Server 上註冊的許可證是禁止使用當前群集功能的類型，且一個 VPN Client 已嘗試在群集模式下連接。您必須重啟 VPN Server。
 LS_LICENSE_VIOLATION		連接 "%S": VPN Server 發生違反許可證錯誤，不接受連接。
 LS_LICENSE_VIOLATION_DETECTED	發現許可證違反錯誤，一個不同的 VPN Server 與此服務端具有相同的服務端ID "%I64u"。可能是在群集中有兩個或以上 VPN Server 正在使用相同的許可證。請檢查每一個 VPN Server 的許可證資訊。
+LS_API_AUTH_OK			HTTPS API client "%r:%u" (%S): Administration mode: "%S": The embedded HTTPS web server accepted the successful login. Username: "%S", Method: "%S", Path: "%S"
+LS_API_AUTH_ERROR		HTTPS API client "%r:%u" (%S): The embedded HTTPS web server refused a login attempt. Username: "%S", Method: "%S", Path: "%S"
+LS_API_RPC_CALL			HTTPS API client "%r:%u" (%S): The client called a JSON-API. Method: "%S", Returned error code: %u (0 = success), Returned error message: "%s"
 
 
-# (OpenVPN Logs)
+# (Proto 日誌)
+LP_PREFIX_SESSION		[%s] %r:%u -> %r:%u (%s): 
+LP_SESSION_CREATED		Session created.
+LP_SESSION_DELETED		Session deleted.
+
+
+# (WireGuard 日誌)
+LW_PREFIX_SESSION	[WireGuard] %r:%u -> %r:%u: 
+LW_KEYPAIR_EXPIRED	Current keypair (%x -> %x) is expired!
+LW_KEYPAIR_UNKNOWN	The packet was encrypted with an unknown keypair!
+LW_DECRYPT_FAIL		Decryption failure!
+LW_REPLAY_ATTACK	Replay attack detected!
+LW_FLOOD_ATTACK		Flood attack detected!
+LW_HUB_DISCONNECT	The administrator of the Virtual Hub has disconnected this session.
+
+
+# (OpenVPN 日誌)
 LO_PREFIX_RAW			OpenVPN 模組:
 LO_PREFIX_SESSION		OpenVPN 會話%u (%r:%u -> %r:%u):
 LO_PREFIX_CHANNEL		OpenVPN 會話%u (%r:%u -> %r:%u) 通道 %u:
@@ -1818,15 +1839,11 @@ LO_CLIENT_CERT			Client certificate received (subject: CN="%s"), will use certif
 LO_CLIENT_UNVERIFIED_CERT		Client certificate was provided but did not pass verification (error="%S"), will use password authentication.
 LO_CLIENT_NO_CERT		Client certificate is not provided, will use password authentication.
 LO_OPTION_STR_SEND		發送選項字串："%S"
-LO_NEW_SESSION			已創建新的會話。協議：%S
 LO_INITIATE_REKEY			re-keying 進程已開始。
 LO_CHANNEL_ESTABLISHED		該通道成為已建立的狀態。
 LO_PUSH_REPLY			完整字串回答："%S"
 LO_CHANNEL_FAILED		無法連接通道。
 LO_CHANNEL_DISCONNECTED_BY_HUB	此 OpenVPN 的通道被終止，因為虛擬 HUB 管理員斷開了此 VPN 會話。
-LO_DELETE_SESSION		刪除會話中。
-LO_START				OpenVPN Server 模組正在啟動。
-LO_STOP					OpenVPN Server 模組已停止。
 
 
 # (IPsec 日誌)
@@ -1913,14 +1930,15 @@ LH_AUTH_PASSWORD		密碼驗證
 LH_AUTH_PLAIN_PASSWORD	外部伺服器身份驗證
 LH_AUTH_CERT			證書驗證
 LH_AUTH_TICKET			票證驗證
-LH_AUTH_OPENVPN_CERT			OpenVPN certificate authentication
+LH_AUTH_WIREGUARD_KEY	WireGuard public key authentication
+LH_AUTH_OPENVPN_CERT	OpenVPN certificate authentication
 LH_AUTH_RADIUS_NOT_SUPPORT	連接 "%S": 用戶 "%S" 身份驗證方法 RADIUS 或 Active Directory (NT 域)，但 VPN Server 是 "%S"，因為 RADIUS 或 Active Directory (NT 域)不能使用。連接被拒絕。
 LH_AUTH_RADIUS_NOT_SUPPORT_ON_OPEN_SOURCE	"%S" 的連接方法: 用戶 "%S" 的身份驗證方法被指定為 RADIUS 身份驗證或 Active Directory 身份驗證 (NT 域驗證)。然而，這樣一個外部用戶身份驗證功能尚未在 SoftEther VPN 的開源版本上實施。該連接將被拒絕。
 LH_AUTH_CERT_NOT_SUPPORT_ON_OPEN_SOURCE	"%S" 的連接方法: 用戶 "%S" 的身份驗證方法被指定為證書認證。然而，證書驗證功能尚未在 SoftEther VPN 的開源版本上實施。該連接將被拒絕。
 LH_AUTH_OK				連接 "%S": 成功認證為用戶 "%S"。
 LH_AUTH_OK_CERT			虛擬 HUB 的安全帳戶管理器已經從 VPN Client 接收到如下證書，且接受了其內容作為當使用者 "%S" 登入時的證書: %s
 LH_AUTH_NG_CERT			虛擬 HUB 的安全帳戶管理器已經從 VPN Client 接收到如下證書，但拒絕了其內容作為當使用者 "%S" 登入時的證書，因為此證書的內容匹配虛擬 HUB 中註冊的廢止內容清單: %s
-LH_AUTH_NG				連接 "%S": 用戶認證失敗。提供的用戶名為 "%S"。
+LH_AUTH_NG				Connection "%S": User authentication failed. The user name that has been provided was "%S", from %S.
 LH_LOCAL_ONLY			連接 "%S": 遠端登入拒絕，因為用戶 "%S" 的密碼為空。
 LH_POLICY_ACCESS_NG		連接 "%S": 由於安全性原則，用戶 "%S" 拒絕訪問。
 LH_USER_EXPIRES			連接 "%S": 由於有效期限已過，用戶 "%S" 拒絕訪問。
@@ -2003,11 +2021,15 @@ LA_CREATE_LISTENER		已建立新 TCP 監聽器 (埠號 %u)。
 LA_DELETE_LISTENER		已刪除 TCP 監聽器 (埠號 %u)。
 LA_ENABLE_LISTENER		已啟用 TCP 監聽器 (埠號 %u)。
 LA_DISABLE_LISTENER		已禁用 TCP 監聽器 (埠號 %u)。
+LA_SET_PORTS_UDP		UDP ports have been set: %S.
+LA_SET_PROTO_OPTIONS	%S options have been set.
 LA_SET_SERVER_PASSWORD	服務端管理員密碼設置完成。
 LA_SET_FARM_SETTING		群集設置變更完成。
 LA_SET_SERVER_CERT		服務端證書設定完成。
 LA_REGENERATE_SERVER_CERT	伺服器憑證再次生成。新 CN："%S"
 LA_SET_SERVER_CIPHER	服務端的新加密演算法名設定完成。新加密演算法為 "%S"。
+LA_ADD_WGK				Added %u WireGuard key(s).
+LA_DELETE_WGK			Deleted %u WireGuard key(s).
 LA_CREATE_HUB			已創建新虛擬 HUB "%S"。
 LA_SET_HUB				已變更虛擬 HUB 設置。
 LA_DELETE_HUB			已刪除虛擬 HUB "%S"。
@@ -2356,10 +2378,20 @@ STATIC2					主機名稱(&H):
 STATIC3					埠(&A):
 STATIC4					用戶名(&U):
 STATIC5					密碼(&P):
+B_HTTP_HEADER			Custom HTTP header values
 IDOK					確定(&O)
 IDCANCEL				取消
 STATIC6					(可選)
 STATIC7					(可選)
+
+
+PREFIX					D_CM_PROXY_HTTP_HEADER
+CAPTION					Custom Proxy HTTP Header Values
+B_NEW					New
+B_DELETE				Delete
+B_CLEAR					Clear
+IDOK					&OK
+IDCANCEL				Cancel
 
 
 PREFIX					D_CM_DETAIL
@@ -2456,7 +2488,7 @@ STATIC7					保持網際網路連接功能(&K)
 
 PREFIX					D_ABOUT
 S_INFO1					SoftEther VPN %u.0 Developer Edition (Ver %u.%02u, Build %u)
-S_INFO2					Open-Source VPN Software for Academic Purpose, under the GPLv2 License.\r\nCopyright (c) 2012-%u SoftEther Project at University of Tsukuba, Japan. All Rights Reserved.\r\nWeb Site: http://www.softether.org/\r\n%S
+S_INFO2				Licensed under the Apache License, Version 2.0.\r\nCopyright (c) 2012-%u all contributors on SoftEther VPN project in GitHub. All Rights Reserved.\r\nWeb Site: http://www.softether.org/\r\n%S
 S_INFO3					This product includes the following software components:\r\nBitVisor: Copyright (c) 2007, 2008 University of Tsukuba. Copyright (C) 2007, 2008 National Institute of Information and Communications Technology. All rights reserved. / Microsoft(R) C Runtime Library: (c) 2007 Microsoft Corporation. All Rights Reserved. / PKCS #11 Cryptographic Token Interface (Cryptoki): Copyright (c) RSA Security Inc. / WinPcap: Copyright (c) 2001 - 2003 NetGroup, Politecnico di Torino (Italy). All rights reserved. / libedit: Copyright (c) 1992, 1993 The Regents of the University of California. All rights reserved. / libiconv: Copyright (C) 2007 Free Software Foundation, Inc. / ncurses: Copyright (c) 1998-2005, 2006 Free Software Foundation, Inc. / OpenSSL: Copyright (c) 1998-2011 The OpenSSL Project. All rights reserved. This product includes software developed by the OpenSSL Project for use in the OpenSSL Toolkit (http://www.openssl.org/). This product includes cryptographic software written by Eric Young (eay@cryptsoft.com). / zlib: (C) 1995-2004 Jean-loup Gailly and Mark Adler. / Special Thanks to: Software Laboratory, Academic Computing Communication Center, Industrial Liaison and Cooperative Research Center and Professor Yasushi Shinjo in University of Tsukuba, Japan.
 S_INFO4					此 VPN 伺服器作為的一個學術研究且由 (http://www.softether.org/) 為公眾利益免費發佈的。本軟體是日本筑波大學 SoftEther 專案下開發的免費軟體，無任何擔保。開發人員、版權所有者或分銷商在任何情況下對於使用本軟體的任何索賠、損害賠償或其他情況不承擔責任。\r\n\r\nSoftEther VPN 是日本政府的研究和開發項目的一項工作，由日本的經濟、貿易和工業部資助，由資訊化推進機構管理。
 IDCANCEL				確定(&O)
@@ -2561,6 +2593,8 @@ B_CREATE_LISTENER		創建(&R)
 B_DELETE_LISTENER		刪除(&T)
 B_START					開始(&G)
 B_STOP					停止(&P)
+S_UDP					Multiple UDP ports can be specified by splitting them with a space or a comma. Leave empty to disable the UDP listener.
+B_APPLY					Apply
 STATIC3					VPN Server 和網路資訊和設置(&N)
 B_SSL					加密與網路(&E)
 B_STATUS				查看伺服器狀態(&V)
@@ -3867,9 +3901,6 @@ CAPTION					OpenVPN / MS-SSTP 設置
 S_TITLE					OpenVPN / MS-SSTP VPN 克隆 Server 功能設置
 S_1						本 VPN Server 具有 OpenVPN 技術責任有限公司的 OpenVPN 軟體產品的克隆功能。\r\n\r\n任何 OpenVPN Client 都可以連接到此 VPN Server。
 R_OPENVPN				啟用 OpenVPN 克隆 Server 功能(&O)
-S_UDP					監聽 OpenVPN 的 UDP 埠:
-B_DEFAULT				恢復預設值(&D)
-S_UDP2					多重 UDP 埠可以用空格或者逗號隔開的字母來指定。 \r\nOpenVPN Server 功能也可以在 TCP 埠上運行。任何在 VPN Server 上被定義為監聽端的 TCP 埠都可以平等的、分別的接受 OpenVPN 協議。
 S_TOOL					OpenVPN Client 的示例文件生成工具
 S_TOOL2					創建一個 OpenVPN Client 配置是一項艱難的工作。您可以使用此工具來生成一個合適的 OpenVPN Client 設定檔。生成的配置示例檔可馬上應用。本來，OpenVPN Client 會要求客戶手寫一個很難的設定檔。這個工具就可以説明您創建一個有用的配置樣本。您所需要為 OpenVPN Client 生成的設定檔就是點擊以下按鈕。
 B_CONFIG				為 OpenVPN Client 生成配置樣本檔(&C)
@@ -4467,7 +4498,7 @@ CMD_VPNCMD_HOST_2			指定的主機名稱或正在運行的目標 VPN Client 電
 CMD_VPNCMD_HOST_3			目標 IP 位址的主機名稱:
 CMD_VPNCMD_HUB_1			如果通過虛擬 HUB 管理模式連接到伺服器，請輸入虛擬 HUB 的名稱。\n如果通過伺服器管理模式連接，無須輸入任何內容請按Backspace鍵。\n
 CMD_VPNCMD_HUB_2			指定虛擬 HUB 名稱:
-CMD_VPNCMD_ABOUT			SoftEther VPN 命令列管理工具 (vpncmd 命令)\nDeveloper Edition\n%S\n%S\nCopyright (c) SoftEther VPN Project. All Rights Reserved.\n
+CMD_VPNCMD_ABOUT			SoftEther VPN 命令列管理工具 (vpncmd 命令)\nDeveloper Edition\n%S\n%S\nCopyright (c) all contributors on SoftEther VPN project in GitHub.\nCopyright (c) Daiyuu Nobori, SoftEther Project at University of Tsukuba, and SoftEther Corporation.\nAll rights reserved.\n
 CMD_VPNCMD_PASSWORD_1		訪問被拒絕。可能是密碼不正確，或者是您以不正確的管理模式連接。您可以嘗試再次輸入密碼。要取消，請按 Ctrl + D。
 CMD_VPNCMD_PASSWORD_2		密碼: 
 CMD_VPNCMD_ERROR			發生錯誤。(錯誤代碼: %u)\n%s
@@ -4549,6 +4580,52 @@ CMD_ListenerDisable_Help	這將停止在當前伺服器上註冊的 TCP 監偵�
 CMD_ListenerDisable_Args	ListenerDisable [port]
 CMD_ListenerDisable_[port]	使用一個整數，指定要停止的 TCP/IP 監聽器埠號。
 CMD_ListenerDisable_PortPrompt	啟動 TCP/IP 監聽器埠號: 
+
+
+# PortsUDPSet command
+CMD_PortsUDPSet			Sets the UDP ports that the server should listen on
+CMD_PortsUDPSet_Help	This command can be used to specify a single or multiple UDP ports the server should listen on. \nYou can specify a port that is used by another process, however the server will not be able to use it until the port becomes free. \nSpecify a port number that is within the range of 1 to 65535. \nYou can list the ports that are currently set with the PortsUDPGet command. \nTo execute this command, you must have VPN Server administrator privileges.
+CMD_PortsUDPSet_Args	PortsUDPSet [ports]
+CMD_PortsUDPSet_[ports]	Multiple UDP ports can be specified by splitting them with a space or a comma, for example: "443, 992, 1194, 5555". \nSpecify "0" to disable the UDP listener. \n\nPorts: 
+
+
+# PortsUDPGet command
+CMD_PortsUDPGet			Lists the UDP ports that the server is listening on
+CMD_PortsUDPGet_Help	This command can be used to retrieve the UDP ports the server is listening on. \nYou can set the ports with the PortsUDPSet command.
+CMD_PortsUDPGet_Args	PortsUDPGet
+CMD_PortsUDPGet_Ports	UDP ports
+
+
+# ProtoOptionsSet 命令
+CMD_ProtoOptionsSet						Sets an option's value for the specified protocol
+CMD_ProtoOptionsSet_Help				This command can be used to change an option's value for a specific protocol. \nYou can retrieve the options using the ProtoOptionsGet command. \nTo execute this command, you must have VPN Server administrator privileges.
+CMD_ProtoOptionsSet_Args				ProtoOptionsSet [protocol] [/NAME:option_name] [/VALUE:string/true/false]
+CMD_ProtoOptionsSet_[protocol]			Protocol name.
+CMD_ProtoOptionsSet_NAME				Option name.
+CMD_ProtoOptionsSet_VALUE				Option value. Make sure to write a value that is accepted by the specified protocol!
+CMD_ProtoOptionsSet_Prompt_[protocol]	Protocol: 
+CMD_ProtoOptionsSet_Prompt_NAME			Option: 
+CMD_ProtoOptionsSet_Prompt_VALUE		Value: 
+
+
+# ProtoOptionsGet 命令
+CMD_ProtoOptionsGet						Lists the options for the specified protocol
+CMD_ProtoOptionsGet_Help				This command can be used to retrieve the options for a specific protocol. \nDetailed info (e.g. value type) will be shown. \nYou can change an option's value with the ProtoOptionsSet command.
+CMD_ProtoOptionsGet_Args				ProtoOptionsGet [protocol]
+CMD_ProtoOptionsGet_[protocol]			Protocol name.
+CMD_ProtoOptionsGet_Prompt_[protocol]	Protocol: 
+CMD_ProtoOptionsGet_Column_Name			Name
+CMD_ProtoOptionsGet_Column_Type			Type
+CMD_ProtoOptionsGet_Column_Value		Value
+CMD_ProtoOptionsGet_Column_Description	Description
+
+# ProtoOptions
+CMD_ProtoOptions_Description_OpenVPN_DefaultClientOption			When OpenVPN is compiled without OCC code, it doesn't send the options string to the server. The original OpenVPN server still works, because the configuration is static. SoftEther VPN is heuristic and wants to support as many different configurations as possible. This option allows to define the string that is sent to clients built without OCC code, so that they can successfully connect.
+CMD_ProtoOptions_Description_OpenVPN_Obfuscation					This may help an OpenVPN client bypass firewalls that are aware of the protocol and block it. The same XOR mask has to be applied client-side, otherwise it will not be able to connect with certain obfuscation methods!
+CMD_ProtoOptions_Description_OpenVPN_ObfuscationMask				Mask used to XOR the bytes in the packet (used for certain obfuscation modes).
+CMD_ProtoOptions_Description_OpenVPN_PingSendInterval				Interval in milliseconds between each ping packet transmission.
+CMD_ProtoOptions_Description_OpenVPN_PushDummyIPv4AddressOnL2Mode	There's a bug that manifests under certain circumstances on Linux. It causes the OpenVPN client to disconnect unless the TAP device is UP. This option tells the server to push a dummy IPv4 address (RFC7600) to the client, so that the TAP adapter is forced to be UP.
+CMD_ProtoOptions_Description_OpenVPN_Timeout						Time in milliseconds after which the session is forcifully interrupted if no packets are received from the client in the meantime.
 
 
 # ServerPasswordSet 命令
@@ -4692,21 +4769,6 @@ CMD_ServerCipherSet_Args	ServerCipherSet [name]
 CMD_ServerCipherSet_[name]	指定設置加密和數位簽章的程式。可以使用的程式一覽，可以從 ServerCipherGet 指令中獲取。
 CMD_ServerCipherSet_PROMPT_NAME	指定的加密程式的名稱: 
 
-# TUNDownOnDisconnectEnable command
-CMD_TUNDownOnDisconnectEnable	Enable the Turn TUN Interface Down on Client Disconnect Function.
-CMD_TUNDownOnDisconnectEnable_Help	This allows you to enable Turn TUN Interface Down on Client Disconnect Function.
-CMD_TUNDownOnDisconnectEnable_Args	TUNDownOnDisconnectEnable
-
-# TUNDownOnDisconnectDisable command
-CMD_TUNDownOnDisconnectDisable	Disable the Turn TUN Interface Down on Client Disconnect Function.
-CMD_TUNDownOnDisconnectDisable_Help	This allows you to disable Turn TUN Interface Down on Client Disconnect Function.
-CMD_TUNDownOnDisconnectDisable_Args	TUNDownOnDisconnectDisable
-
-# TUNDownOnDisconnectGet command
-CMD_TUNDownOnDisconnectGet		Get status of the Turn TUN Interface Down on Client Disconnect Function.
-CMD_TUNDownOnDisconnectGet_Help	This allows you to get status of the Turn TUN Interface Down on Client Disconnect Function.
-CMD_TUNDownOnDisconnectGet_Args	TUNDownOnDisconnectGet
-CMD_TUNDownOnDisconnectGet_COLUMN1	Put TUN down on disconnect
 
 # KeepEnable 命令
 CMD_KeepEnable				啟動 Internet 保持連接功能
@@ -4975,6 +5037,35 @@ CMD_LogFileGet_SAVE_FAILED	無法寫入指定的檔。
 CMD_LogFileGet_FILESIZE		日誌檔的大小: %u
 
 
+# WgkAdd 命令
+CMD_WgkAdd				Add a WireGuard key
+CMD_WgkAdd_Help			This command can be used to add a WireGuard key to the allowed key list. \nTo execute this command, you must have VPN Server administrator privileges.
+CMD_WgkAdd_Args			WgkAdd [key] [/HUB:hub] [/USER:user]
+CMD_WgkAdd_[key]		WireGuard key. Make sure it is the public one!
+CMD_WgkAdd_HUB			Hub the key will be associated to.
+CMD_WgkAdd_USER			User the key will be associated to, in the specified hub.
+CMD_WgkAdd_Prompt_[key]	Key: 
+CMD_WgkAdd_Prompt_HUB	Hub: 
+CMD_WgkAdd_Prompt_USER	User: 
+
+
+# WgkDelete 命令
+CMD_WgkDelete				Delete a WireGuard key
+CMD_WgkDelete_Help			This command can be used to delete a WireGuard key from the allowed key list. \nTo execute this command, you must have VPN Server administrator privileges.
+CMD_WgkDelete_Args			WgkDelete [key]
+CMD_WgkDelete_[key]			WireGuard key.
+CMD_WgkDelete_Prompt_[key]	Key: 
+
+
+# WgkEnum 命令
+CMD_WgkEnum				List the WireGuard keys
+CMD_WgkEnum_Help		This command retrieves the WireGuard keys that are allowed to connect to the server, along with the associated Virtual Hub and user. \nYou can add a key with the WgkAdd command. \nYou can delete a key with the WgkDelete command. \nTo execute this command, you must have VPN Server administrator privileges.
+CMD_WgkEnum_Args		WgkEnum
+CMD_WgkEnum_Column_Key	Key
+CMD_WgkEnum_Column_Hub	Hub
+CMD_WgkEnum_Column_User	User
+
+
 # HubCreate 命令
 CMD_HubCreate				創建新的虛擬 HUB
 CMD_HubCreate_Help			在 VPN Server 上創建一個新的虛擬 HUB。\n創建的虛擬 HUB 將立即開始工作。\n當 VPN Server，在一個群集中運行，此命令僅對群集控制器有效。新的虛擬 HUB，將作為一個動態的虛擬 HUB。應用 HubSetStatic 命令也可將虛擬 HUB 改為靜態的。要想獲取已經儲存在 VPN Server 上的 HUB，可以運行 HubList 命令獲得列表。\n要運行此命令，需要 VPN Server 管理員許可權。\n此外，此命令在 VPN Bridge 和群集管理伺服器中不起作用。\n在群集上創建虛擬叢集控制器 HUB 時，請運行 HubCreateStatic 或者 HubCreateDynamic 命令。(對群集控制器操作時，HubCreate 和 HubCreateDynamic就有相同的功能)。
@@ -5052,6 +5143,16 @@ CMD_Offline_Help			如果您正在管理的虛擬 HUB 線上，設置成離線�
 CMD_Offline_Args			Offline
 
 
+# SetStaticNetwork 命令
+CMD_SetStaticNetwork				Set Virtual Hub static IPv4 network parameters
+CMD_SetStaticNetwork_Help			Set the static IPv4 network parameters for the Virtual Hub. They are used when DHCP is not available (e.g. WireGuard sessions). \nYou can get the current settings by using the OptionsGet command.
+CMD_SetStaticNetwork_Args			SetStaticNetwork [/GATEWAY:gateway] [/SUBNET:subnet]
+CMD_SetStaticNetwork_GATEWAY		Specify the IP address of the gateway that will be used for internet communication.
+CMD_SetStaticNetwork_SUBNET			Specify the subnet mask, required to determine the size of the local VPN network.
+CMD_SetStaticNetwork_Prompt_GATEWAY	Gateway: 
+CMD_SetStaticNetwork_Prompt_SUBNET	Subnet mask: 
+
+
 # SetMaxSession 命令
 CMD_SetMaxSession			設定虛擬 HUB 的最大同時線上用戶數量
 CMD_SetMaxSession_Help		設定現在正在管理的虛擬 HUB 的最大同時線上客戶數量。當超過這個數量時，如果從 VPN Client 和 VPN Bridge 連接的時候，超過了最大併發會話數，更多的客戶將無法連接。最大同時線上客戶數的限制不包括本地的橋接器，虛擬的 NAT，級聯連接等生成連接不包括在內。\n設置同時線上最大數目，可以通過運行 OptionsGet 命令獲得。\n此命令，在 VPN Bridge 中不會運行。\n此命令在集群虛擬 HUB 中不能運行。
@@ -5088,7 +5189,8 @@ CMD_OptionsGet_ENUM			對於匿名使用者的虛擬 HUB 的顯示
 CMD_OptionsGet_MAXSESSIONS	最大同時線上客戶數
 CMD_OptionsGet_STATUS		狀態
 CMD_OptionsGet_TYPE			虛擬 HUB 的類型
-
+CMD_OptionsGet_GATEWAY		Default gateway
+CMD_OptionsGet_SUBNET		Default subnet
 
 
 # RadiusServerSet 命令
@@ -5327,6 +5429,35 @@ CMD_CascadeCompressDisable	級聯通信是資料禁止壓縮功能
 CMD_CascadeCompressDisable_Help	指定已經在當前虛擬 HUB 註冊的級聯連接，當此連接和 VPN Server 之間通信時，設置通信內容為禁止壓縮。\n此命令在集群虛擬 HUB 中不能運行。
 CMD_CascadeCompressDisable_Args	CascadeCompressDisable [name]
 CMD_CascadeCompressDisable_[name]	指定級聯名稱來改變設置。
+
+
+# CascadeHttpHeader* commands
+CMD_CascadeHttpHeader_Prompt_Name	Value name (part before the colon): 
+CMD_CascadeHttpHeader_Prompt_Data	Value data (part after the colon): 
+
+
+# CascadeHttpHeaderAdd command
+CMD_CascadeHttpHeaderAdd	Add a custom value in the HTTP header sent to the proxy server
+CMD_CascadeHttpHeaderAdd_Help	Use this to add a custom value in the HTTP header sent to the proxy server. A custom HTTP header can be used to bypass certain restrictions imposed on the network or to avoid speed limitations applied by the QoS.
+CMD_CascadeHttpHeaderAdd_Args	CascadeHttpHeaderAdd [name] [/NAME:name] [/DATA:data]
+CMD_CascadeHttpHeaderAdd_[name]	Specify the name of the Cascade Connection whose setting you want to change.
+CMD_CascadeHttpHeaderAdd_NAME	Specify the name of the custom value (the part before the colon character).
+CMD_CascadeHttpHeaderAdd_DATA	Specify the data of the custom value (the part after the colon character).
+
+
+# CascadeHttpHeaderDelete command
+CMD_CascadeHttpHeaderDelete	Delete a custom value in the HTTP header sent to the proxy server
+CMD_CascadeHttpHeaderDelete_Help	Use this to delete a custom value in the HTTP header sent to the proxy server. A custom HTTP header can be used to bypass certain restrictions imposed on the network or to avoid speed limitations applied by the QoS.
+CMD_CascadeHttpHeaderDelete_Args	CascadeHttpHeaderDelete [name] [/NAME:name]
+CMD_CascadeHttpHeaderDelete_[name]	Specify the name of the Cascade Connection whose setting you want to change.
+CMD_CascadeHttpHeaderDelete_NAME	Specify the name of the custom value (the part before the colon character).
+
+
+# CascadeHttpHeaderGet command
+CMD_CascadeHttpHeaderGet	Get the list of custom values in the HTTP header sent to the proxy server
+CMD_CascadeHttpHeaderGet_Help	Use this to get the list of custom values in the HTTP header sent to the proxy server. A custom HTTP header can be used to bypass certain restrictions imposed on the network or to avoid speed limitations applied by the QoS.
+CMD_CascadeHttpHeaderGet_Args	CascadeHttpHeaderGet [name]
+CMD_CascadeHttpHeaderGet_[name]	Specify the name of the Cascade Connection whose setting you want to get.
 
 
 # CascadeProxyNone 命令
@@ -6254,23 +6385,6 @@ CMD_EtherIpClientList_Help		這個命令會獲得和顯示通過 EtherIP / L2TPv
 CMD_EtherIpClientList_Args		EtherIpClientList
 
 
-# OpenVpnEnable 命令
-CMD_OpenVpnEnable					啟用/禁用 OpenVPN 克隆伺服器功能
-CMD_OpenVpnEnable_Help				本 VPN Server 有 OpenVPN Technologies, Inc. 公司生產的 OpenVPN 軟體產品的克隆功能。任何 OpenVPN Client 都可以連接到本 VPN Server。\n\n指定用戶名連接到虛擬 HUB 的的方式，使用本克隆伺服器功能來為預設虛擬 HUB 的選擇規則都與 IPsec 伺服器功能相同。詳情，請參見 IPsecEnable 命令的幫助。\n\n要執行此命令，您必須具有 VPN Server 管理員許可權。\n該命令在 VPN Bridge 上不能運行。\n以集群成員運行的 VPN Server 的虛擬 HUB 不能執行此命令。
-CMD_OpenVpnEnable_Args				OpenVpnEnable [yes|no] [/PORTS:udp_port_list]
-CMD_OpenVpnEnable_[yes|no]			指定 "yes"，啟用 OpenVPN 克隆伺服器功能。指定 "no" 禁用該功能。
-CMD_OpenVpnEnable_PORTS				指定UDP埠監聽 OpenVPN 。指定多個 UDP 埠可以用空格或者逗號分開來它們，例如： "1194, 2001, 2010, 2012"。OpenVPN 的默認埠是 UDP 1194。您也可以指定任一其他 UDP 埠。
-CMD_OpenVpnEnable_Prompt_[yes|no]	啟用 OpenVPN 克隆伺服器功能 (yes / no): 
-CMD_OpenVpnEnable_Prompt_PORTS		監聽 OpenVPN 的 UDP 埠(默認: 1194 /也可設置多埠): 
-
-
-# OpenVpnGet 命令
-CMD_OpenVpnGet						獲取 OpenVPN 克隆伺服器功能的當前設置
-CMD_OpenVpnGet_Help					獲取並顯示 OpenVPN 克隆伺服器功能的當前設置。\n\n要執行此命令，您必須具有 VPN Server 管理員許可權。\n該命令在 VPN Bridge 上不能運行。\n以集群成員運行的 VPN Server 的虛擬 HUB 不能執行此命令。
-CMD_OpenVpnGet_Args					OpenVpnGet
-CMD_OpenVpnGet_PRINT_Enabled		OpenVPN 克隆伺服器已啟用
-CMD_OpenVpnGet_PRINT_Ports			UDP 埠列表
-
 # OpenVpnMakeConfig 命令
 CMD_OpenVpnMakeConfig					生成 OpenVPN Client 樣本設置檔案
 CMD_OpenVpnMakeConfig_Help				原來，OpenVPN Client 會要求用戶手寫很難的設定檔案。本工具可以説明您創建一個有用的配置樣本。你所需要生成的 OpenVPN Client 設定檔案就是運行此命令。\n\n要執行此命令，您必須具有 VPN Server 管理員許可權。\n該命令在 VPN Bridge 上不能運行。\n以集群成員運行的 VPN Server 的虛擬 HUB 不能執行此命令。
@@ -6281,24 +6395,9 @@ CMD_OpenVpnMakeConfig_OK				樣本設置檔案被保存為 "%s"。您可以解�
 CMD_OpenVpnMakeConfig_ERROR				本樣本設置檔案不能保存為 "%s"。該檔案名無效。\n
 
 
-# SstpEnable 命令
-CMD_SstpEnable						啟用/禁用 Microsoft SSTP VPN 克隆伺服器功能
-CMD_SstpEnable_Help					本 VPN Server 擁有植入在微軟 Windows Server 2008 / 2012 中的 MS-SSTP VPN Server 的克隆功能。Windows Vista / 7 / 8 / RT / 10 中的標準 MS-SSTP 用戶端可以連接本 VPN Server。\n\n[注意]\n在 VPN Server 上的 SSL 證書 CN 值必須要和指定給用戶端的主機名稱吻合。並且，該證書必須在 SSTP VPN Client 的信任清單中。詳情請參見微軟相關檔。\n您可以用用 ServerCertRegenerate 命令來取代當前 VPN Server 的證書，形成一個新的，有 CN 值欄位的自我認證證書。這樣的話，您需要在 SSTP VPN Client 註冊這樣一個新的自我認證證書作為一個可信任根證書。如果您的確想做這件複雜的事，請考慮購買一個商業權威機構的 SSL 證書，如 VeriSign 或者 GlobalSign。\n\n指定用戶名連接到虛擬 HUB 的的方式，使用本克隆伺服器功能來為預設虛擬 HUB 的選擇規則都與 IPsec 伺服器功能相同。詳情，請參見 IPsecEnable 命令的幫助。\n\n要執行此命令，您必須具有 VPN Server 管理員許可權。\n該命令在 VPN Bridge 上不能運行。\n以集群成員運行的 VPN Server 的虛擬 HUB 不能執行此命令。
-CMD_SstpEnable_Args					SstpEnable [yes|no]
-CMD_SstpEnable_[yes|no]				指定 "yes"，啟用Microsoft SSTP VPN 克隆伺服器功能。指定 "no" 禁用該功能。
-CMD_SstpEnable_Prompt_[yes|no]		啟用 SSTP VPN 克隆伺服器功能(yes/no): 
-CMD_SstpEnable_PRINT_Enabled		SSTP VPN 克隆伺服器已禁用
-
-
-# SstpGet 命令
-CMD_SstpGet				獲得 Microsoft SSTP VPN 克隆伺服器功能的當前設置
-CMD_SstpGet_Help		獲得並顯示 Microsoft SSTP VPN 克隆伺服器功能的當前設置。\n\n要執行此命令，您必須具有 VPN Server 管理員許可權。\n該命令在 VPN Bridge 上不能運行。\n以集群成員運行的 VPN Server 的虛擬 HUB 不能執行此命令。
-CMD_SstpGet_Args		SstpGet
-
-
 # ServerCertRegenerate 命令
 CMD_ServerCertRegenerate	生成一個新的帶有指定 CN (Common Name) 的自簽章憑證，並且在 VPN Server 上註冊。
-CMD_ServerCertRegenerate_Help	您可以使用此命令，將當前 VPN Server 上的證書替換成一個新的、有 CN (Common Name) 值欄位的、自簽字證書。n\n此命令在您想使用 Microsoft SSTP VPN 克隆伺服器功能時很方便。因為在 VPN Server 上 SSL 證書的 CN 值必須要與 SSTP VPN Client 指定的主機名稱吻合。\n詳情參見 SstpEnable 命令的幫助。\n\n本命令會刪除 VPN Server 上現有的 SSL 證書。這要求事先使用 ServerKeyGet 命令備份當前的 SSL 證書和金鑰。\n\n要執行此命令，您必須具有 VPN Server 管理員許可權。\n該命令在 VPN Bridge 上不能運行。\n以集群成員運行的 VPN Server 的虛擬 HUB 不能執行此命令。
+CMD_ServerCertRegenerate_Help	您可以使用此命令，將當前 VPN Server 上的證書替換成一個新的、有 CN (Common Name) 值欄位的、自簽字證書。n\n此命令在您想使用 Microsoft SSTP VPN 克隆伺服器功能時很方便。因為在 VPN Server 上 SSL 證書的 CN 值必須要與 SSTP VPN Client 指定的主機名稱吻合。\n\n本命令會刪除 VPN Server 上現有的 SSL 證書。這要求事先使用 ServerKeyGet 命令備份當前的 SSL 證書和金鑰。\n\n要執行此命令，您必須具有 VPN Server 管理員許可權。\n該命令在 VPN Bridge 上不能運行。\n以集群成員運行的 VPN Server 的虛擬 HUB 不能執行此命令。
 CMD_ServerCertRegenerate_Args	ServerCertRegenerate [CN]
 CMD_ServerCertRegenerate_[CN]	指定一個新證書要使用的 Common Name(CN)
 CMD_ServerCertRegenerate_Prompt_CN	Common Name(CN)值：
@@ -6623,6 +6722,35 @@ CMD_AccountCompressDisable_Args	AccountCompressDisable [name]
 CMD_AccountCompressDisable_[name]	指定要更改設置的連接設置名。
 
 
+# AccountHttpHeader* commands
+CMD_AccountHttpHeader_Prompt_Name	Value name (part before the colon): 
+CMD_AccountHttpHeader_Prompt_Data	Value data (part after the colon): 
+
+
+# AccountHttpHeaderAdd command
+CMD_AccountHttpHeaderAdd	Add a custom value in the HTTP header sent to the proxy server
+CMD_AccountHttpHeaderAdd_Help	Use this to add a custom value in the HTTP header sent to the proxy server. A custom HTTP header can be used to bypass certain restrictions imposed on the network or to avoid speed limitations applied by the QoS.
+CMD_AccountHttpHeaderAdd_Args	AccountHttpHeaderAdd [name] [/NAME:name] [/DATA:data]
+CMD_AccountHttpHeaderAdd_[name]	Specify the name of the VPN Connection Setting whose setting you want to change.
+CMD_AccountHttpHeaderAdd_NAME	Specify the name of the custom value (the part before the colon character).
+CMD_AccountHttpHeaderAdd_DATA	Specify the data of the custom value (the part after the colon character).
+
+
+# AccountHttpHeaderDelete command
+CMD_AccountHttpHeaderDelete	Delete a custom value in the HTTP header sent to the proxy server
+CMD_AccountHttpHeaderDelete_Help	Use this to delete a custom value in the HTTP header sent to the proxy server. A custom HTTP header can be used to bypass certain restrictions imposed on the network or to avoid speed limitations applied by the QoS.
+CMD_AccountHttpHeaderDelete_Args	AccountHttpHeaderDelete [name] [/NAME:name]
+CMD_AccountHttpHeaderDelete_[name]	Specify the name of the VPN Connection Setting whose setting you want to change.
+CMD_AccountHttpHeaderDelete_NAME	Specify the name of the custom value (the part before the colon character).
+
+
+# AccountHttpHeaderGet command
+CMD_AccountHttpHeaderGet	Get the list of custom values in the HTTP header sent to the proxy server
+CMD_AccountHttpHeaderGet_Help	Use this to get the list of custom values in the HTTP header sent to the proxy server. A custom HTTP header can be used to bypass certain restrictions imposed on the network or to avoid speed limitations applied by the QoS.
+CMD_AccountHttpHeaderGet_Args	AccountHttpHeaderGet [name]
+CMD_AccountHttpHeaderGet_[name]	Specify the name of the VPN Connection Setting whose setting you want to get.
+
+
 # AccountProxyNone 命令
 CMD_AccountProxyNone		將連接設置的連接方法直接設置為 TCP/IP 連接
 CMD_AccountProxyNone_Help	當指定註冊到 VPN Client 的連接設置，將其連接設置與 VPN Server 間進行 VPN 連接時使用的連接方法設置為 [直接 TCP/IP連接]，不通過代理伺服器。
@@ -6683,9 +6811,9 @@ CMD_AccountRetryOnServerCertEnable_[name]	Specify the name of the VPN Connection
 
 
 # AccountRetryOnServerCertDisable command
-CMD_AccountRetryOnServerCertDisable	Enable VPN connection retry if server certificate is invalid
+CMD_AccountRetryOnServerCertDisable	Disable VPN connection retry if server certificate is invalid
 CMD_AccountRetryOnServerCertDisable_Help	When a VPN Connection Setting registered on the VPN Client is specified and that VPN Connection Setting connects to a VPN Server, use this to disable the option to retry connection if Server certificate cannot be trusted.
-CMD_AccountRetryOnServerCertDisable_Args	AccountRetryOnServerCertEnable [name]
+CMD_AccountRetryOnServerCertDisable_Args	AccountRetryOnServerCertDisable [name]
 CMD_AccountRetryOnServerCertDisable_[name]	Specify the name of the VPN Connection Setting whose setting you want to change.
 
 
@@ -6803,6 +6931,11 @@ CMD_AccountSecureCertSet_PROMPT_CERTNAME	智慧卡證書對象名:
 CMD_AccountSecureCertSet_PROMPT_KEYNAME	智慧卡私匙對象名: 
 
 
+# PcAccountOpensslEngineCertSet
+CMD_AccountOpensslCertSet_PROMPT_KEYNAME Specify the openssl engine specific key name: 
+CMD_AccountOpensslCertSet_PROMPT_ENGINENAME Specify the openssl engine name: 
+
+
 # AccountRetrySet 命令
 CMD_AccountRetrySet			設置連接設置的連接失敗或斷開時建立重新連接的次數和間隔
 CMD_AccountRetrySet_Help	指定註冊到 VPN Client 的連接設置，且其連接設置試圖連接到 VPN Server 時，還有連接中的與 VPN Server 的通信被斷開或連接失敗時，指定連接的重試次數和連接重試的間隔。\n而且，如果用戶認證類型為 [智慧卡認證] 時，不管連接重試次數如何設置，都將不進行連接重試。
@@ -6870,6 +7003,23 @@ CMD_RemoteDisable_Args		RemoteDisable
 # 下面這是VPN工具用的指令                         #
 #                                                 #
 ###################################################
+
+
+# GenX25519 命令
+CMD_GenX25519				Create new X25519 keypair
+CMD_GenX25519_Help			Use this to create a new X25519 keypair, which can be used for WireGuard. \nBoth the private and public key will be shown. \nThe public key can be shared and is used to identify a peer. \nAlso, it can always be retrieved from the private key using the GetPublicX25519 command. \nThe private key should be kept in a secure place and never be shared. \nIt cannot be recovered once lost.
+CMD_GenX25519_ARGS			GenX25519
+CMD_GenX25519_PRIVATE_KEY	Private key: 
+CMD_GenX25519_PUBLIC_KEY	Public key: 
+
+
+# GetPublicX25519 命令
+CMD_GetPublicX25519				Retrieve public X25519 key from a private one
+CMD_GetPublicX25519_Help		Use this if you have a private X25519 key and want to get its corresponding public key.
+CMD_GetPublicX25519_ARGS    	GetPublicX25519 [private]
+CMD_GetPublicX25519_[private]	The private X25519 key you want to get the corresponding public key of.
+CMD_GetPublicX25519_PRIVATE_KEY	Private key: 
+CMD_GetPublicX25519_PUBLIC_KEY	Public key: 
 
 
 # MakeCert 命令
@@ -7008,7 +7158,7 @@ CMD_Check_Args				Check
 
 # 關於系統 checker
 # (包含著一部分奇怪的字串,不過，是檢測字元編碼變換用的)
-CHECK_TITLE					---------------------------------------------------\nSoftEther VPN 運行環境檢查工具\nDeveloper Edition\n\nCopyright (c) SoftEther VPN Project.\nAll Rights Reserved.\n\n
+CHECK_TITLE					---------------------------------------------------\nSoftEther VPN 運行環境檢查工具\nDeveloper Edition\n\nCopyright (c) all contributors on SoftEther VPN project in GitHub.\nCopyright (c) Daiyuu Nobori, SoftEther Project at University of Tsukuba, and SoftEther Corporation.\nAll Rights Reserved.\n\n
 CHECK_NOTE					如果運行了此運行環境檢測工具的系統通過了測試，SoftEther VPN 軟體有較高的運行可能性。檢測可能需要一定的時間。請稍候...\n\n
 CHECK_EXEC_TAG				'%s' 的檢測中...\n
 CHECK_PASS					[合格] ○
@@ -7073,6 +7223,7 @@ SW_WEB2_TITLE						指定資料夾
 SW_UNINSTALLINFO_URL					http://selinks.org/
 SW_UNINSTALLINFO_PUBLISHER				SoftEther VPN Project
 
+SW_KB3033929_REQUIRED						In Windows 7 and Windows Server 2008 R2, some SoftEther VPN functions require the Microsoft's Windows Update module KB3033929 installed.\r\n\r\nIf KB3033929 is not installed in your Windows, please install it from Windows Update or Microsoft website before installing SoftEther VPN.
 
 SW_COMPONENTS_ABOUT_TAG				關於 %s
 SW_COMPONENTS_REQUIRE_ADMIN			安裝需要管理員許可權
@@ -7091,7 +7242,6 @@ SW_DIR_DST_IS_SYSTEM_MODE			同樣的軟體已經在指定目錄中以系統模�
 SW_DIR_DST_IS_USER_MODE				同樣的軟體已經在指定目錄中以使用者模式安裝。\r\n\r\n請指定另外一個目錄。
 SW_SYSTEM_MODE_ALREADY_INSTALLED	本軟體 "%s" 以系統模式被安裝在這台電腦上。\r\n\r\n同樣的軟體以使用者模式和系統模式安裝在同一台電腦上會發生衝突。\r\n\r\n您確定要以使用者模式繼續進行安裝？
 
-SW_NOT_INSTALL_SRC					安裝程式已在一個外部的安裝源執行。\r\n\r\n不能再繼續安裝。
 SW_SETUPLOG_CORRUPTED				"setuplog.dat" 檔已被破壞。
 SW_MSI_UNINSTALL_FAILED				之前的版本 %s (產品號: "%S")已安裝。 Windows安裝工具移除舊版本失敗。\r\n\r\n請您手動移除並且重啟本安裝工具。
 SW_MSI_UNINSTALL_REBOOT_REQUIRED	Windows 安裝工具已經移除舊版本 %s。請重啟電腦。\r\n\r\n點擊結束按鈕並且手動重啟電腦，然後在電腦重啟後，重啟本安裝工具。

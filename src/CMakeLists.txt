@@ -1,34 +1,56 @@
 if(UNIX)
   # Creates wrapper scripts and installs them in the user's binaries directory, which is usually "/usr/local/bin".
   # This is required because symlinks use the folder they are in as working directory.
-  macro(install_wrapper_script component target)
-    get_filename_component(file_name ${target} NAME)
+  #
+  # The actual wrapper script needs to be generated at install time, not build time, because it depends on the
+  # installation prefix. This is especially important when generating packages (rpm/deb) where the prefix is
+  # changed from /usr to /usr/local for the install step.
+  #
+  # The placeholder is needed to satisfy the "install" dependency scanner which runs early.
+  #
+  macro(install_wrapper_script component)
+    file(GENERATE OUTPUT ${BUILD_DIRECTORY}/${component}.sh
+      CONTENT "# placeholder\n"
+    )
 
-    file(WRITE ${CMAKE_SOURCE_DIR}/tmp/script/${file_name} "#!/bin/sh\n")
-    file(APPEND ${CMAKE_SOURCE_DIR}/tmp/script/${file_name} "${target} \"$@\"\n")
-    file(APPEND ${CMAKE_SOURCE_DIR}/tmp/script/${file_name} "exit $?\n")
+    install(CODE "file(WRITE ${BUILD_DIRECTORY}/${component}.sh \"#!/bin/sh\nexec \${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBEXECDIR}/softether/${component}/${component} \\\"$@\\\"\n\")"
+     COMPONENT ${component}
+    )
 
-    install(FILES ${CMAKE_SOURCE_DIR}/tmp/script/${file_name}
+    install(PROGRAMS ${BUILD_DIRECTORY}/${component}.sh
       COMPONENT ${component}
-      DESTINATION ${CMAKE_INSTALL_FULL_BINDIR}
-      PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+      DESTINATION bin
+      RENAME ${component}
     )
   endmacro(install_wrapper_script)
+
+  # Same approach for systemd unit files
+  #
+  macro(install_unit_file component)
+    file(GENERATE OUTPUT ${BUILD_DIRECTORY}/softether-${component}.service
+      CONTENT "# placeholder\n"
+    )
+
+    install(CODE "set(DIR \"\${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBEXECDIR}\")\nconfigure_file(${TOP_DIRECTORY}/systemd/softether-${component}.service ${BUILD_DIRECTORY}/softether-${component}.service)"
+      COMPONENT ${component}
+    )
+
+    install(FILES ${BUILD_DIRECTORY}/softether-${component}.service
+      COMPONENT ${component}
+      DESTINATION ${CMAKE_INSTALL_SYSTEMD_UNITDIR}
+      PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
+    )
+  endmacro(install_unit_file)
 endif()
 
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+if(BUILD_TYPE STREQUAL "Debug")
   add_definitions(-D_DEBUG -DDEBUG)
-endif()
-
-if(CMAKE_BUILD_TYPE STREQUAL "Release")
+else()
   add_definitions(-DNDEBUG -DVPN_SPEED)
 endif()
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-  set(COMPILER_ARCHITECTURE "x64")
   add_definitions(-DCPU_64)
-else()
-  set(COMPILER_ARCHITECTURE "x86")
 endif()
 
 add_definitions(-D_REENTRANT -DREENTRANT -D_THREAD_SAFE -D_THREADSAFE -DTHREAD_SAFE -DTHREADSAFE -D_FILE_OFFSET_BITS=64)
@@ -37,7 +59,22 @@ add_definitions(-D_REENTRANT -DREENTRANT -D_THREAD_SAFE -D_THREADSAFE -DTHREAD_S
 include_directories(.)
 
 if(WIN32)
-  add_definitions(-DWIN32 -D_WINDOWS -D_CRT_SECURE_NO_WARNINGS)
+  add_definitions(-DWIN32 -D_WINDOWS -DOS_WIN32 -D_CRT_SECURE_NO_WARNINGS)
+
+  #
+  # https://msrc-blog.microsoft.com/2020/08/17/control-flow-guard-for-clang-llvm-and-rust/
+  #
+
+  message("Setting CONTROL FLOW GUARD") 
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /guard:cf")
+  set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} /guard:cf /DYNAMICBASE")
+
+  message("Setting QSPECTRE")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Qspectre")
+
+  message("Setting CETCOMPAT")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /CETCOMPAT")
+
 endif()
 
 if(UNIX)
@@ -45,7 +82,7 @@ if(UNIX)
   set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g")
   set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O2")
 
-  add_definitions(-DUNIX)
+  add_definitions(-DUNIX -DOS_UNIX)
 
   if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     add_definitions(-DUNIX_LINUX)
@@ -73,6 +110,23 @@ if(UNIX)
   if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
     add_definitions(-DUNIX_BSD -DUNIX_MACOS -DBRIDGE_PCAP)
   endif()
+
+  # custom db, log, pid directory for Unix
+  set(SE_DBDIR "" CACHE STRING "Directory where config files are saved")
+  set(SE_LOGDIR "" CACHE STRING "Directory where log files are written")
+  set(SE_PIDDIR "" CACHE STRING "Directory where PID files are put")
+
+  if(SE_DBDIR)
+    add_definitions(-DSE_DBDIR="${SE_DBDIR}")
+  endif()
+
+  if(SE_LOGDIR)
+    add_definitions(-DSE_LOGDIR="${SE_LOGDIR}")
+  endif()
+
+  if(SE_PIDDIR)
+    add_definitions(-DSE_PIDDIR="${SE_PIDDIR}")
+  endif()
 endif()
 
 # Cedar communication module
@@ -80,9 +134,6 @@ add_subdirectory(Cedar)
 
 # Mayaqua kernel
 add_subdirectory(Mayaqua)
-
-# hamcorebuilder utility
-add_subdirectory(hamcorebuilder)
 
 # vpnserver
 add_subdirectory(vpnserver)
@@ -99,12 +150,24 @@ add_subdirectory(vpncmd)
 # vpntest
 add_subdirectory(vpntest)
 
+# libhamcore
+add_subdirectory(libhamcore)
+
+# hamcorebuilder utility
+add_subdirectory(hamcorebuilder)
+
 # hamcore.se2 archive file
 add_custom_target(hamcore-archive-build
   ALL
-  COMMAND hamcorebuilder "${CMAKE_SOURCE_DIR}/src/bin/hamcore/" "${BUILD_DIRECTORY}/hamcore.se2"
-  DEPENDS hamcorebuilder
+  DEPENDS "${BUILD_DIRECTORY}/hamcore.se2"
+)
+
+add_custom_command(
   COMMENT "Building hamcore.se2 archive file..."
+  COMMAND hamcorebuilder "hamcore.se2" "${TOP_DIRECTORY}/src/bin/hamcore"
+  DEPENDS hamcorebuilder "${TOP_DIRECTORY}/src/bin/hamcore/"
+  OUTPUT "${BUILD_DIRECTORY}/hamcore.se2"
+  WORKING_DIRECTORY "${BUILD_DIRECTORY}"
   VERBATIM
 )
 
@@ -113,11 +176,18 @@ if(WIN32)
   add_subdirectory(PenCore)
   add_dependencies(hamcore-archive-build PenCore)
 
+  # vpndrvinst
+  add_subdirectory(vpndrvinst)
+  add_dependencies(hamcore-archive-build vpndrvinst)
+
   # vpnsmgr
   add_subdirectory(vpnsmgr)
 
   # vpncmgr
   add_subdirectory(vpncmgr)
+
+  # vpnsetup
+  add_subdirectory(vpnsetup)
 endif()
 
 if(UNIX)

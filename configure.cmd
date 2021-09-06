@@ -3,31 +3,28 @@
 echo ---------------------------------------------------------------------
 echo SoftEther VPN for Windows
 echo.
-echo Copyright (c) SoftEther VPN Project at University of Tsukuba, Japan.
-echo Copyright (c) Daiyuu Nobori. All Rights Reserved.
+echo Copyright (c) all contributors on SoftEther VPN project in GitHub.
+echo Copyright (c) Daiyuu Nobori, SoftEther Project at University of Tsukuba, and SoftEther Corporation.
 echo.
-echo This program is free software; you can redistribute it and/or
-echo modify it under the terms of the GNU General Public License
-echo version 2 as published by the Free Software Foundation.
-echo.
-echo Read and understand README.TXT, LICENSE.TXT and WARNING.TXT before use.
+echo Read and understand README, LICENSE and WARNING before use.
 echo ---------------------------------------------------------------------
 echo.
 
 echo Welcome to the corner-cutting configure script !
 echo.
 
-if not exist "tmp" (
-	mkdir tmp
+if not exist "build" (
+	mkdir build
 )
 
-cd tmp
+cd build
 
-cmake -DCMAKE_BUILD_TYPE=Release -G "NMake Makefiles" ..
+cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -G "NMake Makefiles" ..
 
 if %errorlevel% == 0 (
 	echo.
 	echo The Makefile is generated. Run 'nmake' to build SoftEther VPN.
 ) else (
 	cd ..
+	exit /b 1
 )

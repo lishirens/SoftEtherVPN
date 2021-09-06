@@ -1,111 +1,5 @@
 // SoftEther VPN Source Code - Developer Edition Master Branch
 // Mayaqua Kernel
-// 
-// SoftEther VPN Server, Client and Bridge are free software under GPLv2.
-// 
-// Copyright (c) Daiyuu Nobori.
-// Copyright (c) SoftEther VPN Project, University of Tsukuba, Japan.
-// Copyright (c) SoftEther Corporation.
-// 
-// All Rights Reserved.
-// 
-// http://www.softether.org/
-// 
-// Author: Daiyuu Nobori, Ph.D.
-// Comments: Tetsuo Sugiyama, Ph.D.
-// 
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// version 2 as published by the Free Software Foundation.
-// 
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License version 2
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-// CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-// SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-// 
-// THE LICENSE AGREEMENT IS ATTACHED ON THE SOURCE-CODE PACKAGE
-// AS "LICENSE.TXT" FILE. READ THE TEXT FILE IN ADVANCE TO USE THE SOFTWARE.
-// 
-// 
-// THIS SOFTWARE IS DEVELOPED IN JAPAN, AND DISTRIBUTED FROM JAPAN,
-// UNDER JAPANESE LAWS. YOU MUST AGREE IN ADVANCE TO USE, COPY, MODIFY,
-// MERGE, PUBLISH, DISTRIBUTE, SUBLICENSE, AND/OR SELL COPIES OF THIS
-// SOFTWARE, THAT ANY JURIDICAL DISPUTES WHICH ARE CONCERNED TO THIS
-// SOFTWARE OR ITS CONTENTS, AGAINST US (SOFTETHER PROJECT, SOFTETHER
-// CORPORATION, DAIYUU NOBORI OR OTHER SUPPLIERS), OR ANY JURIDICAL
-// DISPUTES AGAINST US WHICH ARE CAUSED BY ANY KIND OF USING, COPYING,
-// MODIFYING, MERGING, PUBLISHING, DISTRIBUTING, SUBLICENSING, AND/OR
-// SELLING COPIES OF THIS SOFTWARE SHALL BE REGARDED AS BE CONSTRUED AND
-// CONTROLLED BY JAPANESE LAWS, AND YOU MUST FURTHER CONSENT TO
-// EXCLUSIVE JURISDICTION AND VENUE IN THE COURTS SITTING IN TOKYO,
-// JAPAN. YOU MUST WAIVE ALL DEFENSES OF LACK OF PERSONAL JURISDICTION
-// AND FORUM NON CONVENIENS. PROCESS MAY BE SERVED ON EITHER PARTY IN
-// THE MANNER AUTHORIZED BY APPLICABLE LAW OR COURT RULE.
-// 
-// USE ONLY IN JAPAN. DO NOT USE THIS SOFTWARE IN ANOTHER COUNTRY UNLESS
-// YOU HAVE A CONFIRMATION THAT THIS SOFTWARE DOES NOT VIOLATE ANY
-// CRIMINAL LAWS OR CIVIL RIGHTS IN THAT PARTICULAR COUNTRY. USING THIS
-// SOFTWARE IN OTHER COUNTRIES IS COMPLETELY AT YOUR OWN RISK. THE
-// SOFTETHER VPN PROJECT HAS DEVELOPED AND DISTRIBUTED THIS SOFTWARE TO
-// COMPLY ONLY WITH THE JAPANESE LAWS AND EXISTING CIVIL RIGHTS INCLUDING
-// PATENTS WHICH ARE SUBJECTS APPLY IN JAPAN. OTHER COUNTRIES' LAWS OR
-// CIVIL RIGHTS ARE NONE OF OUR CONCERNS NOR RESPONSIBILITIES. WE HAVE
-// NEVER INVESTIGATED ANY CRIMINAL REGULATIONS, CIVIL LAWS OR
-// INTELLECTUAL PROPERTY RIGHTS INCLUDING PATENTS IN ANY OF OTHER 200+
-// COUNTRIES AND TERRITORIES. BY NATURE, THERE ARE 200+ REGIONS IN THE
-// WORLD, WITH DIFFERENT LAWS. IT IS IMPOSSIBLE TO VERIFY EVERY
-// COUNTRIES' LAWS, REGULATIONS AND CIVIL RIGHTS TO MAKE THE SOFTWARE
-// COMPLY WITH ALL COUNTRIES' LAWS BY THE PROJECT. EVEN IF YOU WILL BE
-// SUED BY A PRIVATE ENTITY OR BE DAMAGED BY A PUBLIC SERVANT IN YOUR
-// COUNTRY, THE DEVELOPERS OF THIS SOFTWARE WILL NEVER BE LIABLE TO
-// RECOVER OR COMPENSATE SUCH DAMAGES, CRIMINAL OR CIVIL
-// RESPONSIBILITIES. NOTE THAT THIS LINE IS NOT LICENSE RESTRICTION BUT
-// JUST A STATEMENT FOR WARNING AND DISCLAIMER.
-// 
-// 
-// SOURCE CODE CONTRIBUTION
-// ------------------------
-// 
-// Your contribution to SoftEther VPN Project is much appreciated.
-// Please send patches to us through GitHub.
-// Read the SoftEther VPN Patch Acceptance Policy in advance:
-// http://www.softether.org/5-download/src/9.patch
-// 
-// 
-// DEAR SECURITY EXPERTS
-// ---------------------
-// 
-// If you find a bug or a security vulnerability please kindly inform us
-// about the problem immediately so that we can fix the security problem
-// to protect a lot of users around the world as soon as possible.
-// 
-// Our e-mail address for security reports is:
-// softether-vpn-security [at] softether.org
-// 
-// Please note that the above e-mail address is not a technical support
-// inquiry address. If you need technical assistance, please visit
-// http://www.softether.org/ and ask your question on the users forum.
-// 
-// Thank you for your cooperation.
-// 
-// 
-// NO MEMORY OR RESOURCE LEAKS
-// ---------------------------
-// 
-// The memory-leaks and resource-leaks verification under the stress
-// test has been passed before release this source code.
 
 
 // MayaType.h
@@ -114,26 +8,28 @@
 #ifndef	MAYATYPE_H
 #define	MAYATYPE_H
 
-// Check whether the windows.h header is included
-#ifndef	WINDOWS_H
-#ifdef	_WINDOWS_
-#define	WINDOWS_H
-#endif	// _WINDOWS_
-#endif	// WINDOWS_H
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
 
+#ifdef OS_WIN32
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
 
-#if	!defined(ENCRYPT_C) && !defined(HAM_C)
-// Structure which is used by OpenSSL
-typedef struct x509_st X509;
-typedef struct evp_pkey_st EVP_PKEY;
-typedef struct bio_st BIO;
-typedef struct ssl_st SSL;
-typedef struct ssl_ctx_st SSL_CTX;
-typedef struct X509_req_st X509_REQ;
-typedef struct PKCS12 PKCS12;
-typedef struct bignum_st BIGNUM;
-typedef struct x509_crl_st X509_CRL;
-#endif	// ENCRYPT_C
+#ifndef NTDDI_VERSION
+#define	NTDDI_VERSION NTDDI_VISTA
+#endif
+
+#ifndef _WIN32_WINNT
+#define _WIN32_WINNT _WIN32_WINNT_VISTA
+#endif
+
+#include <WinSock2.h>
+#include <ws2ipdef.h>
+#else
+#include <unistd.h>
+#endif
 
 // 
 // Constant
@@ -145,10 +41,10 @@ typedef struct x509_crl_st X509_CRL;
 #define	BUF_SIZE			512
 
 // Support Windows OS list
-#define	SUPPORTED_WINDOWS_LIST		"Windows 98 / 98 SE / ME / NT 4.0 SP6a / 2000 SP4 / XP SP2, SP3 / Vista SP1, SP2 / 7 SP1 / 8 / 8.1 / 10 / Server 2003 SP2 / Server 2008 SP1, SP2 / Hyper-V Server 2008 / Server 2008 R2 SP1 / Hyper-V Server 2008 R2 / Server 2012 / Hyper-V Server 2012 / Server 2012 R2 / Hyper-V Server 2012 R2 / Server 2016"
+#define	SUPPORTED_WINDOWS_LIST		"Windows 98 / 98 SE / ME / NT 4.0 SP6a / 2000 SP4 / XP SP2, SP3 / Vista SP1, SP2 / 7 SP1 / 8 / 8.1 / 10 / Server 2003 SP2 / Server 2008 SP1, SP2 / Hyper-V Server 2008 / Server 2008 R2 SP1 / Hyper-V Server 2008 R2 / Server 2012 / Hyper-V Server 2012 / Server 2012 R2 / Hyper-V Server 2012 R2 / Server 2016 / Server 2019"
 
 // Infinite
-#ifndef	WINDOWS_H
+#ifndef	INFINITE
 #define	INFINITE			(0xFFFFFFFF)
 #endif
 
@@ -157,7 +53,7 @@ typedef struct x509_crl_st X509_CRL;
 #define	SRC_LINE			__LINE__	// Line number in the source code
 
 // Maximum path size
-#ifndef	WINDOWS_H
+#ifndef	MAX_PATH
 #define	MAX_PATH			260
 #endif	// WINDOWS_H
 
@@ -263,78 +159,30 @@ typedef int (COMPARE)(void *p1, void *p2);
 #define	WRITE_UINT(buf, i)		(((UCHAR *)(buf))[0]) = ((((UINT)(i)) >> 24) & 0xFF); (((UCHAR *)(buf))[1]) = ((((UINT)(i)) >> 16) & 0xFF); (((UCHAR *)(buf))[2]) = ((((UINT)(i)) >> 8) & 0xFF); (((UCHAR *)(buf))[3]) = ((((UINT)(i))) & 0xFF)
 #define	WRITE_UINT64(buf, i)	(((UCHAR *)(buf))[0]) = ((((UINT64)(i)) >> 56) & 0xFF); (((UCHAR *)(buf))[1]) = ((((UINT64)(i)) >> 48) & 0xFF); (((UCHAR *)(buf))[2]) = ((((UINT64)(i)) >> 40) & 0xFF); (((UCHAR *)(buf))[3]) = ((((UINT64)(i)) >> 32) & 0xFF); (((UCHAR *)(buf))[4]) = ((((UINT64)(i)) >> 24) & 0xFF); (((UCHAR *)(buf))[5]) = ((((UINT64)(i)) >> 16) & 0xFF); (((UCHAR *)(buf))[6]) = ((((UINT64)(i)) >> 8) & 0xFF); (((UCHAR *)(buf))[7]) = ((((UINT64)(i))) & 0xFF)
 
-
-
 // 
 // Type declaration
 // 
+typedef int64_t time_64t;
 
-// PID type
-#ifdef OS_UNIX
-typedef int PID;
-#endif // OS_UNIX
 #ifdef OS_WIN32
-typedef unsigned long PID;
-#endif // WINDOWS_H
+typedef uint32_t PID;
+#else
+typedef int32_t  INT;
+typedef int64_t  INT64;
 
-// bool type
-#ifndef	WINDOWS_H
-typedef	unsigned int		BOOL;
-#define	TRUE				1
-#define	FALSE				0
-#endif	// WINDOWS_H
+typedef uint32_t UINT;
+typedef uint64_t UINT64;
 
-// bool type
-#ifndef	WIN32COM_CPP
-typedef	unsigned int		bool;
-#define	true				1
-#define	false				0
-#endif	// WIN32COM_CPP
+typedef uint8_t  BYTE;
+typedef uint8_t  UCHAR;
+typedef uint16_t USHORT;
 
-// 32bit integer type
-#ifndef	WINDOWS_H
-typedef	unsigned int		UINT;
-typedef	unsigned int		UINT32;
-typedef	unsigned int		DWORD;
-typedef	signed int			INT;
-typedef	signed int			INT32;
+typedef int SOCKET;
+typedef pid_t PID;
 
-typedef	int					UINT_PTR;
-typedef	long				LONG_PTR;
-
-#endif
-
-// 16bit integer type
-typedef	unsigned short		WORD;
-typedef	unsigned short		USHORT;
-typedef	signed short		SHORT;
-
-// 8bit integer type
-typedef	unsigned char		BYTE;
-typedef	unsigned char		UCHAR;
-
-#ifndef	WIN32COM_CPP
-typedef signed char			CHAR;
-#endif	// WIN32COM_CPP
-
-
-// 64-bit integer type
-typedef	unsigned long long	UINT64;
-typedef signed long long	INT64;
-
-typedef signed long long	time_64t;
-
-#ifdef	OS_UNIX
-// Avoiding compile error
 #define	__cdecl
 #define	__declspec(x)
-// socket type
-typedef	int SOCKET;
-#else	// OS_UNIX
-#ifndef	_WINSOCK2API_
-typedef UINT_PTR SOCKET;
-#endif	// _WINSOCK2API_
-#endif	// OS_UNIX
+#endif
 
 // OS type
 #define	OSTYPE_WINDOWS_95						1100	// Windows 95
@@ -383,11 +231,9 @@ typedef UINT_PTR SOCKET;
 
 // OS discrimination macro
 #define	GET_KETA(t, i)			(((t) % (i * 10)) / i)
-#define	OS_IS_WINDOWS_9X(t)		(GET_KETA(t, 1000) == 1)
-#define	OS_IS_WINDOWS_NT(t)		(GET_KETA(t, 1000) == 2)
-#define	OS_IS_WINDOWS(t)		(OS_IS_WINDOWS_9X(t) || OS_IS_WINDOWS_NT(t))
-#define	OS_IS_SERVER(t)			(OS_IS_WINDOWS_NT(t) && GET_KETA(t, 10))
-#define	OS_IS_WORKSTATION(t)	((OS_IS_WINDOWS_NT(t) && (!(GET_KETA(t, 10)))) || OS_IS_WINDOWS_9X(t))
+#define	OS_IS_WINDOWS(t)		((GET_KETA(t, 1000) == 1) || (GET_KETA(t, 1000) == 2))
+#define	OS_IS_SERVER(t)			(OS_IS_WINDOWS(t) && GET_KETA(t, 10))
+#define	OS_IS_WORKSTATION(t)	(OS_IS_WINDOWS(t) && !(GET_KETA(t, 10))
 #define	OS_IS_UNIX(t)			(GET_KETA(t, 1000) == 3)
 
 
@@ -405,20 +251,19 @@ typedef struct OS_INFO
 } OS_INFO;
 
 // Time type
-#ifndef	WINDOWS_H
+#ifndef	OS_WIN32
 typedef struct SYSTEMTIME
 {
-	WORD wYear;
-	WORD wMonth;
-	WORD wDayOfWeek;
-	WORD wDay;
-	WORD wHour;
-	WORD wMinute;
-	WORD wSecond;
-	WORD wMilliseconds;
+	USHORT wYear;
+	USHORT wMonth;
+	USHORT wDayOfWeek;
+	USHORT wDay;
+	USHORT wHour;
+	USHORT wMinute;
+	USHORT wSecond;
+	USHORT wMilliseconds;
 } SYSTEMTIME;
 #endif	// WINDOWS_H
-
 
 // Object.h
 typedef struct LOCK LOCK;
@@ -453,6 +298,9 @@ typedef struct PRAND PRAND;
 // Str.h
 typedef struct TOKEN_LIST TOKEN_LIST;
 typedef struct INI_ENTRY INI_ENTRY;
+typedef struct JSON_OBJECT JSON_OBJECT;
+typedef struct JSON_ARRAY  JSON_ARRAY;
+typedef struct JSON_VALUE  JSON_VALUE;
 
 // Internat.h
 typedef struct UNI_TOKEN_LIST UNI_TOKEN_LIST;
@@ -489,6 +337,8 @@ typedef struct INSTANCE INSTANCE;
 typedef struct VALUE VALUE;
 typedef struct ELEMENT ELEMENT;
 typedef struct PACK PACK;
+typedef struct JSONPACKHINT JSONPACKHINT;
+typedef struct JSONPACKHINT_ITEM JSONPACKHINT_ITEM;
 
 // Cfg.h
 typedef struct FOLDER FOLDER;
@@ -502,7 +352,6 @@ typedef struct LANGLIST LANGLIST;
 
 // Network.h
 typedef struct IP IP;
-typedef struct DNSCACHE DNSCACHE;
 typedef struct SOCK_EVENT SOCK_EVENT;
 typedef struct SOCK SOCK;
 typedef struct SOCKSET SOCKSET;
@@ -512,7 +361,6 @@ typedef struct ROUTE_TABLE ROUTE_TABLE;
 typedef struct IP_CLIENT IP_CLIENT;
 typedef struct ROUTE_CHANGE ROUTE_CHANGE;
 typedef struct ROUTE_CHANGE_DATA ROUTE_CHANGE_DATA;
-typedef struct GETIP_THREAD_PARAM GETIP_THREAD_PARAM;
 typedef struct WIN32_RELEASEADDRESS_THREAD_PARAM WIN32_RELEASEADDRESS_THREAD_PARAM;
 typedef struct IPV6_ADDR IPV6_ADDR;
 typedef struct TUBE TUBE;
@@ -522,6 +370,7 @@ typedef struct TUBEPAIR_DATA TUBEPAIR_DATA;
 typedef struct UDPLISTENER UDPLISTENER;
 typedef struct UDPLISTENER_SOCK UDPLISTENER_SOCK;
 typedef struct UDPPACKET UDPPACKET;
+typedef struct TCP_RAW_DATA TCP_RAW_DATA;
 typedef struct INTERRUPT_MANAGER INTERRUPT_MANAGER;
 typedef struct TUBE_FLUSH_LIST TUBE_FLUSH_LIST;
 typedef struct ICMP_RESULT ICMP_RESULT;
@@ -536,8 +385,6 @@ typedef struct TCP_PAIR_HEADER TCP_PAIR_HEADER;
 typedef struct NIC_ENTRY NIC_ENTRY;
 typedef struct HTTP_VALUE HTTP_VALUE;
 typedef struct HTTP_HEADER HTTP_HEADER;
-typedef struct DNSPROXY_CLIENT DNSPROXY_CLIENT;
-typedef struct DNSPROXY_CACHE DNSPROXY_CACHE;
 typedef struct QUERYIPTHREAD QUERYIPTHREAD;
 typedef struct IPBLOCK IPBLOCK;
 typedef struct SAFE_REQUEST SAFE_REQUEST;
@@ -563,7 +410,6 @@ typedef struct ZIP_DIR_HEADER ZIP_DIR_HEADER;
 typedef struct ZIP_END_HEADER ZIP_END_HEADER;
 typedef struct ZIP_FILE ZIP_FILE;
 typedef struct ZIP_PACKER ZIP_PACKER;
-typedef struct ENUM_DIR_WITH_SUB_DATA ENUM_DIR_WITH_SUB_DATA;
 
 // TcpIp.h
 typedef struct MAC_HEADER MAC_HEADER;
@@ -607,7 +453,19 @@ typedef struct DHCP_MODIFY_OPTION DHCP_MODIFY_OPTION;
 typedef struct NBTDG_HEADER NBTDG_HEADER;
 typedef struct IKE_HEADER IKE_HEADER;
 
+// HTTP.h
+typedef struct HTTP_MIME_TYPE HTTP_MIME_TYPE;
 
+// Proxy.h
+typedef struct PROXY_PARAM_IN PROXY_PARAM_IN;
+typedef struct PROXY_PARAM_OUT PROXY_PARAM_OUT;
+
+// DNS.h
+typedef struct DNS_CACHE DNS_CACHE;
+typedef struct DNS_CACHE_REVERSE DNS_CACHE_REVERSE;
+typedef struct DNS_RESOLVER DNS_RESOLVER;
+typedef struct DNS_RESOLVER_REVERSE DNS_RESOLVER_REVERSE;
+
+#include "Crypto/Types.h"
 
 #endif	// MAYATYPE_H
-

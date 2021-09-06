@@ -1,111 +1,5 @@
 // SoftEther VPN Source Code - Developer Edition Master Branch
 // Cedar Communication Module
-// 
-// SoftEther VPN Server, Client and Bridge are free software under GPLv2.
-// 
-// Copyright (c) Daiyuu Nobori.
-// Copyright (c) SoftEther VPN Project, University of Tsukuba, Japan.
-// Copyright (c) SoftEther Corporation.
-// 
-// All Rights Reserved.
-// 
-// http://www.softether.org/
-// 
-// Author: Daiyuu Nobori, Ph.D.
-// Comments: Tetsuo Sugiyama, Ph.D.
-// 
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// version 2 as published by the Free Software Foundation.
-// 
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License version 2
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-// CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-// SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-// 
-// THE LICENSE AGREEMENT IS ATTACHED ON THE SOURCE-CODE PACKAGE
-// AS "LICENSE.TXT" FILE. READ THE TEXT FILE IN ADVANCE TO USE THE SOFTWARE.
-// 
-// 
-// THIS SOFTWARE IS DEVELOPED IN JAPAN, AND DISTRIBUTED FROM JAPAN,
-// UNDER JAPANESE LAWS. YOU MUST AGREE IN ADVANCE TO USE, COPY, MODIFY,
-// MERGE, PUBLISH, DISTRIBUTE, SUBLICENSE, AND/OR SELL COPIES OF THIS
-// SOFTWARE, THAT ANY JURIDICAL DISPUTES WHICH ARE CONCERNED TO THIS
-// SOFTWARE OR ITS CONTENTS, AGAINST US (SOFTETHER PROJECT, SOFTETHER
-// CORPORATION, DAIYUU NOBORI OR OTHER SUPPLIERS), OR ANY JURIDICAL
-// DISPUTES AGAINST US WHICH ARE CAUSED BY ANY KIND OF USING, COPYING,
-// MODIFYING, MERGING, PUBLISHING, DISTRIBUTING, SUBLICENSING, AND/OR
-// SELLING COPIES OF THIS SOFTWARE SHALL BE REGARDED AS BE CONSTRUED AND
-// CONTROLLED BY JAPANESE LAWS, AND YOU MUST FURTHER CONSENT TO
-// EXCLUSIVE JURISDICTION AND VENUE IN THE COURTS SITTING IN TOKYO,
-// JAPAN. YOU MUST WAIVE ALL DEFENSES OF LACK OF PERSONAL JURISDICTION
-// AND FORUM NON CONVENIENS. PROCESS MAY BE SERVED ON EITHER PARTY IN
-// THE MANNER AUTHORIZED BY APPLICABLE LAW OR COURT RULE.
-// 
-// USE ONLY IN JAPAN. DO NOT USE THIS SOFTWARE IN ANOTHER COUNTRY UNLESS
-// YOU HAVE A CONFIRMATION THAT THIS SOFTWARE DOES NOT VIOLATE ANY
-// CRIMINAL LAWS OR CIVIL RIGHTS IN THAT PARTICULAR COUNTRY. USING THIS
-// SOFTWARE IN OTHER COUNTRIES IS COMPLETELY AT YOUR OWN RISK. THE
-// SOFTETHER VPN PROJECT HAS DEVELOPED AND DISTRIBUTED THIS SOFTWARE TO
-// COMPLY ONLY WITH THE JAPANESE LAWS AND EXISTING CIVIL RIGHTS INCLUDING
-// PATENTS WHICH ARE SUBJECTS APPLY IN JAPAN. OTHER COUNTRIES' LAWS OR
-// CIVIL RIGHTS ARE NONE OF OUR CONCERNS NOR RESPONSIBILITIES. WE HAVE
-// NEVER INVESTIGATED ANY CRIMINAL REGULATIONS, CIVIL LAWS OR
-// INTELLECTUAL PROPERTY RIGHTS INCLUDING PATENTS IN ANY OF OTHER 200+
-// COUNTRIES AND TERRITORIES. BY NATURE, THERE ARE 200+ REGIONS IN THE
-// WORLD, WITH DIFFERENT LAWS. IT IS IMPOSSIBLE TO VERIFY EVERY
-// COUNTRIES' LAWS, REGULATIONS AND CIVIL RIGHTS TO MAKE THE SOFTWARE
-// COMPLY WITH ALL COUNTRIES' LAWS BY THE PROJECT. EVEN IF YOU WILL BE
-// SUED BY A PRIVATE ENTITY OR BE DAMAGED BY A PUBLIC SERVANT IN YOUR
-// COUNTRY, THE DEVELOPERS OF THIS SOFTWARE WILL NEVER BE LIABLE TO
-// RECOVER OR COMPENSATE SUCH DAMAGES, CRIMINAL OR CIVIL
-// RESPONSIBILITIES. NOTE THAT THIS LINE IS NOT LICENSE RESTRICTION BUT
-// JUST A STATEMENT FOR WARNING AND DISCLAIMER.
-// 
-// 
-// SOURCE CODE CONTRIBUTION
-// ------------------------
-// 
-// Your contribution to SoftEther VPN Project is much appreciated.
-// Please send patches to us through GitHub.
-// Read the SoftEther VPN Patch Acceptance Policy in advance:
-// http://www.softether.org/5-download/src/9.patch
-// 
-// 
-// DEAR SECURITY EXPERTS
-// ---------------------
-// 
-// If you find a bug or a security vulnerability please kindly inform us
-// about the problem immediately so that we can fix the security problem
-// to protect a lot of users around the world as soon as possible.
-// 
-// Our e-mail address for security reports is:
-// softether-vpn-security [at] softether.org
-// 
-// Please note that the above e-mail address is not a technical support
-// inquiry address. If you need technical assistance, please visit
-// http://www.softether.org/ and ask your question on the users forum.
-// 
-// Thank you for your cooperation.
-// 
-// 
-// NO MEMORY OR RESOURCE LEAKS
-// ---------------------------
-// 
-// The memory-leaks and resource-leaks verification under the stress
-// test has been passed before release this source code.
 
 
 // Server.h
@@ -113,6 +7,9 @@
 
 #ifndef	SERVER_H
 #define	SERVER_H
+
+#include "Client.h"
+#include "Proto_WireGuard.h"
 
 // Default ports
 #define	SERVER_DEF_PORTS_1				443
@@ -154,10 +51,11 @@ extern char *SERVER_CONFIG_FILE_NAME;
 
 #define	MAX_PUBLIC_PORT_NUM				128
 
-#define	MEMBER_SELECTOR_TXT_FILENAME	"@member_selector.config"
+#define	MEMBER_SELECTOR_TXT_FILENAME	"$member_selector.config"
 #define	MEMBER_SELECTOR_CONNECT_TIMEOUT	2000
 #define	MEMBER_SELECTOR_DATA_TIMEOUT	5000
 
+#define FIRM_SERV_RECV_PACK_MAX_SIZE	(100 * 1024 * 1024)
 
 // Virtual HUB list hosted by each farm member
 struct HUB_LIST
@@ -252,8 +150,15 @@ struct SYSLOG_SETTING
 struct OPENVPN_SSTP_CONFIG
 {
 	bool EnableOpenVPN;						// OpenVPN is enabled
-	char OpenVPNPortList[MAX_SIZE];			// OpenVPN UDP port number list
 	bool EnableSSTP;						// SSTP is enabled
+};
+
+// WireGuard key structure
+struct WGK
+{
+	char Key[WG_KEY_BASE64_SIZE];
+	char Hub[MAX_HUBNAME_LEN + 1];
+	char User[MAX_USERNAME_LEN + 1];
 };
 
 // Server object
@@ -262,6 +167,7 @@ struct SERVER
 	UINT ServerType;					// Type of server
 	UINT UpdatedServerType;				// Type of updated server
 	LIST *ServerListenerList;			// Server listener list
+	LIST *PortsUDP;						// The ports used by Proto's UDP listener
 	UCHAR HashedPassword[SHA1_SIZE];	// Password
 	char ControllerName[MAX_HOST_NAME_LEN + 1];		// Controller name
 	UINT ControllerPort;				// Controller port
@@ -288,14 +194,13 @@ struct SERVER
 	bool NoLinuxArpFilter;				// Not to set arp_filter in Linux
 	bool NoHighPriorityProcess;			// Not to raise the priority of the process
 	bool NoDebugDump;					// Not to output the debug dump
-	bool DisableSSTPServer;				// Disable the SSTP server function
-	bool DisableOpenVPNServer;			// Disable the OpenVPN server function
 	bool DisableNatTraversal;			// Disable the NAT-traversal feature
 	bool EnableVpnOverIcmp;				// VPN over ICMP is enabled
 	bool EnableVpnOverDns;				// VPN over DNS is enabled
 	bool NoMoreSave;					// Do not save any more
 	bool EnableConditionalAccept;		// Apply the Conditional Accept the Listener
 	bool EnableLegacySSL;				// Enable Legacy SSL
+	bool DisableIPsecAggressiveMode;	// Disable IPsec's aggressive mode
 
 	volatile bool Halt;					// Halting flag
 	LOCK *lock;							// Lock
@@ -344,9 +249,8 @@ struct SERVER
 	volatile bool HaltDeadLockThread;	// Halting flag
 	EVENT *DeadLockWaitEvent;			// Waiting Event
 
+	PROTO *Proto;						// Protocols handler
 	IPSEC_SERVER *IPsecServer;			// IPsec server function
-	OPENVPN_SERVER_UDP *OpenVpnServerUdp;	// OpenVPN server function
-	char OpenVpnServerUdpPorts[MAX_SIZE];	// UDP port list string
 	DDNS_CLIENT *DDnsClient;			// DDNS client feature
 	LOCK *OpenVpnSstpConfigLock;		// Lock OpenVPN and SSTP configuration
 
@@ -371,6 +275,7 @@ struct SERVER
 
 	IP ListenIP;						// Listen IP
 	bool StrictSyslogDatetimeFormat;	// Make syslog datetime format strict RFC3164
+	bool DisableJsonRpcWebApi;					// Disable JSON-RPC Web API
 };
 
 
@@ -394,6 +299,7 @@ struct RPC_SESSION_STATUS
 	RPC_CLIENT_GET_CONNECTION_STATUS Status;		// Status
 	UINT ClientIp;									// Client IP address
 	UCHAR ClientIp6[16];							// Client IPv6 address
+	IP ClientIpAddress;								// Client IP address (IPv4/IPv6)
 	char ClientHostName[MAX_HOST_NAME_LEN + 1];		// Client host name
 	NODE_INFO NodeInfo;								// Node information
 };
@@ -519,6 +425,8 @@ void SiLoadServerCfg(SERVER *s, FOLDER *f);
 void SiWriteGlobalParamsCfg(FOLDER *f);
 void SiLoadGlobalParamsCfg(FOLDER *f);
 void SiLoadGlobalParamItem(UINT id, UINT value);
+void SiLoadProtoCfg(PROTO *p, FOLDER *f);
+void SiWriteProtoCfg(FOLDER *f, PROTO *p);
 void SiWriteTraffic(FOLDER *parent, char *name, TRAFFIC *t);
 void SiWriteTrafficInner(FOLDER *parent, char *name, TRAFFIC_ENTRY *e);
 void SiLoadTrafficInner(FOLDER *parent, char *name, TRAFFIC_ENTRY *e);
@@ -721,9 +629,6 @@ bool SiIsHubRegistedOnCreateHistory(SERVER *s, char *name);
 
 bool SiTooManyUserObjectsInServer(SERVER *s, bool oneMore);
 
-void SiGetOpenVPNAndSSTPConfig(SERVER *s, OPENVPN_SSTP_CONFIG *c);
-void SiSetOpenVPNAndSSTPConfig(SERVER *s, OPENVPN_SSTP_CONFIG *c);
-
 bool SiCanOpenVpnOverDnsPort();
 bool SiCanOpenVpnOverIcmpPort();
 void SiApplySpecialListenerStatus(SERVER *s);
@@ -736,6 +641,8 @@ void SiSetAzureEnable(SERVER *s, bool enabled);
 void SiUpdateCurrentRegion(CEDAR *c, char *region, bool force_update);
 void SiGetCurrentRegion(CEDAR *c, char *region, UINT region_size);
 bool SiIsEnterpriseFunctionsRestrictedOnOpenSource(CEDAR *c);
+
+int CompareWgk(void *p1, void *p2);
 
 #endif	// SERVER_H
 

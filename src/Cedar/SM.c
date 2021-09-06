@@ -1,147 +1,38 @@
 // SoftEther VPN Source Code - Developer Edition Master Branch
 // Cedar Communication Module
-// 
-// SoftEther VPN Server, Client and Bridge are free software under GPLv2.
-// 
-// Copyright (c) Daiyuu Nobori.
-// Copyright (c) SoftEther VPN Project, University of Tsukuba, Japan.
-// Copyright (c) SoftEther Corporation.
-// 
-// All Rights Reserved.
-// 
-// http://www.softether.org/
-// 
-// Author: Daiyuu Nobori, Ph.D.
-// Comments: Tetsuo Sugiyama, Ph.D.
-// 
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// version 2 as published by the Free Software Foundation.
-// 
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License version 2
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-// CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-// SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-// 
-// THE LICENSE AGREEMENT IS ATTACHED ON THE SOURCE-CODE PACKAGE
-// AS "LICENSE.TXT" FILE. READ THE TEXT FILE IN ADVANCE TO USE THE SOFTWARE.
-// 
-// 
-// THIS SOFTWARE IS DEVELOPED IN JAPAN, AND DISTRIBUTED FROM JAPAN,
-// UNDER JAPANESE LAWS. YOU MUST AGREE IN ADVANCE TO USE, COPY, MODIFY,
-// MERGE, PUBLISH, DISTRIBUTE, SUBLICENSE, AND/OR SELL COPIES OF THIS
-// SOFTWARE, THAT ANY JURIDICAL DISPUTES WHICH ARE CONCERNED TO THIS
-// SOFTWARE OR ITS CONTENTS, AGAINST US (SOFTETHER PROJECT, SOFTETHER
-// CORPORATION, DAIYUU NOBORI OR OTHER SUPPLIERS), OR ANY JURIDICAL
-// DISPUTES AGAINST US WHICH ARE CAUSED BY ANY KIND OF USING, COPYING,
-// MODIFYING, MERGING, PUBLISHING, DISTRIBUTING, SUBLICENSING, AND/OR
-// SELLING COPIES OF THIS SOFTWARE SHALL BE REGARDED AS BE CONSTRUED AND
-// CONTROLLED BY JAPANESE LAWS, AND YOU MUST FURTHER CONSENT TO
-// EXCLUSIVE JURISDICTION AND VENUE IN THE COURTS SITTING IN TOKYO,
-// JAPAN. YOU MUST WAIVE ALL DEFENSES OF LACK OF PERSONAL JURISDICTION
-// AND FORUM NON CONVENIENS. PROCESS MAY BE SERVED ON EITHER PARTY IN
-// THE MANNER AUTHORIZED BY APPLICABLE LAW OR COURT RULE.
-// 
-// USE ONLY IN JAPAN. DO NOT USE THIS SOFTWARE IN ANOTHER COUNTRY UNLESS
-// YOU HAVE A CONFIRMATION THAT THIS SOFTWARE DOES NOT VIOLATE ANY
-// CRIMINAL LAWS OR CIVIL RIGHTS IN THAT PARTICULAR COUNTRY. USING THIS
-// SOFTWARE IN OTHER COUNTRIES IS COMPLETELY AT YOUR OWN RISK. THE
-// SOFTETHER VPN PROJECT HAS DEVELOPED AND DISTRIBUTED THIS SOFTWARE TO
-// COMPLY ONLY WITH THE JAPANESE LAWS AND EXISTING CIVIL RIGHTS INCLUDING
-// PATENTS WHICH ARE SUBJECTS APPLY IN JAPAN. OTHER COUNTRIES' LAWS OR
-// CIVIL RIGHTS ARE NONE OF OUR CONCERNS NOR RESPONSIBILITIES. WE HAVE
-// NEVER INVESTIGATED ANY CRIMINAL REGULATIONS, CIVIL LAWS OR
-// INTELLECTUAL PROPERTY RIGHTS INCLUDING PATENTS IN ANY OF OTHER 200+
-// COUNTRIES AND TERRITORIES. BY NATURE, THERE ARE 200+ REGIONS IN THE
-// WORLD, WITH DIFFERENT LAWS. IT IS IMPOSSIBLE TO VERIFY EVERY
-// COUNTRIES' LAWS, REGULATIONS AND CIVIL RIGHTS TO MAKE THE SOFTWARE
-// COMPLY WITH ALL COUNTRIES' LAWS BY THE PROJECT. EVEN IF YOU WILL BE
-// SUED BY A PRIVATE ENTITY OR BE DAMAGED BY A PUBLIC SERVANT IN YOUR
-// COUNTRY, THE DEVELOPERS OF THIS SOFTWARE WILL NEVER BE LIABLE TO
-// RECOVER OR COMPENSATE SUCH DAMAGES, CRIMINAL OR CIVIL
-// RESPONSIBILITIES. NOTE THAT THIS LINE IS NOT LICENSE RESTRICTION BUT
-// JUST A STATEMENT FOR WARNING AND DISCLAIMER.
-// 
-// 
-// SOURCE CODE CONTRIBUTION
-// ------------------------
-// 
-// Your contribution to SoftEther VPN Project is much appreciated.
-// Please send patches to us through GitHub.
-// Read the SoftEther VPN Patch Acceptance Policy in advance:
-// http://www.softether.org/5-download/src/9.patch
-// 
-// 
-// DEAR SECURITY EXPERTS
-// ---------------------
-// 
-// If you find a bug or a security vulnerability please kindly inform us
-// about the problem immediately so that we can fix the security problem
-// to protect a lot of users around the world as soon as possible.
-// 
-// Our e-mail address for security reports is:
-// softether-vpn-security [at] softether.org
-// 
-// Please note that the above e-mail address is not a technical support
-// inquiry address. If you need technical assistance, please visit
-// http://www.softether.org/ and ask your question on the users forum.
-// 
-// Thank you for your cooperation.
-// 
-// 
-// NO MEMORY OR RESOURCE LEAKS
-// ---------------------------
-// 
-// The memory-leaks and resource-leaks verification under the stress
-// test has been passed before release this source code.
 
 
 // SM.c
 // VPN Server Manager for Win32
 
-#include <GlobalConst.h>
+#ifdef OS_WIN32
 
-#ifdef	WIN32
-
-#define	SM_C
-#define	CM_C
-#define	NM_C
-
-#define	_WIN32_WINNT		0x0502
-#define	WINVER				0x0502
-#include <winsock2.h>
-#include <windows.h>
-#include <wincrypt.h>
-#include <wininet.h>
-#include <shlobj.h>
-#include <commctrl.h>
-#include <Dbghelp.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <wchar.h>
-#include <stdarg.h>
-#include <time.h>
-#include <errno.h>
-#include <Mayaqua/Mayaqua.h>
-#include <Cedar/Cedar.h>
-#include "CMInner.h"
+#include "SM.h"
 #include "SMInner.h"
+
+#include "AzureClient.h"
+#include "CMInner.h"
+#include "Console.h"
+#include "Database.h"
+#include "Layer3.h"
 #include "NMInner.h"
-#include "EMInner.h"
+#include "Proto_PPP.h"
+#include "Radius.h"
+#include "Remote.h"
+#include "Server.h"
+
+#include "Mayaqua/Cfg.h"
+#include "Mayaqua/FileIO.h"
+#include "Mayaqua/Internat.h"
+#include "Mayaqua/Memory.h"
+#include "Mayaqua/Microsoft.h"
+#include "Mayaqua/Secure.h"
+#include "Mayaqua/Str.h"
+
 #include "../PenCore/resource.h"
+
+#include <shellapi.h>
+#include <shlobj.h>
 
 // Global variable
 static SM *sm = NULL;
@@ -219,6 +110,7 @@ UINT SmProxyDlg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam, void *param)
 		case R_DIRECT_TCP:
 		case R_HTTPS:
 		case R_SOCKS:
+		case R_SOCKS5:
 			if (IsChecked(hWnd, R_HTTPS))
 			{
 				t->ProxyType = PROXY_HTTP;
@@ -247,6 +139,7 @@ UINT SmProxyDlg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam, void *param)
 			a.ProxyPort = t->ProxyPort;
 			StrCpy(a.ProxyUsername, sizeof(a.ProxyUsername), t->ProxyUsername);
 			StrCpy(a.ProxyPassword, sizeof(a.ProxyPassword), t->ProxyPassword);
+			StrCpy(a.CustomHttpHeader, sizeof(a.CustomHttpHeader), t->CustomHttpHeader);
 
 			if (CmProxyDlg(hWnd, &a))
 			{
@@ -255,6 +148,7 @@ UINT SmProxyDlg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam, void *param)
 				t->ProxyPort = a.ProxyPort;
 				StrCpy(t->ProxyUsername, sizeof(t->ProxyUsername), a.ProxyUsername);
 				StrCpy(t->ProxyPassword, sizeof(t->ProxyPassword), a.ProxyPassword);
+				StrCpy(t->CustomHttpHeader, sizeof(t->CustomHttpHeader), a.CustomHttpHeader);
 			}
 
 			SmProxyDlgUpdate(hWnd, t);
@@ -912,9 +806,6 @@ static UINT SmDdnsGetKey(char *key, SM_DDNS *d){
 
 void SmDDnsDlgInit(HWND hWnd, SM_DDNS *d)
 {
-	char key[20];
-	char encodedkey[20 * 4 + 32];
-
 	// Validate arguments
 	if (hWnd == NULL || d == NULL)
 	{
@@ -937,10 +828,10 @@ void SmDDnsDlgInit(HWND hWnd, SM_DDNS *d)
 	SetFont(hWnd, S_SUFFIX, GetFont("Verdana", 10, false, false, false, false));
 	SetFont(hWnd, E_NEWHOST, GetFont("Verdana", 10, false, false, false, false));
 
-	SetFont(hWnd, E_HOST, GetFont((MsIsWinXPOrGreater() ? "Verdana" : NULL), 10, false, false, false, false));
-	SetFont(hWnd, E_IPV4, GetFont((MsIsWinXPOrGreater() ? "Verdana" : NULL), 10, false, false, false, false));
-	SetFont(hWnd, E_IPV6, GetFont((MsIsWinXPOrGreater() ? "Verdana" : NULL), 10, false, false, false, false));
-	SetFont(hWnd, E_KEY, GetFont((MsIsWinXPOrGreater() ? "Verdana" : NULL), 8, false, false, false, false));
+	SetFont(hWnd, E_HOST, GetFont("Verdana", 10, false, false, false, false));
+	SetFont(hWnd, E_IPV4, GetFont("Verdana", 10, false, false, false, false));
+	SetFont(hWnd, E_IPV6, GetFont("Verdana", 10, false, false, false, false));
+	SetFont(hWnd, E_KEY, GetFont("Verdana", 8, false, false, false, false));
 
 	DlgFont(hWnd, IDOK, 0, true);
 
@@ -951,10 +842,15 @@ void SmDDnsDlgInit(HWND hWnd, SM_DDNS *d)
 
 	Hide(hWnd, B_PROXY);
 
-	if(SmDdnsGetKey(key, d) == ERR_NO_ERROR){
-		encodedkey[ B64_Encode(encodedkey, key, 20) ] = 0;
-		SetTextA(hWnd, E_KEY, encodedkey);
-	}else{
+	char key[20];
+	if (SmDdnsGetKey(key, d) == ERR_NO_ERROR)
+	{
+		char *encoded_key = Base64FromBin(NULL, key, sizeof(key));
+		SetTextA(hWnd, E_KEY, encoded_key);
+		Free(encoded_key);
+	}
+	else
+	{
 		SetText(hWnd, E_KEY, _UU("SM_DDNS_KEY_ERR"));
 	}
 
@@ -1159,7 +1055,6 @@ void SmOpenVpn(HWND hWnd, SM_SERVER *s)
 UINT SmOpenVpnDlg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam, void *param)
 {
 	SM_SERVER *s = (SM_SERVER *)param;
-	char tmp[MAX_SIZE];
 	// Validate arguments
 	if (hWnd == NULL)
 	{
@@ -1176,7 +1071,6 @@ UINT SmOpenVpnDlg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam, void *param
 		switch (LOWORD(wParam))
 		{
 		case R_OPENVPN:
-		case E_UDP:
 		case R_SSTP:
 			SmOpenVpnDlgUpdate(hWnd, s);
 			break;
@@ -1186,12 +1080,6 @@ UINT SmOpenVpnDlg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam, void *param
 		{
 		case IDOK:
 			SmOpenVpnDlgOnOk(hWnd, s, false);
-			break;
-
-		case B_DEFAULT:
-			ToStr(tmp, OPENVPN_UDP_PORT);
-			SetTextA(hWnd, E_UDP, tmp);
-			FocusEx(hWnd, E_UDP);
 			break;
 
 		case B_CONFIG:
@@ -1302,13 +1190,11 @@ void SmOpenVpnDlgInit(HWND hWnd, SM_SERVER *s)
 	}
 
 	Check(hWnd, R_OPENVPN, t.EnableOpenVPN);
-	SetTextA(hWnd, E_UDP, t.OpenVPNPortList);
 	Check(hWnd, R_SSTP, t.EnableSSTP);
 
 	SetIcon(hWnd, 0, ICO_OPENVPN);
 
 	DlgFont(hWnd, S_TITLE, 14, true);
-	SetFont(hWnd, E_UDP, GetFont("Verdana", 10, false, false, false, false));
 
 	DlgFont(hWnd, R_OPENVPN, 0, true);
 	DlgFont(hWnd, S_TOOL, 11, true);
@@ -1328,10 +1214,6 @@ void SmOpenVpnDlgUpdate(HWND hWnd, SM_SERVER *s)
 	b1 = IsChecked(hWnd, R_OPENVPN);
 	b2 = IsChecked(hWnd, R_SSTP);
 
-	SetEnable(hWnd, S_UDP, b1);
-	SetEnable(hWnd, E_UDP, b1);
-	SetEnable(hWnd, B_DEFAULT, b1);
-	SetEnable(hWnd, S_UDP2, b1);
 	SetEnable(hWnd, S_TOOL, b1);
 	SetEnable(hWnd, S_TOOL2, b1);
 	SetEnable(hWnd, B_CONFIG, b1);
@@ -1350,7 +1232,6 @@ void SmOpenVpnDlgOnOk(HWND hWnd, SM_SERVER *s, bool no_close)
 	Zero(&t, sizeof(t));
 
 	t.EnableOpenVPN = IsChecked(hWnd, R_OPENVPN);
-	GetTxtA(hWnd, E_UDP, t.OpenVPNPortList, sizeof(t.OpenVPNPortList));
 	t.EnableSSTP = IsChecked(hWnd, R_SSTP);
 
 	if (CALL(hWnd, ScSetOpenVpnSstpConfig(s->Rpc, &t)) == false)
@@ -2110,14 +1991,7 @@ void SmHubMsgDlgInit(HWND hWnd, SM_EDIT_HUB *s)
 		return;
 	}
 
-	if (MsIsVista())
-	{
-		SetFont(hWnd, E_TEXT, GetMeiryoFont());
-	}
-	else
-	{
-		DlgFont(hWnd, E_TEXT, 11, false);
-	}
+	SetFont(hWnd, E_TEXT, GetMeiryoFont());
 
 	FormatText(hWnd, S_MSG_2, s->HubName);
 
@@ -8312,7 +8186,7 @@ void SmInstallWinPcap(HWND hWnd, SM_SERVER *s)
 	UniFormat(temp_name, sizeof(temp_name), L"%s\\winpcap_installer.exe", MsGetTempDirW());
 
 	// Read from hamcore
-	buf = ReadDump(MsIsNt() ? "|winpcap_installer.exe" : "|winpcap_installer_win9x.exe");
+	buf = ReadDump("|winpcap_installer.exe");
 	if (buf == NULL)
 	{
 RES_ERROR:
@@ -8348,31 +8222,22 @@ RES_ERROR:
 		return;
 	}
 
-	// Message after completed
-	if (OS_IS_WINDOWS_NT(GetOsInfo()->OsType) == false)
+	// Need to restart the service
+	if (MsgBox(hWnd, MB_ICONQUESTION | MB_YESNO, _UU("SM_BRIDGE_WPCAP_REBOOT2")) == IDNO)
 	{
-		// Need to restart the computer
-		MsgBox(hWnd, MB_ICONINFORMATION, _UU("SM_BRIDGE_WPCAP_REBOOT1"));
+		// Not restart
 	}
 	else
 	{
-		// Need to restart the service
-		if (MsgBox(hWnd, MB_ICONQUESTION | MB_YESNO, _UU("SM_BRIDGE_WPCAP_REBOOT2")) == IDNO)
-		{
-			// Not restart
-		}
-		else
-		{
-			// Restart
-			RPC_TEST t;
-			Zero(&t, sizeof(t));
-			ScRebootServer(s->Rpc, &t);
+		// Restart
+		RPC_TEST t;
+		Zero(&t, sizeof(t));
+		ScRebootServer(s->Rpc, &t);
 
-			SleepThread(500);
+		SleepThread(500);
 
-			Zero(&t, sizeof(t));
-			CALL(hWnd, ScTest(s->Rpc, &t));
-		}
+		Zero(&t, sizeof(t));
+		CALL(hWnd, ScTest(s->Rpc, &t));
 	}
 }
 
@@ -8404,7 +8269,7 @@ void SmBridgeDlg(HWND hWnd, SM_SERVER *s)
 
 	if (t.IsWinPcapNeeded)
 	{
-		if (s->Rpc->Sock->RemoteIP.addr[0] != 127)
+		if (IsLocalHostIP(&s->Rpc->Sock->RemoteIP) == false)
 		{
 			// WinPcap is required, but can not do anything because it is in remote control mode
 			MsgBox(hWnd, MB_ICONINFORMATION, _UU("SM_BRIDGE_WPCAP_REMOTE"));
@@ -8634,14 +8499,14 @@ void SmCreateCertDlgInit(HWND hWnd, SM_CERT *s)
 	}
 
 	// Font
-	SetFont(hWnd, E_CN, GetFont((MsIsWinXPOrGreater() ? "Verdana" : NULL), 0, false, false, false, false));
-	SetFont(hWnd, E_O, GetFont((MsIsWinXPOrGreater() ? "Verdana" : NULL), 0, false, false, false, false));
-	SetFont(hWnd, E_OU, GetFont((MsIsWinXPOrGreater() ? "Verdana" : NULL), 0, false, false, false, false));
-	SetFont(hWnd, E_C, GetFont((MsIsWinXPOrGreater() ? "Verdana" : NULL), 0, false, false, false, false));
-	SetFont(hWnd, E_ST, GetFont((MsIsWinXPOrGreater() ? "Verdana" : NULL), 0, false, false, false, false));
-	SetFont(hWnd, E_L, GetFont((MsIsWinXPOrGreater() ? "Verdana" : NULL), 0, false, false, false, false));
-	SetFont(hWnd, E_SERIAL, GetFont((MsIsWinXPOrGreater() ? "Verdana" : NULL), 0, false, false, false, false));
-	SetFont(hWnd, E_EXPIRE, GetFont((MsIsWinXPOrGreater() ? "Verdana" : NULL), 0, false, false, false, false));
+	SetFont(hWnd, E_CN, GetFont("Verdana", 0, false, false, false, false));
+	SetFont(hWnd, E_O, GetFont("Verdana", 0, false, false, false, false));
+	SetFont(hWnd, E_OU, GetFont("Verdana", 0, false, false, false, false));
+	SetFont(hWnd, E_C, GetFont("Verdana", 0, false, false, false, false));
+	SetFont(hWnd, E_ST, GetFont("Verdana", 0, false, false, false, false));
+	SetFont(hWnd, E_L, GetFont("Verdana", 0, false, false, false, false));
+	SetFont(hWnd, E_SERIAL, GetFont("Verdana", 0, false, false, false, false));
+	SetFont(hWnd, E_EXPIRE, GetFont("Verdana", 0, false, false, false, false));
 	SetFont(hWnd, C_BITS, GetFont("Verdana", 0, false, false, false, false));
 
 	FocusEx(hWnd, E_CN);
@@ -9466,12 +9331,6 @@ void SmSessionDlgUpdate(HWND hWnd, SM_HUB *s)
 				}
 			}
 		}
-	}
-
-	if (s->p->ServerInfo.ServerBuildInt < 2844)
-	{
-		// Old version doesn't support for remote management of the sessions
-		ok2 = ok;
 	}
 
 	SetEnable(hWnd, IDOK, ok2);
@@ -15646,12 +15505,6 @@ UINT SmFarmMemberDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam, void
 	return 0;
 }
 
-// Convert the string to port list
-LIST *SmStrToPortList(char *str)
-{
-	return StrToPortList(str);
-}
-
 // Initialize the dialog
 void SmFarmDlgInit(HWND hWnd, SM_SERVER *p)
 {
@@ -15784,7 +15637,7 @@ void SmFarmDlgUpdate(HWND hWnd, SM_SERVER *p)
 		}
 
 		s = GetTextA(hWnd, E_PORT);
-		o = SmStrToPortList(s);
+		o = StrToPortList(s, true);
 		if (o == NULL)
 		{
 			ok = false;
@@ -15891,7 +15744,7 @@ void SmFarmDlgOnOk(HWND hWnd, SM_SERVER *p)
 			s = GetTextA(hWnd, E_PORT);
 			if (s != NULL)
 			{
-				LIST *o = SmStrToPortList(s);
+				LIST *o = StrToPortList(s, true);
 				if (o != NULL)
 				{
 					UINT i;
@@ -17016,23 +16869,34 @@ void SmSslDlgInit(HWND hWnd, SM_SSL *s)
 		return;
 	}
 
-	// Set the encryption algorithm list
-	cipher_list = GetCipherList();
-	SetFont(hWnd, C_CIPHER, GetFont("Tahoma", 8, false, false, false, false));
-	CbSetHeight(hWnd, C_CIPHER, 18);
-	for (i = 0;i < cipher_list->NumTokens;i++)
-	{
-		wchar_t tmp[MAX_SIZE];
-		char *name = cipher_list->Token[i];
-		StrToUni(tmp, sizeof(tmp), name);
-		CbAddStr(hWnd, C_CIPHER, tmp, 0);
-	}
-
 	if (s->p != NULL)
 	{
-		// Get the encryption algorithm name from the server
 		RPC_STR t;
 		Zero(&t, sizeof(t));
+
+		SetFont(hWnd, C_CIPHER, GetFont("Tahoma", 8, false, false, false, false));
+		CbSetHeight(hWnd, C_CIPHER, 18);
+
+		// Get the list of available encryption algorithms from the server
+		if (ScGetServerCipherList(s->p->Rpc, &t) == ERR_NO_ERROR)
+		{
+			cipher_list = ParseToken(t.String, ";");
+
+			FreeRpcStr(&t);
+			Zero(&t, sizeof(t));
+
+			for (i = 0; i < cipher_list->NumTokens; i++)
+			{
+				wchar_t tmp[MAX_SIZE];
+				char *name = cipher_list->Token[i];
+				StrToUni(tmp, sizeof(tmp), name);
+				CbAddStr(hWnd, C_CIPHER, tmp, 0);
+			}
+
+			FreeToken(cipher_list);
+		}
+
+		// Get the current encryption algorithm's name from the server
 		if (CALL(hWnd, ScGetServerCipher(s->p->Rpc, &t)))
 		{
 			wchar_t tmp[MAX_SIZE];
@@ -18371,6 +18235,7 @@ void SmServerDlgRefresh(HWND hWnd, SM_SERVER *p)
 {
 	RPC_ENUM_HUB t;
 	RPC_LISTENER_LIST t2;
+	RPC_PORTS t3;
 	DDNS_CLIENT_STATUS st;
 	RPC_AZURE_STATUS sta;
 	UINT i;
@@ -18486,6 +18351,32 @@ void SmServerDlgRefresh(HWND hWnd, SM_SERVER *p)
 		}
 		LvInsertEnd(b, hWnd, L_LISTENER);
 		FreeRpcListenerList(&t2);
+	}
+
+	// Get the UDP ports
+	Zero(&t3, sizeof(RPC_PORTS));
+	if (CALL(hWnd, ScGetPortsUDP(p->Rpc, &t3)))
+	{
+		char str[MAX_SIZE];
+
+		Zero(str, sizeof(str));
+
+		if (t3.Num > 0)
+		{
+			UINT i;
+
+			Format(str, sizeof(str), "%u", t3.Ports[0]);
+
+			for (i = 1; i < t3.Num; ++i)
+			{
+				char tmp[MAX_SIZE];
+				Format(tmp, sizeof(tmp), ", %u", t3.Ports[i]);
+				StrCat(str, sizeof(str), tmp);
+			}
+		}
+
+		SetTextA(hWnd, E_UDP, str);
+		FreeRpcPorts(&t3);
 	}
 
 	// Get the DDNS client state
@@ -18762,6 +18653,44 @@ UINT SmServerDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam, void *pa
 				}
 			}
 			break;
+
+		case B_APPLY:
+		{
+			// Apply UDP ports
+			LIST* ports;
+			RPC_PORTS t;
+			char tmp[MAX_SIZE];
+
+			GetTxtA(hWnd, E_UDP, tmp, sizeof(tmp));
+			ports = StrToPortList(tmp, false);
+
+			t.Num = LIST_NUM(ports);
+			if (t.Num > 0)
+			{
+				UINT i;
+				t.Ports = Malloc(sizeof(UINT) * t.Num);
+
+				for (i = 0; i < t.Num; ++i)
+				{
+					t.Ports[i] = (UINT)LIST_DATA(ports, i);
+				}
+			}
+			else
+			{
+				t.Ports = NULL;
+			}
+
+			ReleaseList(ports);
+
+			if (CALL(hWnd, ScSetPortsUDP(p->Rpc, &t)))
+			{
+				SmServerDlgRefresh(hWnd, p);
+			}
+
+			Free(t.Ports);
+
+			break;
+		}
 
 		case B_SSL:
 			// SSL related
@@ -19671,6 +19600,7 @@ UINT SmEditSettingDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam, voi
 		case R_DIRECT_TCP:
 		case R_HTTPS:
 		case R_SOCKS:
+		case R_SOCKS5:
 		case R_SERVER_ADMIN:
 		case R_HUB_ADMIN:
 		case C_HUBNAME:
@@ -19702,6 +19632,7 @@ UINT SmEditSettingDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam, voi
 		case R_DIRECT_TCP:
 		case R_HTTPS:
 		case R_SOCKS:
+		case R_SOCKS5:
 			if (HIWORD(wParam) == BN_CLICKED)
 			{
 				CmEnumHubStart(hWnd, &p->Setting->ClientOption);
@@ -20075,26 +20006,17 @@ void SmInitDefaultSettingList()
 			{
 				MS_PROCESS *p = LIST_DATA(pl, i);
 
-				if (UniInStr(p->ExeFilenameW, L"vpnserver.exe") || UniInStr(p->ExeFilenameW, L"vpnserver_x64.exe") ||
-					UniInStr(p->ExeFilenameW, L"vpnserver_ia64.exe") ||
-					UniInStr(p->ExeFilenameW, L"vpnbridge.exe") || UniInStr(p->ExeFilenameW, L"vpnbridge_x64.exe") ||
-					UniInStr(p->ExeFilenameW, L"vpnbridge_ia64.exe"))
+				if (UniInStr(p->ExeFilenameW, L"vpnserver.exe") || UniInStr(p->ExeFilenameW, L"vpnbridge.exe"))
 				{
 					b = true;
 				}
 
-				if (UniInStr(p->ExeFilenameW, L"sevpnserver.exe") || UniInStr(p->ExeFilenameW, L"sevpnserver_x64.exe") ||
-					UniInStr(p->ExeFilenameW, L"sevpnserver_ia64.exe") ||
-					UniInStr(p->ExeFilenameW, L"sevpnbridge.exe") || UniInStr(p->ExeFilenameW, L"sevpnbridge_x64.exe") ||
-					UniInStr(p->ExeFilenameW, L"sevpnbridge_ia64.exe"))
+				if (UniInStr(p->ExeFilenameW, L"sevpnserver.exe") || UniInStr(p->ExeFilenameW, L"sevpnbridge.exe"))
 				{
 					b = true;
 				}
 
-				if (UniInStr(p->ExeFilenameW, L"utvpnserver.exe") || UniInStr(p->ExeFilenameW, L"utvpnserver_x64.exe") ||
-					UniInStr(p->ExeFilenameW, L"utvpnserver_ia64.exe") ||
-					UniInStr(p->ExeFilenameW, L"utvpnbridge.exe") || UniInStr(p->ExeFilenameW, L"utvpnbridge_x64.exe") ||
-					UniInStr(p->ExeFilenameW, L"utvpnbridge_ia64.exe"))
+				if (UniInStr(p->ExeFilenameW, L"utvpnserver.exe") || UniInStr(p->ExeFilenameW, L"utvpnbridge.exe"))
 				{
 					b = true;
 				}

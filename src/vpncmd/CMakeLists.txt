@@ -1,10 +1,7 @@
-set(VPNCMD_SOURCES vpncmd.c)
+set(COMPONENT_NAME "Command Line Management Utility")
+set(COMPONENT_INTERNAL_NAME "vpncmd")
 
-if(WIN32)
-  set(VPNCMD_SOURCES ${VPNCMD_SOURCES} vpncmd.rc)
-endif()
-
-add_executable(vpncmd ${VPNCMD_SOURCES})
+add_executable(vpncmd vpncmd.c)
 
 set_target_properties(vpncmd
   PROPERTIES
@@ -13,7 +10,26 @@ set_target_properties(vpncmd
   RUNTIME_OUTPUT_DIRECTORY "${BUILD_DIRECTORY}"
 )
 
-target_link_libraries(vpncmd cedar mayaqua)
+if(WIN32)
+  set_target_properties(vpncmd
+    PROPERTIES
+    PDB_OUTPUT_DIRECTORY "${BUILD_DIRECTORY}"
+  )
+
+  get_filename_component(COMPONENT_FILE_NAME vpncmd NAME)
+  set(COMPONENT_FILE_NAME "${COMPONENT_FILE_NAME}.exe")
+
+  configure_file("${TOP_DIRECTORY}/src/BuildFiles/VerScript/ver.rc" "${CMAKE_CURRENT_BINARY_DIR}/ver.rc")
+
+  target_sources(vpncmd PRIVATE
+    "vpncmd.rc"
+    "ver.rc"
+
+    "${TOP_DIRECTORY}/src/BuildFiles/Manifests/common.manifest"
+  )
+endif()
+
+target_link_libraries(vpncmd cedar)
 
 if(UNIX)
   # Copy binary and "hamcore.se2" to /usr/lib(exec)/softether/, install launch script
@@ -29,5 +45,5 @@ if(UNIX)
     PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
   )
 
-  install_wrapper_script("vpncmd" "${CMAKE_INSTALL_FULL_LIBEXECDIR}/softether/vpncmd/vpncmd")
+  install_wrapper_script("vpncmd")
 endif()

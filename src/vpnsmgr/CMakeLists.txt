@@ -2,21 +2,28 @@ if(NOT WIN32)
   message(FATAL_ERROR "VPN Server Manager is available only for Windows.")
 endif()
 
-set(VPNSMGR_SOURCES vpnsmgr.c vpnsmgr.rc)
+set(COMPONENT_NAME "Server Manager")
+set(COMPONENT_INTERNAL_NAME "vpnsmgr")
 
-if(${COMPILER_ARCHITECTURE} STREQUAL "x64")
-  set(VPNSMGR_SOURCES ${VPNSMGR_SOURCES} ${CMAKE_SOURCE_DIR}/src/BuildFiles/Manifests/x64_user.manifest)
-else()
-  set(VPNSMGR_SOURCES ${VPNSMGR_SOURCES} ${CMAKE_SOURCE_DIR}/src/BuildFiles/Manifests/x86_user.manifest)
-endif()
+add_executable(vpnsmgr WIN32
+  "vpnsmgr.c"
+  "vpnsmgr.rc"
 
-add_executable(vpnsmgr WIN32 ${VPNSMGR_SOURCES})
+  "${TOP_DIRECTORY}/src/BuildFiles/Manifests/common.manifest"
+)
+
+get_filename_component(COMPONENT_FILE_NAME vpnsmgr NAME)
+set(COMPONENT_FILE_NAME "${COMPONENT_FILE_NAME}.exe")
+
+configure_file("${TOP_DIRECTORY}/src/BuildFiles/VerScript/ver.rc" "${CMAKE_CURRENT_BINARY_DIR}/ver.rc")
+target_sources(vpnsmgr PRIVATE "vpnsmgr.rc" "${CMAKE_CURRENT_BINARY_DIR}/ver.rc")
 
 set_target_properties(vpnsmgr
   PROPERTIES
   ARCHIVE_OUTPUT_DIRECTORY "${BUILD_DIRECTORY}"
   LIBRARY_OUTPUT_DIRECTORY "${BUILD_DIRECTORY}"
   RUNTIME_OUTPUT_DIRECTORY "${BUILD_DIRECTORY}"
+  PDB_OUTPUT_DIRECTORY "${BUILD_DIRECTORY}"
 )
 
-target_link_libraries(vpnsmgr cedar mayaqua)
+target_link_libraries(vpnsmgr cedar)

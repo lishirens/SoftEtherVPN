@@ -1,134 +1,31 @@
 // SoftEther VPN Source Code - Developer Edition Master Branch
 // Cedar Communication Module
-// 
-// SoftEther VPN Server, Client and Bridge are free software under GPLv2.
-// 
-// Copyright (c) Daiyuu Nobori.
-// Copyright (c) SoftEther VPN Project, University of Tsukuba, Japan.
-// Copyright (c) SoftEther Corporation.
-// 
-// All Rights Reserved.
-// 
-// http://www.softether.org/
-// 
-// Author: Daiyuu Nobori, Ph.D.
-// Comments: Tetsuo Sugiyama, Ph.D.
-// 
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// version 2 as published by the Free Software Foundation.
-// 
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License version 2
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-// CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-// SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-// 
-// THE LICENSE AGREEMENT IS ATTACHED ON THE SOURCE-CODE PACKAGE
-// AS "LICENSE.TXT" FILE. READ THE TEXT FILE IN ADVANCE TO USE THE SOFTWARE.
-// 
-// 
-// THIS SOFTWARE IS DEVELOPED IN JAPAN, AND DISTRIBUTED FROM JAPAN,
-// UNDER JAPANESE LAWS. YOU MUST AGREE IN ADVANCE TO USE, COPY, MODIFY,
-// MERGE, PUBLISH, DISTRIBUTE, SUBLICENSE, AND/OR SELL COPIES OF THIS
-// SOFTWARE, THAT ANY JURIDICAL DISPUTES WHICH ARE CONCERNED TO THIS
-// SOFTWARE OR ITS CONTENTS, AGAINST US (SOFTETHER PROJECT, SOFTETHER
-// CORPORATION, DAIYUU NOBORI OR OTHER SUPPLIERS), OR ANY JURIDICAL
-// DISPUTES AGAINST US WHICH ARE CAUSED BY ANY KIND OF USING, COPYING,
-// MODIFYING, MERGING, PUBLISHING, DISTRIBUTING, SUBLICENSING, AND/OR
-// SELLING COPIES OF THIS SOFTWARE SHALL BE REGARDED AS BE CONSTRUED AND
-// CONTROLLED BY JAPANESE LAWS, AND YOU MUST FURTHER CONSENT TO
-// EXCLUSIVE JURISDICTION AND VENUE IN THE COURTS SITTING IN TOKYO,
-// JAPAN. YOU MUST WAIVE ALL DEFENSES OF LACK OF PERSONAL JURISDICTION
-// AND FORUM NON CONVENIENS. PROCESS MAY BE SERVED ON EITHER PARTY IN
-// THE MANNER AUTHORIZED BY APPLICABLE LAW OR COURT RULE.
-// 
-// USE ONLY IN JAPAN. DO NOT USE THIS SOFTWARE IN ANOTHER COUNTRY UNLESS
-// YOU HAVE A CONFIRMATION THAT THIS SOFTWARE DOES NOT VIOLATE ANY
-// CRIMINAL LAWS OR CIVIL RIGHTS IN THAT PARTICULAR COUNTRY. USING THIS
-// SOFTWARE IN OTHER COUNTRIES IS COMPLETELY AT YOUR OWN RISK. THE
-// SOFTETHER VPN PROJECT HAS DEVELOPED AND DISTRIBUTED THIS SOFTWARE TO
-// COMPLY ONLY WITH THE JAPANESE LAWS AND EXISTING CIVIL RIGHTS INCLUDING
-// PATENTS WHICH ARE SUBJECTS APPLY IN JAPAN. OTHER COUNTRIES' LAWS OR
-// CIVIL RIGHTS ARE NONE OF OUR CONCERNS NOR RESPONSIBILITIES. WE HAVE
-// NEVER INVESTIGATED ANY CRIMINAL REGULATIONS, CIVIL LAWS OR
-// INTELLECTUAL PROPERTY RIGHTS INCLUDING PATENTS IN ANY OF OTHER 200+
-// COUNTRIES AND TERRITORIES. BY NATURE, THERE ARE 200+ REGIONS IN THE
-// WORLD, WITH DIFFERENT LAWS. IT IS IMPOSSIBLE TO VERIFY EVERY
-// COUNTRIES' LAWS, REGULATIONS AND CIVIL RIGHTS TO MAKE THE SOFTWARE
-// COMPLY WITH ALL COUNTRIES' LAWS BY THE PROJECT. EVEN IF YOU WILL BE
-// SUED BY A PRIVATE ENTITY OR BE DAMAGED BY A PUBLIC SERVANT IN YOUR
-// COUNTRY, THE DEVELOPERS OF THIS SOFTWARE WILL NEVER BE LIABLE TO
-// RECOVER OR COMPENSATE SUCH DAMAGES, CRIMINAL OR CIVIL
-// RESPONSIBILITIES. NOTE THAT THIS LINE IS NOT LICENSE RESTRICTION BUT
-// JUST A STATEMENT FOR WARNING AND DISCLAIMER.
-// 
-// 
-// SOURCE CODE CONTRIBUTION
-// ------------------------
-// 
-// Your contribution to SoftEther VPN Project is much appreciated.
-// Please send patches to us through GitHub.
-// Read the SoftEther VPN Patch Acceptance Policy in advance:
-// http://www.softether.org/5-download/src/9.patch
-// 
-// 
-// DEAR SECURITY EXPERTS
-// ---------------------
-// 
-// If you find a bug or a security vulnerability please kindly inform us
-// about the problem immediately so that we can fix the security problem
-// to protect a lot of users around the world as soon as possible.
-// 
-// Our e-mail address for security reports is:
-// softether-vpn-security [at] softether.org
-// 
-// Please note that the above e-mail address is not a technical support
-// inquiry address. If you need technical assistance, please visit
-// http://www.softether.org/ and ask your question on the users forum.
-// 
-// Thank you for your cooperation.
-// 
-// 
-// NO MEMORY OR RESOURCE LEAKS
-// ---------------------------
-// 
-// The memory-leaks and resource-leaks verification under the stress
-// test has been passed before release this source code.
 
 
 // BridgeWin32.c
 // Ethernet Bridge Program (Win32)
 
-#include <GlobalConst.h>
+#ifdef OS_WIN32
 
-#ifdef	BRIDGE_C
+#define BRIDGE_C
 
-#include <winsock2.h>
+#include "BridgeWin32.h"
+
+#include "Admin.h"
+#include "Connection.h"
+#include "SeLowUser.h"
+
+#include "Mayaqua/Cfg.h"
+#include "Mayaqua/FileIO.h"
+#include "Mayaqua/Internat.h"
+#include "Mayaqua/Memory.h"
+#include "Mayaqua/Microsoft.h"
+#include "Mayaqua/Object.h"
+#include "Mayaqua/Str.h"
+#include "Mayaqua/Tick64.h"
+#include "Mayaqua/Str.h"
+
 #include <Ws2tcpip.h>
-#include <windows.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <wchar.h>
-#include <stdarg.h>
-#include <time.h>
-#include <errno.h>
-#include <Packet32.h>
-#include <Mayaqua/Mayaqua.h>
-#include <Cedar/Cedar.h>
-
 
 static WP *wp = NULL;
 static LIST *eth_list = NULL;
@@ -571,11 +468,6 @@ bool EnumEthVLanWin32(RPC_ENUM_ETH_VLAN *t)
 	}
 
 	Zero(t, sizeof(RPC_ENUM_ETH_VLAN));
-
-	if (MsIsWin2000OrGreater() == false)
-	{
-		return false;
-	}
 
 	if (IsEthSupported() == false)
 	{
@@ -1594,7 +1486,7 @@ LIST *GetEthAdapterListInternal()
 
 		i = 0;
 
-		if (OS_IS_WINDOWS_NT(GetOsInfo()->OsType))
+		if (true)
 		{
 			// Windows NT
 			if (size >= 2 && buf[0] != 0 && buf[1] != 0)
@@ -1632,7 +1524,6 @@ LIST *GetEthAdapterListInternal()
 		}
 		else
 		{
-			// Windows 9x
 ANSI_STR:
 			while (true)
 			{
@@ -1669,18 +1560,6 @@ ANSI_STR:
 
 			StrCpy(a->Title, sizeof(a->Title), &buf[i]);
 			i += StrSize(a->Title);
-
-			// If device description is "Unknown" in Win9x, skip 1 byte
-			if (OS_IS_WINDOWS_9X(GetOsInfo()->OsType))
-			{
-				if (StrCmp(a->Title, "Unknown") == 0)
-				{
-					if (buf[i] == 0)
-					{
-						i+=sizeof(char);
-					}
-				}
-			}
 
 			TrimCrlf(a->Title);
 			Trim(a->Title);
@@ -1896,31 +1775,7 @@ bool IsEthSupportedInner()
 // Is the PCD driver supported in current OS
 bool IsPcdSupported()
 {
-	UINT type;
-	OS_INFO *info = GetOsInfo();
-
-	if (MsIsWindows10())
-	{
-		// Windows 10 or later never supports PCD driver.
-		return false;
-	}
-
-	type = info->OsType;
-
-	if (OS_IS_WINDOWS_NT(type) == false)
-	{
-		// Only on Windows NT series
-		return false;
-	}
-
-	if (GET_KETA(type, 100) >= 2)
-	{
-		// Good for Windows 2000 or later
-		return true;
-	}
-
-	// Not good for Windows NT 4.0 or Longhorn
-	return false;
+	return !MsIsWindows10();
 }
 
 // Save build number of PCD driver
@@ -2191,8 +2046,7 @@ void GetEthNetworkConnectionName(wchar_t *dst, UINT size, char *device_name)
 	UniStrCpy(dst, size, L"");
 
 	// Validate arguments
-	if (device_name == NULL || IsEthSupported() == false || 
-		IsNt() == false || MsIsWin2000OrGreater() == false)
+	if (device_name == NULL || IsEthSupported() == false)
 	{
 		return;
 	}
@@ -2240,6 +2094,4 @@ void GetEthNetworkConnectionName(wchar_t *dst, UINT size, char *device_name)
 	Free(ncname);
 }
 
-#endif	// BRIDGE_C
-
-
+#endif

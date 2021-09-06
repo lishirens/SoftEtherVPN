@@ -1,142 +1,48 @@
 // SoftEther VPN Source Code - Developer Edition Master Branch
 // Cedar Communication Module
-// 
-// SoftEther VPN Server, Client and Bridge are free software under GPLv2.
-// 
-// Copyright (c) Daiyuu Nobori.
-// Copyright (c) SoftEther VPN Project, University of Tsukuba, Japan.
-// Copyright (c) SoftEther Corporation.
-// 
-// All Rights Reserved.
-// 
-// http://www.softether.org/
-// 
-// Author: Daiyuu Nobori, Ph.D.
-// Comments: Tetsuo Sugiyama, Ph.D.
-// 
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// version 2 as published by the Free Software Foundation.
-// 
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License version 2
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-// CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-// SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-// 
-// THE LICENSE AGREEMENT IS ATTACHED ON THE SOURCE-CODE PACKAGE
-// AS "LICENSE.TXT" FILE. READ THE TEXT FILE IN ADVANCE TO USE THE SOFTWARE.
-// 
-// 
-// THIS SOFTWARE IS DEVELOPED IN JAPAN, AND DISTRIBUTED FROM JAPAN,
-// UNDER JAPANESE LAWS. YOU MUST AGREE IN ADVANCE TO USE, COPY, MODIFY,
-// MERGE, PUBLISH, DISTRIBUTE, SUBLICENSE, AND/OR SELL COPIES OF THIS
-// SOFTWARE, THAT ANY JURIDICAL DISPUTES WHICH ARE CONCERNED TO THIS
-// SOFTWARE OR ITS CONTENTS, AGAINST US (SOFTETHER PROJECT, SOFTETHER
-// CORPORATION, DAIYUU NOBORI OR OTHER SUPPLIERS), OR ANY JURIDICAL
-// DISPUTES AGAINST US WHICH ARE CAUSED BY ANY KIND OF USING, COPYING,
-// MODIFYING, MERGING, PUBLISHING, DISTRIBUTING, SUBLICENSING, AND/OR
-// SELLING COPIES OF THIS SOFTWARE SHALL BE REGARDED AS BE CONSTRUED AND
-// CONTROLLED BY JAPANESE LAWS, AND YOU MUST FURTHER CONSENT TO
-// EXCLUSIVE JURISDICTION AND VENUE IN THE COURTS SITTING IN TOKYO,
-// JAPAN. YOU MUST WAIVE ALL DEFENSES OF LACK OF PERSONAL JURISDICTION
-// AND FORUM NON CONVENIENS. PROCESS MAY BE SERVED ON EITHER PARTY IN
-// THE MANNER AUTHORIZED BY APPLICABLE LAW OR COURT RULE.
-// 
-// USE ONLY IN JAPAN. DO NOT USE THIS SOFTWARE IN ANOTHER COUNTRY UNLESS
-// YOU HAVE A CONFIRMATION THAT THIS SOFTWARE DOES NOT VIOLATE ANY
-// CRIMINAL LAWS OR CIVIL RIGHTS IN THAT PARTICULAR COUNTRY. USING THIS
-// SOFTWARE IN OTHER COUNTRIES IS COMPLETELY AT YOUR OWN RISK. THE
-// SOFTETHER VPN PROJECT HAS DEVELOPED AND DISTRIBUTED THIS SOFTWARE TO
-// COMPLY ONLY WITH THE JAPANESE LAWS AND EXISTING CIVIL RIGHTS INCLUDING
-// PATENTS WHICH ARE SUBJECTS APPLY IN JAPAN. OTHER COUNTRIES' LAWS OR
-// CIVIL RIGHTS ARE NONE OF OUR CONCERNS NOR RESPONSIBILITIES. WE HAVE
-// NEVER INVESTIGATED ANY CRIMINAL REGULATIONS, CIVIL LAWS OR
-// INTELLECTUAL PROPERTY RIGHTS INCLUDING PATENTS IN ANY OF OTHER 200+
-// COUNTRIES AND TERRITORIES. BY NATURE, THERE ARE 200+ REGIONS IN THE
-// WORLD, WITH DIFFERENT LAWS. IT IS IMPOSSIBLE TO VERIFY EVERY
-// COUNTRIES' LAWS, REGULATIONS AND CIVIL RIGHTS TO MAKE THE SOFTWARE
-// COMPLY WITH ALL COUNTRIES' LAWS BY THE PROJECT. EVEN IF YOU WILL BE
-// SUED BY A PRIVATE ENTITY OR BE DAMAGED BY A PUBLIC SERVANT IN YOUR
-// COUNTRY, THE DEVELOPERS OF THIS SOFTWARE WILL NEVER BE LIABLE TO
-// RECOVER OR COMPENSATE SUCH DAMAGES, CRIMINAL OR CIVIL
-// RESPONSIBILITIES. NOTE THAT THIS LINE IS NOT LICENSE RESTRICTION BUT
-// JUST A STATEMENT FOR WARNING AND DISCLAIMER.
-// 
-// 
-// SOURCE CODE CONTRIBUTION
-// ------------------------
-// 
-// Your contribution to SoftEther VPN Project is much appreciated.
-// Please send patches to us through GitHub.
-// Read the SoftEther VPN Patch Acceptance Policy in advance:
-// http://www.softether.org/5-download/src/9.patch
-// 
-// 
-// DEAR SECURITY EXPERTS
-// ---------------------
-// 
-// If you find a bug or a security vulnerability please kindly inform us
-// about the problem immediately so that we can fix the security problem
-// to protect a lot of users around the world as soon as possible.
-// 
-// Our e-mail address for security reports is:
-// softether-vpn-security [at] softether.org
-// 
-// Please note that the above e-mail address is not a technical support
-// inquiry address. If you need technical assistance, please visit
-// http://www.softether.org/ and ask your question on the users forum.
-// 
-// Thank you for your cooperation.
-// 
-// 
-// NO MEMORY OR RESOURCE LEAKS
-// ---------------------------
-// 
-// The memory-leaks and resource-leaks verification under the stress
-// test has been passed before release this source code.
 
 
 // WinUi.c
 // User interface code for Win32
 
-#include <GlobalConst.h>
+#ifdef OS_WIN32
 
-#ifdef	WIN32
+#define WINUI_C
 
-#define	WINUI_C
+#include "WinUi.h"
 
-#define	_WIN32_WINNT		0x0502
-#define	WINVER				0x0502
-#include <winsock2.h>
-#include <windows.h>
-#include <wincrypt.h>
-#include <wininet.h>
-#include <Iphlpapi.h>
-#include <shlobj.h>
-#include <commctrl.h>
-#include <Dbghelp.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <wchar.h>
-#include <stdarg.h>
-#include <time.h>
-#include <errno.h>
-#include <Mayaqua/Mayaqua.h>
-#include <Cedar/Cedar.h>
+#include "Client.h"
+#include "CM.h"
+#include "Protocol.h"
+#include "Session.h"
+#include "Win32Com.h"
+
+#include "Mayaqua/FileIO.h"
+#include "Mayaqua/Internat.h"
+#include "Mayaqua/Microsoft.h"
+#include "Mayaqua/Memory.h"
+#include "Mayaqua/Object.h"
+#include "Mayaqua/Pack.h"
+#include "Mayaqua/Secure.h"
+#include "Mayaqua/Str.h"
+#include "Mayaqua/Table.h"
+#include "Mayaqua/Tick64.h"
+#include "Mayaqua/Win32.h"
+
 #include "../PenCore/resource.h"
+
+#include <commdlg.h>
+#include <shellapi.h>
+#include <shlobj.h>
+
+// Process name list of incompatible anti-virus software
+static BAD_PROCESS bad_processes[] =
+{
+	{"nod32krn.exe", "NOD32 Antivirus"},
+	{"avp.exe", "Kaspersky"}
+};
+
+static const UINT num_bad_processes = sizeof(bad_processes) / sizeof(bad_processes[0]);
 
 char cached_pin_code[MAX_SIZE] = {0};
 UINT64 cached_pin_code_expires = 0;
@@ -573,11 +479,6 @@ void SetUacIcon(HWND hWnd, UINT id)
 		return;
 	}
 
-	if (MsIsVista() == false)
-	{
-		goto LABEL_FAILED;
-	}
-
 	if (hShell32 == NULL)
 	{
 		hShell32 = LoadLibraryA("shell32.dll");
@@ -606,14 +507,10 @@ void SetUacIcon(HWND hWnd, UINT id)
 		}
 	}
 
-	if (ok)
+	if (!ok)
 	{
-		return;
+		Hide(hWnd, id);
 	}
-
-LABEL_FAILED:
-
-	Hide(hWnd, id);
 }
 
 // Procedure of the wizard page
@@ -874,14 +771,7 @@ LRESULT CALLBACK WizardCustomizedWindowProc(HWND hWnd, UINT msg, WPARAM wParam, 
 			break;
 		}
 
-		if (MsIsNt())
-		{
-			return CallWindowProcW(wizard->OriginalWindowProc, hWnd, msg, wParam, lParam);
-		}
-		else
-		{
-			return CallWindowProcA(wizard->OriginalWindowProc, hWnd, msg, wParam, lParam);
-		}
+		return CallWindowProcW(wizard->OriginalWindowProc, hWnd, msg, wParam, lParam);
 	}
 	else
 	{
@@ -907,25 +797,10 @@ UINT CALLBACK WizardDlgProc(HWND hWnd, UINT msg, LPARAM lParam)
 			{
 				wizard->ReplaceWindowProcFlag = true;
 
-				if (MsIsNt())
-				{
-					wizard->OriginalWindowProc = (void *)GetWindowLongPtrW(hWnd, GWLP_WNDPROC);
-				}
-				else
-				{
-					wizard->OriginalWindowProc = (void *)GetWindowLongPtrA(hWnd, GWLP_WNDPROC);
-				}
-
+				wizard->OriginalWindowProc = (void *)GetWindowLongPtrW(hWnd, GWLP_WNDPROC);
 				if (wizard->OriginalWindowProc != NULL)
 				{
-					if (MsIsNt())
-					{
-						SetWindowLongPtrW(hWnd, GWLP_WNDPROC, (LONG_PTR)WizardCustomizedWindowProc);
-					}
-					else
-					{
-						SetWindowLongPtrA(hWnd, GWLP_WNDPROC, (LONG_PTR)WizardCustomizedWindowProc);
-					}
+					SetWindowLongPtrW(hWnd, GWLP_WNDPROC, (LONG_PTR)WizardCustomizedWindowProc);
 				}
 			}
 		}
@@ -998,12 +873,6 @@ void ShowWizard(HWND hWndParent, WIZARD *w, UINT start_id)
 	Zero(&h, sizeof(h));
 	h.dwSize = sizeof(PROPSHEETHEADERW_V2);
 	h.dwFlags = PSH_WIZARD97 | PSH_HEADER | PSH_USEICONID | PSH_USECALLBACK;
-
-	if (MsIsVista() == false)
-	{
-		// Aero Wizard is unavailable in pre-Vista
-		w->IsAreoStyle = false;
-	}
 
 	if (MsIsAeroColor() == false)
 	{
@@ -1304,7 +1173,7 @@ void NicInfoShowStatus(HWND hWnd, UI_NICINFO *info, wchar_t *msg1, wchar_t *msg2
 	SetText(hWnd, S_STATUS1, msg1);
 	SetText(hWnd, S_STATUS2, msg2);
 
-	SetShow(hWnd, P_BAR, animate && MsIsWinXPOrWinVista());
+	SetShow(hWnd, P_BAR, animate);
 }
 void NicInfoRefresh(HWND hWnd, UI_NICINFO *info)
 {
@@ -1338,7 +1207,7 @@ void NicInfoRefresh(HWND hWnd, UI_NICINFO *info)
 		{
 			Copy(&ip, &a->IpAddresses[i], sizeof(IP));
 
-			if (!(ip.addr[0] == 169 && ip.addr[1] == 254))
+			if (!(IPV4(ip.address)[0] == 169 && IPV4(ip.address)[1] == 254))
 			{
 				has_ip = true;
 			}
@@ -1383,12 +1252,9 @@ void NicInfoInit(HWND hWnd, UI_NICINFO *info)
 		return;
 	}
 
-	if (MsIsWinXPOrWinVista())
-	{
-		// Show a progress bar for Windows XP or later
-		SendMsg(hWnd, P_BAR, PBM_SETMARQUEE, TRUE, 150);
-		SetStyle(hWnd, P_BAR, PBS_MARQUEE);
-	}
+	// Show a progress bar
+	SendMsg(hWnd, P_BAR, PBM_SETMARQUEE, TRUE, 150);
+	SetStyle(hWnd, P_BAR, PBS_MARQUEE);
 
 	DlgFont(hWnd, S_STATUS1, 9, false);
 	DlgFont(hWnd, S_STATUS2, 11, false);
@@ -1488,17 +1354,9 @@ UINT WinConnectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam, void *
 		SetIcon(hWnd, S_ICON, d->icon_id);
 		d->hWnd = hWnd;
 
-		if (MsIsWinXPOrWinVista())
-		{
-			// Show a progress bar for Windows XP or later
-			SendMsg(hWnd, IDC_PROGRESS1, PBM_SETMARQUEE, TRUE, 100);
-			SetStyle(hWnd, IDC_PROGRESS1, PBS_MARQUEE);
-		}
-		else
-		{
-			// Hide the progress bar in the case of pre-Windows 2000
-			Hide(hWnd, IDC_PROGRESS1);
-		}
+		// Show a progress bar
+		SendMsg(hWnd, IDC_PROGRESS1, PBM_SETMARQUEE, TRUE, 100);
+		SetStyle(hWnd, IDC_PROGRESS1, PBS_MARQUEE);
 
 		// Create a thread
 		d->thread = NewThread(WinConnectDlgThread, d);
@@ -1620,14 +1478,7 @@ char *GetMeiryoFontName()
 	}
 	else
 	{
-		if (MsIsVista())
-		{
-			return "Meiryo";
-		}
-		else
-		{
-			return "MS UI Gothic";
-		}
+		return "Meiryo";
 	}
 }
 
@@ -1769,14 +1620,7 @@ UINT OnceMsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam, void *param)
 			SetIcon(hWnd, 0, d->Icon);
 		}
 
-		if (MsIsVista())
-		{
-			SetFont(hWnd, E_TEXT, GetMeiryoFont());
-		}
-		else
-		{
-			DlgFont(hWnd, E_TEXT, 11, false);
-		}
+		SetFont(hWnd, E_TEXT, GetMeiryoFont());
 
 		SetTimer(hWnd, 1, 50, NULL);
 		break;
@@ -1907,11 +1751,6 @@ void InitVistaWindowTheme(HWND hWnd)
 	static HINSTANCE hInstDll = NULL;
 	HRESULT (WINAPI *_SetWindowTheme)(HWND, LPCWSTR, LPCWSTR) = NULL;
 
-	if (MsIsVista() == false)
-	{
-		return;
-	}
-
 	if (hInstDll == NULL)
 	{
 		hInstDll = LoadLibraryA("uxtheme.dll");
@@ -1948,25 +1787,12 @@ void RegistWindowsFirewallAll()
 void RegistWindowsFirewallAllEx(char *dir)
 {
 	MsRegistWindowsFirewallEx2(CEDAR_CLIENT_STR, "vpnclient.exe", dir);
-	MsRegistWindowsFirewallEx2(CEDAR_CLIENT_STR, "vpnclient_x64.exe", dir);
-
 	MsRegistWindowsFirewallEx2(CEDAR_CLIENT_MANAGER_STR, "vpncmgr.exe", dir);
-	MsRegistWindowsFirewallEx2(CEDAR_CLIENT_MANAGER_STR, "vpncmgr_x64.exe", dir);
-
 	MsRegistWindowsFirewallEx2(CEDAR_MANAGER_STR, "vpnsmgr.exe", dir);
-	MsRegistWindowsFirewallEx2(CEDAR_MANAGER_STR, "vpnsmgr_x64.exe", dir);
-
 	MsRegistWindowsFirewallEx2(CEDAR_SERVER_STR, "vpnserver.exe", dir);
-	MsRegistWindowsFirewallEx2(CEDAR_SERVER_STR, "vpnserver_x64.exe", dir);
-
 	MsRegistWindowsFirewallEx2(CEDAR_BRIDGE_STR, "vpnbridge.exe", dir);
-	MsRegistWindowsFirewallEx2(CEDAR_BRIDGE_STR, "vpnbridge_x64.exe", dir);
-
 	MsRegistWindowsFirewallEx2(CEDAR_CUI_STR, "vpncmd.exe", dir);
-	MsRegistWindowsFirewallEx2(CEDAR_CUI_STR, "vpncmd_x64.exe", dir);
-
 	MsRegistWindowsFirewallEx2(CEDAR_PRODUCT_STR, "vpntest.exe", dir);
-	MsRegistWindowsFirewallEx2(CEDAR_PRODUCT_STR, "vpntest_x64.exe", dir);
 }
 
 // Check whether the notification service is already running
@@ -2002,149 +1828,6 @@ bool Win32CnCheckAlreadyExists(bool lock)
 // Show the Easter Egg
 void ShowEasterEgg(HWND hWnd)
 {
-}
-
-void KakushiThread(THREAD *thread, void *param)
-{
-	KAKUSHI *k;
-	// Validate arguments
-	if (thread == NULL || param == NULL)
-	{
-		return;
-	}
-
-	k = (KAKUSHI *)param;
-
-	k->Thread = thread;
-	AddRef(k->Thread->ref);
-	NoticeThreadInit(thread);
-
-	Dialog(NULL, D_CM_KAKUSHI, KakushiDlgProc, k);
-	k->hWnd = NULL;
-}
-
-KAKUSHI *InitKakushi()
-{
-	THREAD *t;
-	KAKUSHI *k = ZeroMalloc(sizeof(KAKUSHI));
-
-	t = NewThread(KakushiThread, k);
-
-	WaitThreadInit(t);
-	ReleaseThread(t);
-
-	return k;
-}
-
-UINT KakushiDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam, void *param)
-{
-	KAKUSHI *k = (KAKUSHI *)param;
-	UINT64 now;
-	bool b;
-	if (hWnd == NULL)
-	{
-		return 0;
-	}
-
-	switch (msg)
-	{
-	case WM_INITDIALOG:
-		SetText(hWnd, S_INFO, _UU("CM_VLAN_CREATING"));
-
-		b = false;
-
-		if (MsIsVista())
-		{
-			if (_GETLANG() == 0)
-			{
-				SetFont(hWnd, S_INFO, GetFont(GetMeiryoFontName(), 11, false, false, false, false));
-				b = true;
-			}
-			else if (_GETLANG() == 2)
-			{
-				SetFont(hWnd, S_INFO, GetFont("Microsoft YaHei", 11, false, false, false, false));
-				b = true;
-			}
-			else if (_GETLANG() == 3)
-			{
-				SetFont(hWnd, S_INFO, GetFont("Microsoft JhengHei", 11, false, false, false, false));
-				b = true;
-			}
-		}
-
-		if (b == false)
-		{
-			DlgFont(hWnd, S_INFO, 11, false);
-		}
-
-		SetTimer(hWnd, 1, 50, NULL);
-		k->hWnd = hWnd;
-
-		k->Span = 20 * 1000;
-		k->StartTick = Tick64();
-
-		SetRange(hWnd, P_PROGRESS, 0, (UINT)k->Span);
-
-	case WM_APP + 9821:
-		now = Tick64();
-
-		if (((k->StartTick + k->Span) <= now) || k->Halt)
-		{
-			EndDialog(hWnd, 0);
-			break;
-		}
-
-		SetPos(hWnd, P_PROGRESS, (UINT)(now - k->StartTick));
-		break;
-
-	case WM_TIMER:
-		switch (wParam)
-		{
-		case 1:
-			AllowSetForegroundWindow(ASFW_ANY);
-			SetForegroundWindow(hWnd);
-			SetActiveWindow(hWnd);
-
-			now = Tick64();
-
-			if (((k->StartTick + k->Span) <= now) || k->Halt)
-			{
-				EndDialog(hWnd, 0);
-				break;
-			}
-
-			SetPos(hWnd, P_PROGRESS, (UINT)(now - k->StartTick));
-			break;
-		}
-		break;
-
-	case WM_CLOSE:
-		return 1;
-	}
-
-	return 0;
-}
-
-// Release the Kakushi screen 
-void FreeKakushi(KAKUSHI *k)
-{
-	// Validate arguments
-	if (k == NULL)
-	{
-		return;
-	}
-
-	k->Halt = true;
-
-	if (k->hWnd != NULL)
-	{
-		PostMessage(k->hWnd, WM_APP + 9821, 0, 0);
-	}
-
-	WaitThread(k->Thread, INFINITE);
-	ReleaseThread(k->Thread);
-
-	Free(k);
 }
 
 // TCP/IP optimization selection dialog procedure
@@ -2421,26 +2104,14 @@ void ShowTcpIpConfigUtil(HWND hWnd, bool util_mode)
 
 		GetExeDirW(exedir, sizeof(exedir));
 
-		if (IsX64())
-		{
-			UniFormat(tmp, sizeof(tmp), L"%s\\vpncmd_x64.exe", exedir);
-		}
-		else if (IsIA64())
-		{
-			UniFormat(tmp, sizeof(tmp), L"%s\\vpncmd_ia64.exe", exedir);
-		}
-		else
-		{
-			UniFormat(tmp, sizeof(tmp), L"%s\\vpncmd.exe", exedir);
-		}
-
+		UniFormat(tmp, sizeof(tmp), L"%s\\vpncmd.exe", exedir);
 		if (IsFileW(tmp))
 		{
 			RunW(tmp, L"/tool /cmd:exit", true, false);
 		}
 
 		// Disable the task off-loading by netsh
-		if (MsIsVista())
+		if (true)
 		{
 			DIRLIST *dl;
 			UINT i;
@@ -2489,14 +2160,11 @@ void ShowTcpIpConfigUtil(HWND hWnd, bool util_mode)
 
 		if (MsIsAdmin())
 		{
-			if (MsIsVista())
+			// If installing on Windows Vista,
+			// dispel the network limitation of MMCSS
+			if (MsIsMMCSSNetworkThrottlingEnabled())
 			{
-				// If installing on Windows Vista,
-				// dispel the network limitation of MMCSS
-				if (MsIsMMCSSNetworkThrottlingEnabled())
-				{
-					MsSetMMCSSNetworkThrottlingEnable(false);
-				}
+				MsSetMMCSSNetworkThrottlingEnable(false);
 			}
 		}
 	}
@@ -2605,63 +2273,13 @@ void InitMenuInternationalUni(HMENU hMenu, char *prefix)
 // Internationalization of menu
 void InitMenuInternational(HMENU hMenu, char *prefix)
 {
-	UINT i, num;
 	// Validate arguments
 	if (hMenu == NULL || prefix == NULL)
 	{
 		return;
 	}
 
-	if (MsIsNt())
-	{
-		InitMenuInternationalUni(hMenu, prefix);
-		return;
-	}
-
-	// Get the number of items in the menu
-	num = GetMenuItemCount(hMenu);
-
-	// Enumerate the menu items
-	for (i = 0;i < num;i++)
-	{
-		HMENU hSubMenu = GetSubMenu(hMenu, i);
-		MENUITEMINFO info;
-		char tmp[MAX_SIZE];
-
-		if (hSubMenu != NULL)
-		{
-			// If there is a sub-menu, call it recursively
-			InitMenuInternational(hSubMenu, prefix);
-		}
-
-		// Get the menu item
-		Zero(&info, sizeof(info));
-		info.cbSize = sizeof(info);
-		info.cch = sizeof(tmp);
-		info.dwTypeData = tmp;
-		info.fMask = MIIM_STRING;
-		Zero(tmp, sizeof(tmp));
-
-		if (GetMenuItemInfo(hMenu, i, true, &info))
-		{
-			if (tmp[0] == '@')
-			{
-				char name[256];
-				char *ret;
-
-				Format(name, sizeof(name), "%s@%s", prefix, &tmp[1]);
-
-				ret = _SS(name);
-				if (IsEmptyStr(ret) == false)
-				{
-					StrCpy(tmp, sizeof(tmp), ret);
-					info.cch = StrLen(tmp);
-
-					SetMenuItemInfo(hMenu, i, true, &info);
-				}
-			}
-		}
-	}
+	InitMenuInternationalUni(hMenu, prefix);
 }
 
 // Get the default font for the dialog box
@@ -2728,9 +2346,6 @@ void AdjustWindowAndControlSize(HWND hWnd, bool *need_resize, double *factor_x, 
 {
 	HFONT hDlgFont;
 	UINT dlgfont_x, dlgfont_y;
-	RECT rect, rect2;
-	LIST *o;
-	UINT i;
 	// Validate arguments
 	if (hWnd == NULL || need_resize == NULL || factor_x == NULL || factor_y == NULL)
 	{
@@ -2760,120 +2375,6 @@ void AdjustWindowAndControlSize(HWND hWnd, bool *need_resize, double *factor_x, 
 	*factor_x = (double)dlgfont_x / (double)WINUI_DEFAULT_DIALOG_UNIT_X;
 	*factor_y = (double)dlgfont_y / (double)WINUI_DEFAULT_DIALOG_UNIT_Y;
 	//Debug("Factors: %f %f\n", *factor_x, *factor_y);
-
-	if (MsIsVista())
-	{
-		// In Windows Vista or later, trust the size expansion by the OS to follow this (not adjusted)
-		return;
-	}
-
-	// Adjust the size of the window
-	if (GetWindowRect(hWnd, &rect))
-	{
-		if (GetClientRect(hWnd, &rect2))
-		{
-			UINT width = rect2.right - rect2.left;
-			UINT height = rect2.bottom - rect2.top;
-
-			AdjustDialogXY(&width, &height, dlgfont_x, dlgfont_y);
-
-			width += (rect.right - rect.left) - (rect2.right - rect2.left);
-			height += (rect.bottom - rect.top) - (rect2.bottom - rect2.top);
-
-			if (true)
-			{
-				HWND hParent = GetParent(hWnd);
-
-				if (hParent != NULL)
-				{
-					RECT r;
-
-					Zero(&r, sizeof(r));
-
-					if (GetWindowRect(hParent, &r))
-					{
-						RECT r2;
-
-						rect.top = r.top + GetSystemMetrics(SM_CYCAPTION);
-
-						Zero(&r2, sizeof(r2));
-						if (SystemParametersInfo(SPI_GETWORKAREA, 0, &r2, 0))
-						{
-							if (r2.bottom < (rect.top + (int)height))
-							{
-								rect.top -= (rect.top + (int)height) - r2.bottom;
-
-								if (rect.top < 0)
-								{
-									rect.top = 0;
-								}
-							}
-						}
-					}
-				}
-			}
-
-			MoveWindow(hWnd, rect.left, rect.top, width, height, false);
-		}
-	}
-
-	// Enumerate the child windows
-	o = EnumAllChildWindowEx(hWnd, false, true, true);
-
-	for (i = 0;i < LIST_NUM(o);i++)
-	{
-		// Adjust the size of the child window
-		HWND h = *((HWND *)LIST_DATA(o, i));
-		HWND hWndParent = GetParent(h);
-		RECT current_rect;
-		char class_name[MAX_PATH];
-		bool is_image = false;
-
-		// Get the class name
-		Zero(class_name, sizeof(class_name));
-		GetClassNameA(h, class_name, sizeof(class_name));
-
-		if (StrCmpi(class_name, "static") == 0)
-		{
-			if (SendMsg(h, 0, STM_GETIMAGE, IMAGE_BITMAP, 0) != 0 ||
-				SendMsg(h, 0, STM_GETIMAGE, IMAGE_ICON, 0) != 0 ||
-				SendMsg(h, 0, STM_GETICON, 0, 0) != 0)
-			{
-				is_image = true;
-			}
-		}
-
-		// Get the position
-		if (GetWindowRect(h, &current_rect))
-		{
-			// Convert to client coordinates
-			POINT p1, p2;
-
-			p1.x = current_rect.left;
-			p1.y = current_rect.top;
-
-			p2.x = current_rect.right;
-			p2.y = current_rect.bottom;
-
-			ScreenToClient(hWndParent, &p1);
-			ScreenToClient(hWndParent, &p2);
-
-			// Adjust the position
-			AdjustDialogXY(&p1.x, &p1.y, dlgfont_x, dlgfont_y);
-			AdjustDialogXY(&p2.x, &p2.y, dlgfont_x, dlgfont_y);
-
-			if (is_image)
-			{
-				p2.x = p1.x + (current_rect.right - current_rect.left);
-				p2.y = p1.y + (current_rect.bottom - current_rect.top);
-			}
-
-			// Move
-			MoveWindow(h, p1.x, p1.y, p2.x - p1.x, p2.y - p1.y, false);
-		}
-	}
-
-	FreeWindowList(o);
 }
 
 // Adjust the values of x and y according to the font
@@ -2981,15 +2482,12 @@ void InitDialogInternational(HWND hWnd, void *pparam)
 				SetFont(hControl, 0, hFont);
 			}
 
-			if (MsIsVista())
-			{
-				char classname[MAX_PATH];
-				GetClassNameA(hControl, classname, sizeof(classname));
+			char classname[MAX_PATH];
+			GetClassNameA(hControl, classname, sizeof(classname));
 
-				if (StrCmpi(classname, "syslistview32") == 0)
-				{
-					InitVistaWindowTheme(hControl);
-				}
+			if (StrCmpi(classname, "syslistview32") == 0)
+			{
+				InitVistaWindowTheme(hControl);
 			}
 
 			if (is_managed_dialog)
@@ -3028,7 +2526,7 @@ void InitDialogInternational(HWND hWnd, void *pparam)
 
 	FreeWindowList(o);
 
-	if (MsIsVista() && need_resize)
+	if (need_resize)
 	{
 		// Since the window size is changed automatically by the OS by the dpi setting
 		// in Windows Vista or later, a static (bitmap) control needs to be expanded
@@ -3414,81 +2912,6 @@ char *StringDlgA(HWND hWnd, wchar_t *title, wchar_t *info, char *def, UINT icon,
 	Free(tmp);
 
 	return ret;
-}
-
-// Restarting dialog
-UINT Win9xRebootDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam, void *param)
-{
-	WIN9X_REBOOT_DLG *d = (WIN9X_REBOOT_DLG *)param;
-	UINT64 now;
-	wchar_t tmp[MAX_PATH];
-	// Validate arguments
-	if (hWnd == NULL)
-	{
-		return 0;
-	}
-
-	switch (msg)
-	{
-	case WM_INITDIALOG:
-		d->StartTime = Tick64();
-		SetRange(hWnd, P_PROGRESS, 0, d->TotalTime);
-		SetTimer(hWnd, 1, 100, NULL);
-		goto UPDATE;
-
-	case WM_TIMER:
-		switch (wParam)
-		{
-		case 1:
-UPDATE:
-			now = Tick64();
-			if ((d->StartTime + (UINT64)d->TotalTime) <= now)
-			{
-				KillTimer(hWnd, 1);
-				UniStrCpy(tmp, sizeof(tmp), _UU("DLG_REBOOT_INFO_2"));
-				SetText(hWnd, S_INFO, tmp);
-				if (MsShutdown(true, false) == false)
-				{
-					MsgBox(hWnd, MB_ICONSTOP, _UU("DLG_REBOOT_ERROR"));
-				}
-				EndDialog(hWnd, 0);
-			}
-			else
-			{
-				SetPos(hWnd, P_PROGRESS, (UINT)(now - d->StartTime));
-				UniFormat(tmp, sizeof(tmp), _UU("DLG_REBOOT_INFO"),
-					(UINT)((UINT64)d->TotalTime - (now - d->StartTime)) / 1000 + 1);
-				SetText(hWnd, S_INFO, tmp);
-			}
-
-			break;
-		}
-		break;
-	}
-	return 0;
-}
-
-// Restarting thread
-void Win9xRebootThread(THREAD *t, void *p)
-{
-	// Validate arguments
-	if (t == NULL)
-	{
-		return;
-	}
-
-	Win9xReboot(NULL);
-}
-
-// Restart automatically
-void Win9xReboot(HWND hWnd)
-{
-	WIN9X_REBOOT_DLG d;
-
-	Zero(&d, sizeof(d));
-	d.TotalTime = 10 * 1000;
-
-	Dialog(hWnd, D_WIN9X_REBOOT, Win9xRebootDlgProc, &d);
 }
 
 // Show a text file
@@ -4067,11 +3490,7 @@ void AllowFGWindow(UINT process_id)
 		return;
 	}
 
-	if (OS_IS_WINDOWS_NT(GetOsInfo()->OsType) &&
-		GET_KETA(GetOsInfo()->OsType, 100) >= 2)
-	{
-		AllowSetForegroundWindow(process_id);
-	}
+	AllowSetForegroundWindow(process_id);
 }
 
 // Rename the item
@@ -4084,6 +3503,120 @@ void LvRename(HWND hWnd, UINT id, UINT pos)
 	}
 
 	ListView_EditLabel(DlgItem(hWnd, id), pos);
+}
+
+// Enhanced function
+LRESULT CALLBACK LvEnhancedProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+	WNDPROC func = (WNDPROC)GetPropW(hWnd, L"ORIGINAL_FUNC");
+	if (func == NULL)
+	{
+		Debug("LvEnhancedProc(): GetProp() returned NULL!\n");
+		return 1;
+	}
+
+	switch (msg)
+	{
+	case WM_HSCROLL:
+	case WM_VSCROLL:
+	case WM_MOUSEWHEEL:
+	{
+		// Prevent graphical glitches with the edit box by sending the NM_RETURN signal
+		// to the parent dialog (the parent dialog has to delete the edit box on NM_RETURN)
+		NMHDR nmh;
+		nmh.code = NM_RETURN;
+		nmh.idFrom = GetDlgCtrlID(hWnd);
+		nmh.hwndFrom = hWnd;
+		SendMsg(GetParent(hWnd), 0, WM_NOTIFY, nmh.idFrom, (LPARAM)&nmh);
+
+		break;
+	}
+	case WM_CLOSE:
+		// Prevent list view from disappearing after pressing ESC in an edit box
+		return 0;
+	case WM_NCDESTROY:
+		// Restore original function during destruction
+		LvSetEnhanced(hWnd, 0, false);
+	}
+
+	return CallWindowProcW(func, hWnd, msg, wParam, lParam);
+}
+
+// Toggle enhanced function
+void LvSetEnhanced(HWND hWnd, UINT id, bool enable)
+{
+	// Validate arguments
+	if (hWnd == NULL)
+	{
+		return;
+	}
+
+	if (enable)
+	{
+		const HANDLE fn = (HANDLE)SetWindowLongPtrW(DlgItem(hWnd, id), GWLP_WNDPROC, (LONG_PTR)LvEnhancedProc);
+		SetPropW(DlgItem(hWnd, id), L"ORIGINAL_FUNC", fn);
+	}
+	else
+	{
+		SetWindowLongPtrW(DlgItem(hWnd, id), GWLP_WNDPROC, (LONG_PTR)GetPropW(DlgItem(hWnd, id), L"ORIGINAL_FUNC"));
+		RemovePropW(DlgItem(hWnd, id), L"ORIGINAL_FUNC");
+	}
+}
+
+// Enhanced function
+LRESULT CALLBACK EditBoxEnhancedProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+	WNDPROC func = (WNDPROC)GetPropW(hWnd, L"ORIGINAL_FUNC");
+	if (func == NULL)
+	{
+		Debug("EditBoxEnhancedProc(): GetProp() returned NULL!\n");
+		return 1;
+	}
+
+	switch (msg)
+	{
+	case WM_CHAR:
+		switch (wParam)
+		{
+		// CTRL + A
+		case 1:
+			SelectEdit(hWnd, 0);
+			return 0;
+		case VK_RETURN:
+			SendMsg(GetParent(hWnd), 0, WM_KEYDOWN, VK_RETURN, 0);
+			return 0;
+		case VK_ESCAPE:
+			DestroyWindow(hWnd);
+			return 0;
+		}
+		break;
+	case WM_NCDESTROY:
+		// Restore original function during destruction
+		EditBoxSetEnhanced(hWnd, 0, false);
+	}
+
+	return CallWindowProcW(func, hWnd, msg, wParam, lParam);
+}
+
+// Toggle enhanced function
+void EditBoxSetEnhanced(HWND hWnd, UINT id, bool enable)
+{
+	// Validate arguments
+	if (hWnd == NULL)
+	{
+		return;
+	}
+
+	if (enable)
+	{
+		const HANDLE fn = (HANDLE)SetWindowLongPtrW(DlgItem(hWnd, id), GWLP_WNDPROC, (LONG_PTR)EditBoxEnhancedProc);
+		SetPropW(DlgItem(hWnd, id), L"ORIGINAL_FUNC", fn);
+	}
+	else
+	{
+		SetWindowLongPtrW(DlgItem(hWnd, id), GWLP_WNDPROC, (LONG_PTR)GetPropW(DlgItem(hWnd, id), L"ORIGINAL_FUNC"));
+		RemovePropW(DlgItem(hWnd, id), L"ORIGINAL_FUNC");
+	}
 }
 
 // Show the menu
@@ -4163,14 +3696,6 @@ void SetMenuStr(HMENU hMenu, UINT pos, wchar_t *str)
 		return;
 	}
 
-	if (MsIsNt() == false)
-	{
-		char *s = CopyUniToStr(str);
-		SetMenuStrA(hMenu, pos, s);
-		Free(s);
-		return;
-	}
-
 	Zero(&info, sizeof(info));
 	info.cbSize = sizeof(info);
 	info.fMask = MIIM_STRING;
@@ -4201,20 +3726,6 @@ wchar_t *GetMenuStr(HMENU hMenu, UINT pos)
 	if (hMenu == NULL || pos == INFINITE)
 	{
 		return NULL;
-	}
-	if (MsIsNt() == false)
-	{
-		char *s = GetMenuStrA(hMenu, pos);
-		if (s == NULL)
-		{
-			return NULL;
-		}
-		else
-		{
-			wchar_t *ret = CopyStrToUni(s);
-			Free(s);
-			return ret;
-		}
 	}
 
 	if (GetMenuStringW(hMenu, pos, tmp, sizeof(tmp), MF_BYPOSITION) == 0)
@@ -4838,10 +4349,7 @@ void LvInitEx2(HWND hWnd, UINT id, bool no_image, bool large_icon)
 
 	ListView_SetExtendedListViewStyle(DlgItem(hWnd, id), LVS_EX_FULLROWSELECT);
 
-	if (MsIsVista())
-	{
-		LvSetStyle(hWnd, id, LVS_EX_DOUBLEBUFFER);
-	}
+	LvSetStyle(hWnd, id, LVS_EX_DOUBLEBUFFER);
 }
 void LvInit(HWND hWnd, UINT id)
 {
@@ -5366,14 +4874,6 @@ UINT LvInsertItemByImageListId(HWND hWnd, UINT id, UINT image, void *param, wcha
 	{
 		return INFINITE;
 	}
-	if (MsIsNt() == false)
-	{
-		char *s = CopyUniToStr(str);
-		UINT ret;
-		ret = LvInsertItemByImageListIdA(hWnd, id, image, param, s);
-		Free(s);
-		return ret;
-	}
 
 	Zero(&t, sizeof(t));
 	t.mask = LVIF_IMAGE | LVIF_PARAM | LVIF_TEXT;
@@ -5452,13 +4952,6 @@ void LvSetItem(HWND hWnd, UINT id, UINT index, UINT pos, wchar_t *str)
 	// Validate arguments
 	if (hWnd == NULL || str == NULL)
 	{
-		return;
-	}
-	if (MsIsNt() == false)
-	{
-		char *s = CopyUniToStr(str);
-		LvSetItemA(hWnd, id, index, pos, s);
-		Free(s);
 		return;
 	}
 
@@ -5830,21 +5323,6 @@ wchar_t *LvGetStr(HWND hWnd, UINT id, UINT index, UINT pos)
 	if (hWnd == NULL)
 	{
 		return NULL;
-	}
-	if (MsIsNt() == false)
-	{
-		char *s = LvGetStrA(hWnd, id, index, pos);
-		if (s == NULL)
-		{
-			return NULL;
-		}
-		else
-		{
-			wchar_t *ret = CopyStrToUni(s);
-			Free(s);
-
-			return ret;
-		}
 	}
 
 	size = 65536;
@@ -6505,13 +5983,6 @@ wchar_t *CbGetStr(HWND hWnd, UINT id)
 UINT CbFindStr(HWND hWnd, UINT id, wchar_t *str)
 {
 	UINT ret;
-	if (MsIsNt() == false)
-	{
-		char *tmp = CopyUniToStr(str);
-		ret = CbFindStr9xA(hWnd, id, tmp);
-		Free(tmp);
-		return ret;
-	}
 	// Validate arguments
 	if (hWnd == NULL || str == NULL)
 	{
@@ -6566,13 +6037,6 @@ UINT CbAddStrA(HWND hWnd, UINT id, char *str, UINT data)
 UINT CbAddStr(HWND hWnd, UINT id, wchar_t *str, UINT data)
 {
 	UINT ret;
-	if (MsIsNt() == false)
-	{
-		char *s = CopyUniToStr(str);
-		ret = CbAddStr9xA(hWnd, id, s, data);
-		Free(s);
-		return ret;
-	}
 	// Validate arguments
 	if (hWnd == NULL || str == NULL)
 	{
@@ -7192,24 +6656,6 @@ wchar_t *SaveDlg(HWND hWnd, wchar_t *filter, wchar_t *title, wchar_t *default_na
 	wchar_t tmp[MAX_SIZE];
 	OPENFILENAMEW o;
 
-	if (MsIsNt() == false)
-	{
-		char *ret, *s1, *s2, *s3, *s4;
-		wchar_t *wr;
-		s1 = CopyUniToStr(filter);
-		s2 = CopyUniToStr(title);
-		s3 = CopyUniToStr(default_name);
-		s4 = CopyUniToStr(default_ext);
-		ret = SaveDlgA(hWnd, s1, s2, s3, s4);
-		Free(s1);
-		Free(s2);
-		Free(s3);
-		Free(s4);
-		wr = CopyStrToUni(ret);
-		Free(ret);
-		return wr;
-	}
-
 	// Validate arguments
 	if (filter == NULL)
 	{
@@ -7227,12 +6673,6 @@ wchar_t *SaveDlg(HWND hWnd, wchar_t *filter, wchar_t *title, wchar_t *default_na
 	}
 
 	o.lStructSize = sizeof(o);
-	
-	if (OS_IS_WINDOWS_9X(GetOsInfo()->OsType) || (OS_IS_WINDOWS_NT(GetOsInfo()->OsType) && GET_KETA(GetOsInfo()->OsType, 100) <= 1))
-	{
-		o.lStructSize = OPENFILENAME_SIZE_VERSION_400W;
-	}
-
 	o.hwndOwner = hWnd;
 	o.hInstance = GetModuleHandle(NULL);
 	o.lpstrFile = tmp;
@@ -7274,12 +6714,6 @@ char *SaveDlgA(HWND hWnd, char *filter, char *title, char *default_name, char *d
 	}
 
 	o.lStructSize = sizeof(o);
-	
-	if (OS_IS_WINDOWS_9X(GetOsInfo()->OsType) || (OS_IS_WINDOWS_NT(GetOsInfo()->OsType) && GET_KETA(GetOsInfo()->OsType, 100) <= 1))
-	{
-		o.lStructSize = OPENFILENAME_SIZE_VERSION_400A;
-	}
-
 	o.hwndOwner = hWnd;
 	o.hInstance = GetModuleHandle(NULL);
 	o.lpstrFile = tmp;
@@ -7307,22 +6741,6 @@ wchar_t *OpenDlg(HWND hWnd, wchar_t *filter, wchar_t *title)
 	wchar_t tmp[MAX_SIZE];
 	OPENFILENAMEW o;
 
-	if (MsIsNt() == false)
-	{
-		char *ret;
-		char *filter_a;
-		char *title_a;
-		wchar_t *w;
-		filter_a = CopyUniToStr(filter);
-		title_a = CopyUniToStr(title);
-		ret = OpenDlgA(hWnd, filter_a, title_a);
-		Free(filter_a);
-		Free(title_a);
-		w = CopyStrToUni(ret);
-		Free(ret);
-		return w;
-	}
-
 	// Validate arguments
 	if (filter == NULL)
 	{
@@ -7335,14 +6753,6 @@ wchar_t *OpenDlg(HWND hWnd, wchar_t *filter, wchar_t *title)
 	Zero(tmp, sizeof(tmp));
 
 	o.lStructSize = sizeof(o);
-
-
-	if (OS_IS_WINDOWS_9X(GetOsInfo()->OsType) || (OS_IS_WINDOWS_NT(GetOsInfo()->OsType) && GET_KETA(GetOsInfo()->OsType, 100) <= 1))
-	{
-		o.lStructSize = OPENFILENAME_SIZE_VERSION_400W;
-	}
-
-
 	o.hwndOwner = hWnd;
 	o.hInstance = GetModuleHandle(NULL);
 	o.lpstrFilter = filter_str;
@@ -7378,12 +6788,6 @@ char *OpenDlgA(HWND hWnd, char *filter, char *title)
 	Zero(tmp, sizeof(tmp));
 
 	o.lStructSize = sizeof(o);
-
-	if (OS_IS_WINDOWS_9X(GetOsInfo()->OsType) || (OS_IS_WINDOWS_NT(GetOsInfo()->OsType) && GET_KETA(GetOsInfo()->OsType, 100) <= 1))
-	{
-		o.lStructSize = OPENFILENAME_SIZE_VERSION_400A;
-	}
-
 	o.hwndOwner = hWnd;
 	o.hInstance = GetModuleHandle(NULL);
 	o.lpstrFilter = filter_str;
@@ -8106,10 +7510,7 @@ UINT DialogEx2(HWND hWnd, UINT id, WINUI_DIALOG_PROC *proc, void *param, bool wh
 
 	p.BitmapList = NewBitmapList();
 
-	if (MsIsVista())
-	{
-		p.meiryo = meiryo;
-	}
+	p.meiryo = meiryo;
 
 	ret = DialogInternal(hWnd, id, InternalDialogProc, &p);
 
@@ -8411,12 +7812,6 @@ double GetTextScalingFactor()
 	static int cached_dpi = 0;
 	double ret = 1.0;
 
-	if (MsIsVista() == false)
-	{
-		// It's always 1.0 in Windows XP or earlier
-		return 1.0;
-	}
-
 	if (cached_dpi == 0)
 	{
 		HDC hDC = CreateCompatibleDC(NULL);
@@ -8526,21 +7921,9 @@ HFONT GetFont(char *name, UINT size, bool bold, bool italic, bool underline, boo
 		// Create a new font
 		hDC = CreateCompatibleDC(NULL);
 
-		// Specify the ClearType in Windows XP or later
-		if (OS_IS_WINDOWS_NT(os->OsType) && GET_KETA(os->OsType, 100) >= 3)
-		{
-			font_quality = CLEARTYPE_NATURAL_QUALITY;
-			rotate = 3600;
-		}
-
-		if (MsIsVista())
-		{
-			dpi = GetDeviceCaps(hDC, LOGPIXELSY);
-		}
-		else
-		{
-			dpi = 96;
-		}
+		font_quality = CLEARTYPE_NATURAL_QUALITY;
+		rotate = 3600;
+		dpi = GetDeviceCaps(hDC, LOGPIXELSY);
 
 		// Create a font
 		hFont = CreateFontA(-MulDiv(size, dpi, 72),
@@ -8890,16 +8273,7 @@ UINT DialogInternal(HWND hWnd, UINT id, DIALOG_PROC *proc, void *param)
 		return 0;
 	}
 
-	if (MsIsNt() == false)
-	{
-		// Win9x
-		return (UINT)DialogBoxParam(hDll, MAKEINTRESOURCE(id), hWnd, (DLGPROC)proc, (LPARAM)param);
-	}
-	else
-	{
-		// WinNT
-		return (UINT)DialogBoxParamW(hDll, MAKEINTRESOURCEW(id), hWnd, (DLGPROC)proc, (LPARAM)param);
-	}
+	return (UINT)DialogBoxParamW(hDll, MAKEINTRESOURCEW(id), hWnd, (DLGPROC)proc, (LPARAM)param);
 }
 
 // Dialog box procedure managed by WinUi
@@ -8938,23 +8312,19 @@ UINT DlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam, bool white_color
 
 		if (UseAlpha)
 		{
-			UINT os_type = GetOsInfo()->OsType;
-			if (OS_IS_WINDOWS_NT(os_type) && GET_KETA(os_type, 100) >= 2)
+			bool (WINAPI *_SetLayeredWindowAttributes)(HWND, COLORREF, BYTE, DWORD);
+			HINSTANCE hInst;
+
+			hInst = LoadLibrary("user32.dll");
+			_SetLayeredWindowAttributes =
+				(bool (__stdcall *)(HWND,COLORREF,BYTE,DWORD))
+				GetProcAddress(hInst, "SetLayeredWindowAttributes");
+
+			if (_SetLayeredWindowAttributes != NULL)
 			{
-				bool (WINAPI *_SetLayeredWindowAttributes)(HWND, COLORREF, BYTE, DWORD);
-				HINSTANCE hInst;
-
-				hInst = LoadLibrary("user32.dll");
-				_SetLayeredWindowAttributes =
-					(bool (__stdcall *)(HWND,COLORREF,BYTE,DWORD))
-					GetProcAddress(hInst, "SetLayeredWindowAttributes");
-
-				if (_SetLayeredWindowAttributes != NULL)
-				{
-					// Only available on Windows 2000 or later
-					SetExStyle(hWnd, 0, WS_EX_LAYERED);
-					_SetLayeredWindowAttributes(hWnd, 0, AlphaValue * 255 / 100, LWA_ALPHA);
-				}
+				// Only available on Windows 2000 or later
+				SetExStyle(hWnd, 0, WS_EX_LAYERED);
+				_SetLayeredWindowAttributes(hWnd, 0, AlphaValue * 255 / 100, LWA_ALPHA);
 			}
 		}
 
@@ -9259,16 +8629,6 @@ wchar_t *GetClass(HWND hWnd, UINT id)
 {
 	wchar_t tmp[MAX_SIZE];
 
-	if (MsIsNt() == false)
-	{
-		wchar_t *ret;
-		char *s;
-		s = GetClassA(hWnd, id);
-		ret = CopyStrToUni(s);
-		Free(s);
-		return ret;
-	}
-
 	// Validate arguments
 	if (hWnd == NULL)
 	{
@@ -9302,14 +8662,7 @@ UINT SendMsg(HWND hWnd, UINT id, UINT msg, WPARAM wParam, LPARAM lParam)
 		return 0;
 	}
 
-	if (MsIsNt())
-	{
-		return (UINT)SendMessageW(DlgItem(hWnd, id), msg, wParam, lParam);
-	}
-	else
-	{
-		return (UINT)SendMessageA(DlgItem(hWnd, id), msg, wParam, lParam);
-	}
+	return (UINT)SendMessageW(DlgItem(hWnd, id), msg, wParam, lParam);
 }
 
 // Move the cursor to the right edge of the text in the EDIT
@@ -9800,18 +9153,7 @@ bool IsFontFitInRect(struct FONT *f, UINT width, UINT height, wchar_t *text, UIN
 		r.right = width;
 		r.bottom = height;
 
-		if (MsIsNt())
-		{
-			i = DrawTextW(hCommonDC, text, -1, &r, format);
-		}
-		else
-		{
-			char *a = CopyUniToStr(text);
-
-			i = DrawTextA(hCommonDC, a, -1, &r, format);
-
-			Free(a);
-		}
+		i = DrawTextW(hCommonDC, text, -1, &r, format);
 
 		SelectObject(hCommonDC, hOldFont);
 	}
@@ -9864,23 +9206,7 @@ void SetTextInner(HWND hWnd, UINT id, wchar_t *str)
 
 	Free(old);
 
-	if (MsIsNt())
-	{
-		SetWindowTextW(DlgItem(hWnd, id), str);
-	}
-	else
-	{
-		char *tmp = CopyUniToStr(str);
-
-		if (MsIsNt() == false && StrLen(tmp) >= 32000)
-		{
-			// Truncate to less than 32k
-			tmp[32000] = 0;
-		}
-
-		SetWindowTextA(DlgItem(hWnd, id), tmp);
-		Free(tmp);
-	}
+	SetWindowTextW(DlgItem(hWnd, id), str);
 
 	AdjustFontSize(hWnd, id);
 
@@ -9964,15 +9290,6 @@ wchar_t *GetText(HWND hWnd, UINT id)
 		return NULL;
 	}
 
-	if (MsIsNt() == false)
-	{
-		char *s = GetTextA(hWnd, id);
-		ret = CopyStrToUni(s);
-		Free(s);
-
-		return ret;
-	}
-
 	len = GetWindowTextLengthW(DlgItem(hWnd, id));
 	if (len == 0)
 	{
@@ -10051,11 +9368,11 @@ void InitWinUi(wchar_t *software_name, char *font, UINT fontsize)
 	{
 		if (Is64())
 		{
-			hDll = MsLoadLibraryAsDataFile(MsGetPenCoreDllFileName());
+			hDll = MsLoadLibraryAsDataFile(PENCORE_DLL_NAME);
 		}
 		else
 		{
-			hDll = MsLoadLibrary(MsGetPenCoreDllFileName());
+			hDll = MsLoadLibrary(PENCORE_DLL_NAME);
 		}
 
 		if (hDll == NULL)

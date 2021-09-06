@@ -1,128 +1,16 @@
 // SoftEther VPN Source Code - Developer Edition Master Branch
 // Mayaqua Kernel
-// 
-// SoftEther VPN Server, Client and Bridge are free software under GPLv2.
-// 
-// Copyright (c) Daiyuu Nobori.
-// Copyright (c) SoftEther VPN Project, University of Tsukuba, Japan.
-// Copyright (c) SoftEther Corporation.
-// 
-// All Rights Reserved.
-// 
-// http://www.softether.org/
-// 
-// Author: Daiyuu Nobori, Ph.D.
-// Comments: Tetsuo Sugiyama, Ph.D.
-// 
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// version 2 as published by the Free Software Foundation.
-// 
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License version 2
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-// CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-// SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-// 
-// THE LICENSE AGREEMENT IS ATTACHED ON THE SOURCE-CODE PACKAGE
-// AS "LICENSE.TXT" FILE. READ THE TEXT FILE IN ADVANCE TO USE THE SOFTWARE.
-// 
-// 
-// THIS SOFTWARE IS DEVELOPED IN JAPAN, AND DISTRIBUTED FROM JAPAN,
-// UNDER JAPANESE LAWS. YOU MUST AGREE IN ADVANCE TO USE, COPY, MODIFY,
-// MERGE, PUBLISH, DISTRIBUTE, SUBLICENSE, AND/OR SELL COPIES OF THIS
-// SOFTWARE, THAT ANY JURIDICAL DISPUTES WHICH ARE CONCERNED TO THIS
-// SOFTWARE OR ITS CONTENTS, AGAINST US (SOFTETHER PROJECT, SOFTETHER
-// CORPORATION, DAIYUU NOBORI OR OTHER SUPPLIERS), OR ANY JURIDICAL
-// DISPUTES AGAINST US WHICH ARE CAUSED BY ANY KIND OF USING, COPYING,
-// MODIFYING, MERGING, PUBLISHING, DISTRIBUTING, SUBLICENSING, AND/OR
-// SELLING COPIES OF THIS SOFTWARE SHALL BE REGARDED AS BE CONSTRUED AND
-// CONTROLLED BY JAPANESE LAWS, AND YOU MUST FURTHER CONSENT TO
-// EXCLUSIVE JURISDICTION AND VENUE IN THE COURTS SITTING IN TOKYO,
-// JAPAN. YOU MUST WAIVE ALL DEFENSES OF LACK OF PERSONAL JURISDICTION
-// AND FORUM NON CONVENIENS. PROCESS MAY BE SERVED ON EITHER PARTY IN
-// THE MANNER AUTHORIZED BY APPLICABLE LAW OR COURT RULE.
-// 
-// USE ONLY IN JAPAN. DO NOT USE THIS SOFTWARE IN ANOTHER COUNTRY UNLESS
-// YOU HAVE A CONFIRMATION THAT THIS SOFTWARE DOES NOT VIOLATE ANY
-// CRIMINAL LAWS OR CIVIL RIGHTS IN THAT PARTICULAR COUNTRY. USING THIS
-// SOFTWARE IN OTHER COUNTRIES IS COMPLETELY AT YOUR OWN RISK. THE
-// SOFTETHER VPN PROJECT HAS DEVELOPED AND DISTRIBUTED THIS SOFTWARE TO
-// COMPLY ONLY WITH THE JAPANESE LAWS AND EXISTING CIVIL RIGHTS INCLUDING
-// PATENTS WHICH ARE SUBJECTS APPLY IN JAPAN. OTHER COUNTRIES' LAWS OR
-// CIVIL RIGHTS ARE NONE OF OUR CONCERNS NOR RESPONSIBILITIES. WE HAVE
-// NEVER INVESTIGATED ANY CRIMINAL REGULATIONS, CIVIL LAWS OR
-// INTELLECTUAL PROPERTY RIGHTS INCLUDING PATENTS IN ANY OF OTHER 200+
-// COUNTRIES AND TERRITORIES. BY NATURE, THERE ARE 200+ REGIONS IN THE
-// WORLD, WITH DIFFERENT LAWS. IT IS IMPOSSIBLE TO VERIFY EVERY
-// COUNTRIES' LAWS, REGULATIONS AND CIVIL RIGHTS TO MAKE THE SOFTWARE
-// COMPLY WITH ALL COUNTRIES' LAWS BY THE PROJECT. EVEN IF YOU WILL BE
-// SUED BY A PRIVATE ENTITY OR BE DAMAGED BY A PUBLIC SERVANT IN YOUR
-// COUNTRY, THE DEVELOPERS OF THIS SOFTWARE WILL NEVER BE LIABLE TO
-// RECOVER OR COMPENSATE SUCH DAMAGES, CRIMINAL OR CIVIL
-// RESPONSIBILITIES. NOTE THAT THIS LINE IS NOT LICENSE RESTRICTION BUT
-// JUST A STATEMENT FOR WARNING AND DISCLAIMER.
-// 
-// 
-// SOURCE CODE CONTRIBUTION
-// ------------------------
-// 
-// Your contribution to SoftEther VPN Project is much appreciated.
-// Please send patches to us through GitHub.
-// Read the SoftEther VPN Patch Acceptance Policy in advance:
-// http://www.softether.org/5-download/src/9.patch
-// 
-// 
-// DEAR SECURITY EXPERTS
-// ---------------------
-// 
-// If you find a bug or a security vulnerability please kindly inform us
-// about the problem immediately so that we can fix the security problem
-// to protect a lot of users around the world as soon as possible.
-// 
-// Our e-mail address for security reports is:
-// softether-vpn-security [at] softether.org
-// 
-// Please note that the above e-mail address is not a technical support
-// inquiry address. If you need technical assistance, please visit
-// http://www.softether.org/ and ask your question on the users forum.
-// 
-// Thank you for your cooperation.
-// 
-// 
-// NO MEMORY OR RESOURCE LEAKS
-// ---------------------------
-// 
-// The memory-leaks and resource-leaks verification under the stress
-// test has been passed before release this source code.
 
 
 // Microsoft.h
 // Header of Microsoft.c
 
-#ifdef	OS_WIN32
-
-// Make available the types for Windows even if windows.h is not included
-#ifndef	_WINDEF_
-
-typedef void *HWND;
-
-#endif	// _WINDEF_
+#ifdef OS_WIN32
 
 #ifndef	MICROSOFT_H
 #define	MICROSOFT_H
 
+#include "Network.h"
 
 // Constant for Event log
 #define	MS_EVENTLOG_TYPE_INFORMATION		0
@@ -153,9 +41,6 @@ typedef void *HWND;
 #define	SVC_ARG_SERVICE				"/service"
 #define	SVC_ARG_SETUP_INSTALL		"/setup_install"
 #define	SVC_ARG_SETUP_UNINSTALL		"/setup_uninstall"
-#define	SVC_ARG_WIN9X_SERVICE		"/win9x_service"
-#define	SVC_ARG_WIN9X_INSTALL		"/win9x_install"
-#define	SVC_ARG_WIN9X_UNINSTALL		"/win9x_uninstall"
 #define	SVC_ARG_TCP					"/tcp"
 #define	SVC_ARG_TCP_UAC				"/tcp_uac"
 #define	SVC_ARG_TCP_UAC_W			L"/tcp_uac"
@@ -198,18 +83,11 @@ typedef void *HWND;
 #define	SVC_MODE_SERVICE			7
 #define	SVC_MODE_SETUP_INSTALL		8
 #define	SVC_MODE_SETUP_UNINSTALL	9
-#define	SVC_MODE_WIN9X_SERVICE		10
-#define	SVC_MODE_WIN9X_INSTALL		11
-#define	SVC_MODE_WIN9X_UNINSTALL	12
 #define	SVC_MODE_TCP				13
 #define	SVC_MODE_TCPSETUP			14
 #define	SVC_MODE_TRAFFIC			15
 #define	SVC_MODE_UIHELP				16
 #define	SVC_MODE_TCP_UAC			17
-
-
-#define	WIN9X_SVC_REGKEY_1			"Software\\Microsoft\\Windows\\CurrentVersion\\RunServices"
-#define	WIN9X_SVC_REGKEY_2			"Software\\Microsoft\\Windows\\CurrentVersion\\Run"
 
 #define	VISTA_MMCSS_KEYNAME			"SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile\\Tasks"
 #define	VISTA_MMCSS_FILENAME		"mmcss_backup.dat"
@@ -239,59 +117,10 @@ typedef void *HWND;
 
 
 // Vista driver installer related
-#define	VISTA_DRIVER_INSTALLER_SRC	L"|driver_installer.exe"
-#define	VISTA_DRIVER_INSTALLER_SRC_X64	L"|driver_installer_x64.exe"
-#define	VISTA_DRIVER_INSTALLER_SRC_IA64	L"|driver_installer_ia64.exe"
-#define	VISTA_DRIVER_INSTALLER_DST	L"%s\\driver_installer.exe"
+#define	VISTA_DRIVER_INSTALLER_SRC		L"|vpndrvinst.exe"
+#define	VISTA_DRIVER_INSTALLER_DST		L"%s\\vpndrvinst.exe"
 
 #define	DRIVER_DEVICE_ID_TAG		"NeoAdapter_%s"
-
-
-#if		(defined(MICROSOFT_C) || defined(NETWORK_C)) && (defined(OS_WIN32))
-
-typedef enum __TCP_TABLE_CLASS {
-	_TCP_TABLE_BASIC_LISTENER,
-	_TCP_TABLE_BASIC_CONNECTIONS,
-	_TCP_TABLE_BASIC_ALL,
-	_TCP_TABLE_OWNER_PID_LISTENER,
-	_TCP_TABLE_OWNER_PID_CONNECTIONS,
-	_TCP_TABLE_OWNER_PID_ALL,
-	_TCP_TABLE_OWNER_MODULE_LISTENER,
-	_TCP_TABLE_OWNER_MODULE_CONNECTIONS,
-	_TCP_TABLE_OWNER_MODULE_ALL
-} _TCP_TABLE_CLASS, *_PTCP_TABLE_CLASS;
-
-// A pointer to the network related Win32 API function
-typedef struct NETWORK_WIN32_FUNCTIONS
-{
-	HINSTANCE hIpHlpApi32;
-	HINSTANCE hIcmp;
-	DWORD (WINAPI *DeleteIpForwardEntry)(PMIB_IPFORWARDROW);
-	DWORD (WINAPI *CreateIpForwardEntry)(PMIB_IPFORWARDROW);
-	DWORD (WINAPI *GetIpForwardTable)(PMIB_IPFORWARDTABLE, PULONG, BOOL);
-	DWORD (WINAPI *GetNetworkParams)(PFIXED_INFO, PULONG);
-	ULONG (WINAPI *GetAdaptersAddresses)(ULONG, ULONG, PVOID, PIP_ADAPTER_ADDRESSES, PULONG);
-	DWORD (WINAPI *GetIfTable)(PMIB_IFTABLE, PULONG, BOOL);
-	DWORD (WINAPI *GetIfTable2)(void **);
-	void (WINAPI *FreeMibTable)(PVOID);
-	DWORD (WINAPI *IpRenewAddress)(PIP_ADAPTER_INDEX_MAP);
-	DWORD (WINAPI *IpReleaseAddress)(PIP_ADAPTER_INDEX_MAP);
-	DWORD (WINAPI *GetInterfaceInfo)(PIP_INTERFACE_INFO, PULONG);
-	DWORD (WINAPI *GetAdaptersInfo)(PIP_ADAPTER_INFO, PULONG);
-	DWORD (WINAPI *GetExtendedTcpTable)(PVOID, PDWORD, BOOL, ULONG, _TCP_TABLE_CLASS, ULONG);
-	DWORD (WINAPI *AllocateAndGetTcpExTableFromStack)(PVOID *, BOOL, HANDLE, DWORD, DWORD);
-	DWORD (WINAPI *GetTcpTable)(PMIB_TCPTABLE, PDWORD, BOOL);
-	DWORD (WINAPI *NotifyRouteChange)(PHANDLE, LPOVERLAPPED);
-	BOOL (WINAPI *CancelIPChangeNotify)(LPOVERLAPPED);
-	DWORD (WINAPI *NhpAllocateAndGetInterfaceInfoFromStack)(IP_INTERFACE_NAME_INFO **,
-		PDWORD, BOOL, HANDLE, DWORD);
-	HANDLE (WINAPI *IcmpCreateFile)();
-	BOOL (WINAPI *IcmpCloseHandle)(HANDLE);
-	DWORD (WINAPI *IcmpSendEcho)(HANDLE, IPAddr, LPVOID, WORD, PIP_OPTION_INFORMATION,
-		LPVOID, DWORD, DWORD);
-} NETWORK_WIN32_FUNCTIONS;
-#endif
-
 
 #ifdef	MICROSOFT_C
 // WCM related code on Windows 8
@@ -299,17 +128,17 @@ typedef enum _MS_WCM_PROPERTY
 {
 	ms_wcm_global_property_domain_policy,
 	ms_wcm_global_property_minimize_policy,
-	ms_wcm_global_property_roaming_policy,  
+	ms_wcm_global_property_roaming_policy,
 	ms_wcm_global_property_powermanagement_policy,
 	ms_wcm_intf_property_connection_cost,   //used to set/get cost level and flags for the connection
 	ms_wcm_intf_property_dataplan_status,   //used by MNO to indicate plan data associated with new cost
 	ms_wcm_intf_property_hotspot_profile,   //used to store hotspot profile (WISPr credentials)
-} MS_WCM_PROPERTY, *MS_PWCM_PROPERTY;
+} MS_WCM_PROPERTY, * MS_PWCM_PROPERTY;
 
 typedef struct _MS_WCM_POLICY_VALUE {
 	BOOL fValue;
 	BOOL fIsGroupPolicy;
-} MS_WCM_POLICY_VALUE, *MS_PWCM_POLICY_VALUE;
+} MS_WCM_POLICY_VALUE, * MS_PWCM_POLICY_VALUE;
 
 #define MS_WCM_MAX_PROFILE_NAME            256
 
@@ -321,21 +150,20 @@ typedef enum _MS_WCM_MEDIA_TYPE
 	ms_wcm_media_mbn,
 	ms_wcm_media_invalid,
 	ms_wcm_media_max
-} MS_WCM_MEDIA_TYPE, *MS_PWCM_MEDIA_TYPE;
+} MS_WCM_MEDIA_TYPE, * MS_PWCM_MEDIA_TYPE;
 
 typedef struct _MS_WCM_PROFILE_INFO {
 	WCHAR strProfileName[MS_WCM_MAX_PROFILE_NAME];
 	GUID AdapterGUID;
 	MS_WCM_MEDIA_TYPE Media;
-} MS_WCM_PROFILE_INFO, *MS_PWCM_PROFILE_INFO;
+} MS_WCM_PROFILE_INFO, * MS_PWCM_PROFILE_INFO;
 
 typedef struct _MS_WCM_PROFILE_INFO_LIST {
-	DWORD            dwNumberOfItems;
+	UINT            dwNumberOfItems;
 
 	MS_WCM_PROFILE_INFO ProfileInfo[1];
 
-} MS_WCM_PROFILE_INFO_LIST, *MS_PWCM_PROFILE_INFO_LIST;
-
+} MS_WCM_PROFILE_INFO_LIST, * MS_PWCM_PROFILE_INFO_LIST;
 
 // Internal structure
 typedef struct MS
@@ -344,7 +172,6 @@ typedef struct MS
 	HINSTANCE hKernel32;
 	bool IsNt;
 	bool IsAdmin;
-	struct NT_API *nt;
 	HANDLE hCurrentProcess;
 	UINT CurrentProcessId;
 	bool MiniDumpEnabled;
@@ -403,111 +230,10 @@ typedef struct MS
 	bool IsWine;
 } MS;
 
-// For Windows NT API
-typedef struct NT_API
-{
-	HINSTANCE hAdvapi32;
-	HINSTANCE hShell32;
-	HINSTANCE hNewDev;
-	HINSTANCE hSetupApi;
-	HINSTANCE hWtsApi32;
-	HINSTANCE hPsApi;
-	HINSTANCE hKernel32;
-	HINSTANCE hSecur32;
-	HINSTANCE hUser32;
-	HINSTANCE hDbgHelp;
-	HINSTANCE hWcmapi;
-	HINSTANCE hDwmapi;
-	BOOL (WINAPI *OpenProcessToken)(HANDLE, DWORD, PHANDLE);
-	BOOL (WINAPI *LookupPrivilegeValue)(char *, char *, PLUID);
-	BOOL (WINAPI *AdjustTokenPrivileges)(HANDLE, BOOL, PTOKEN_PRIVILEGES, DWORD, PTOKEN_PRIVILEGES, PDWORD);
-	BOOL (WINAPI *InitiateSystemShutdown)(LPTSTR, LPTSTR, DWORD, BOOL, BOOL);
-	BOOL (WINAPI *LogonUserW)(wchar_t *, wchar_t *, wchar_t *, DWORD, DWORD, HANDLE *);
-	BOOL (WINAPI *LogonUserA)(char *, char *, char *, DWORD, DWORD, HANDLE *);
-	BOOL (WINAPI *UpdateDriverForPlugAndPlayDevicesW)(HWND hWnd, wchar_t *hardware_id, wchar_t *inf_path, UINT flag, BOOL *need_reboot);
-	UINT (WINAPI *CM_Get_DevNode_Status_Ex)(UINT *, UINT *, DWORD, UINT, HANDLE);
-	UINT (WINAPI *CM_Get_Device_ID_ExA)(DWORD, char *, UINT, UINT, HANDLE);
-	UINT (WINAPI *WTSQuerySessionInformation)(HANDLE, DWORD, WTS_INFO_CLASS, wchar_t *, DWORD *);
-	void (WINAPI *WTSFreeMemory)(void *);
-	BOOL (WINAPI *WTSDisconnectSession)(HANDLE, DWORD, BOOL);
-	BOOL (WINAPI *WTSEnumerateSessions)(HANDLE, DWORD, DWORD, PWTS_SESSION_INFO *, DWORD *);
-	BOOL (WINAPI *WTSRegisterSessionNotification)(HWND, DWORD);
-	BOOL (WINAPI *WTSUnRegisterSessionNotification)(HWND);
-	SC_HANDLE (WINAPI *OpenSCManager)(LPCTSTR, LPCTSTR, DWORD);
-	SC_HANDLE (WINAPI *CreateServiceA)(SC_HANDLE, LPCTSTR, LPCTSTR, DWORD, DWORD, DWORD, DWORD, LPCTSTR, LPCTSTR, LPDWORD, LPCTSTR, LPCTSTR, LPCTSTR);
-	SC_HANDLE (WINAPI *CreateServiceW)(SC_HANDLE, LPCWSTR, LPCWSTR, DWORD, DWORD, DWORD, DWORD, LPCWSTR, LPCWSTR, LPDWORD, LPCWSTR, LPCWSTR, LPCWSTR);
-	BOOL (WINAPI *ChangeServiceConfig2)(SC_HANDLE, DWORD, LPVOID);
-	BOOL (WINAPI *CloseServiceHandle)(SC_HANDLE);
-	SC_HANDLE (WINAPI *OpenService)(SC_HANDLE, LPCTSTR, DWORD);
-	BOOL (WINAPI *QueryServiceStatus)(SC_HANDLE, LPSERVICE_STATUS);
-	BOOL (WINAPI *StartService)(SC_HANDLE, DWORD, LPCTSTR);
-	BOOL (WINAPI *ControlService)(SC_HANDLE, DWORD, LPSERVICE_STATUS);
-	BOOL (WINAPI *SetServiceStatus)(SERVICE_STATUS_HANDLE, LPSERVICE_STATUS);
-	SERVICE_STATUS_HANDLE (WINAPI *RegisterServiceCtrlHandler)(LPCTSTR, LPHANDLER_FUNCTION);
-	BOOL (WINAPI *StartServiceCtrlDispatcher)(CONST LPSERVICE_TABLE_ENTRY);
-	BOOL (WINAPI *DeleteService)(SC_HANDLE);
-	BOOL (WINAPI *EnumProcesses)(DWORD *, DWORD, DWORD *);
-	BOOL (WINAPI *EnumProcessModules)(HANDLE, HMODULE *, DWORD, DWORD *);
-	DWORD (WINAPI *GetModuleFileNameExA)(HANDLE, HMODULE, LPSTR, DWORD);
-	DWORD (WINAPI *GetModuleFileNameExW)(HANDLE, HMODULE, LPWSTR, DWORD);
-	DWORD (WINAPI *GetProcessImageFileNameA)(HANDLE, LPSTR, DWORD);
-	DWORD (WINAPI *GetProcessImageFileNameW)(HANDLE, LPWSTR, DWORD);
-	BOOL (WINAPI *QueryFullProcessImageNameA)(HANDLE, DWORD, LPSTR, PDWORD);
-	BOOL (WINAPI *QueryFullProcessImageNameW)(HANDLE, DWORD, LPWSTR, PDWORD);
-	LONG (WINAPI *RegDeleteKeyExA)(HKEY, LPCTSTR, REGSAM, DWORD);
-	BOOL (WINAPI *IsWow64Process)(HANDLE, BOOL *);
-	void (WINAPI *GetNativeSystemInfo)(SYSTEM_INFO *);
-	BOOL (WINAPI *DuplicateTokenEx)(HANDLE, DWORD, SECURITY_ATTRIBUTES *, SECURITY_IMPERSONATION_LEVEL, TOKEN_TYPE, HANDLE *);
-	BOOL (WINAPI *ConvertStringSidToSidA)(LPCSTR, PSID *);
-	BOOL (WINAPI *SetTokenInformation)(HANDLE, TOKEN_INFORMATION_CLASS, void *, DWORD);
-	BOOL (WINAPI *GetTokenInformation)(HANDLE, TOKEN_INFORMATION_CLASS, void *, DWORD, PDWORD);
-	BOOL (WINAPI *CreateProcessAsUserA)(HANDLE, LPCSTR, LPSTR, LPSECURITY_ATTRIBUTES, LPSECURITY_ATTRIBUTES, BOOL, DWORD, void *, LPCSTR, LPSTARTUPINFOA, LPPROCESS_INFORMATION);
-	BOOL (WINAPI *CreateProcessAsUserW)(HANDLE, LPCWSTR, LPWSTR, LPSECURITY_ATTRIBUTES, LPSECURITY_ATTRIBUTES, BOOL, DWORD, void *, LPCWSTR, LPSTARTUPINFOW, LPPROCESS_INFORMATION);
-	BOOL (WINAPI *LookupAccountSidA)(LPCSTR,PSID,LPSTR,LPDWORD,LPSTR,LPDWORD,PSID_NAME_USE);
-	BOOL (WINAPI *LookupAccountNameA)(LPCSTR,LPCSTR,PSID,LPDWORD,LPSTR,LPDWORD,PSID_NAME_USE);
-	BOOL (WINAPI *GetUserNameExA)(EXTENDED_NAME_FORMAT, LPSTR, PULONG);
-	BOOL (WINAPI *GetUserNameExW)(EXTENDED_NAME_FORMAT, LPWSTR, PULONG);
-	BOOL (WINAPI *SwitchDesktop)(HDESK);
-	HDESK (WINAPI *OpenDesktopA)(LPTSTR, DWORD, BOOL, ACCESS_MASK);
-	BOOL (WINAPI *CloseDesktop)(HDESK);
-	BOOL (WINAPI *SetProcessShutdownParameters)(DWORD, DWORD);
-	HANDLE (WINAPI *RegisterEventSourceW)(LPCWSTR, LPCWSTR);
-	BOOL (WINAPI *ReportEventW)(HANDLE, WORD, WORD, DWORD, PSID, WORD, DWORD, LPCWSTR *, LPVOID);
-	BOOL (WINAPI *DeregisterEventSource)(HANDLE);
-	BOOL (WINAPI *Wow64DisableWow64FsRedirection)(void **);
-	BOOLEAN (WINAPI *Wow64EnableWow64FsRedirection)(BOOLEAN);
-	BOOL (WINAPI *Wow64RevertWow64FsRedirection)(void *);
-	BOOL (WINAPI *GetFileInformationByHandle)(HANDLE, LPBY_HANDLE_FILE_INFORMATION);
-	HANDLE (WINAPI *GetProcessHeap)();
-	BOOL (WINAPI *MiniDumpWriteDump)(HANDLE, DWORD, HANDLE, MINIDUMP_TYPE,
-		PMINIDUMP_EXCEPTION_INFORMATION, PMINIDUMP_USER_STREAM_INFORMATION,
-		PMINIDUMP_CALLBACK_INFORMATION);
-	BOOL (WINAPI *AllocateLocallyUniqueId)(PLUID);
-	NTSTATUS (NTAPI *LsaConnectUntrusted)(PHANDLE);
-	NTSTATUS (NTAPI *LsaLookupAuthenticationPackage)(HANDLE, PLSA_STRING, PULONG);
-	NTSTATUS (NTAPI *LsaLogonUser)(HANDLE, PLSA_STRING, SECURITY_LOGON_TYPE, ULONG,
-		PVOID, ULONG, PTOKEN_GROUPS, PTOKEN_SOURCE, PVOID, PULONG, PLUID, PHANDLE,
-		PQUOTA_LIMITS, PNTSTATUS);
-	NTSTATUS (NTAPI *LsaDeregisterLogonProcess)(HANDLE);
-	NTSTATUS (NTAPI *LsaFreeReturnBuffer)(PVOID);
-	DWORD (WINAPI *WcmQueryProperty)(const GUID *, LPCWSTR, MS_WCM_PROPERTY, PVOID, PDWORD, PBYTE *);
-	DWORD (WINAPI *WcmSetProperty)(const GUID *, LPCWSTR, MS_WCM_PROPERTY, PVOID, DWORD, const BYTE *);
-	void (WINAPI *WcmFreeMemory)(PVOID);
-	DWORD (WINAPI *WcmGetProfileList)(PVOID, MS_WCM_PROFILE_INFO_LIST **ppProfileList);
-	DWORD (WINAPI *SetNamedSecurityInfoW)(LPWSTR, UINT, SECURITY_INFORMATION, PSID, PSID, PACL, PACL);
-	BOOL (WINAPI *AddAccessAllowedAceEx)(PACL, DWORD, DWORD, DWORD, PSID);
-	HRESULT (WINAPI *DwmIsCompositionEnabled)(BOOL *);
-	BOOL (WINAPI *GetComputerNameExW)(COMPUTER_NAME_FORMAT, LPWSTR, LPDWORD);
-	LONG (WINAPI *RegLoadKeyW)(HKEY, LPCWSTR, LPCWSTR);
-	LONG (WINAPI *RegUnLoadKeyW)(HKEY, LPCWSTR);
-} NT_API;
-
 typedef struct MS_EVENTLOG
 {
 	HANDLE hEventLog;
 } MS_EVENTLOG;
-
-extern NETWORK_WIN32_FUNCTIONS *w32net;
 
 typedef struct MS_USERMODE_SVC_PULSE_THREAD_PARAM
 {
@@ -521,7 +247,7 @@ typedef struct MS_USERMODE_SVC_PULSE_THREAD_PARAM
 // Structure to suppress the warning message
 typedef struct NO_WARNING
 {
-	DWORD ThreadId;
+	UINT ThreadId;
 	THREAD *NoWarningThread;
 	EVENT *HaltEvent;
 	volatile bool Halt;
@@ -649,7 +375,7 @@ void MsFree();
 char *MsCutExeNameFromCommandLine(char *str);
 wchar_t *MsCutExeNameFromUniCommandLine(wchar_t *str);
 
-DWORD MsRegAccessMaskFor64BitEx(bool force32bit, bool force64bit);
+UINT MsRegAccessMaskFor64BitEx(bool force32bit, bool force64bit);
 
 bool MsRegIsKey(UINT root, char *name);
 bool MsRegIsKeyEx(UINT root, char *name, bool force32bit);
@@ -659,8 +385,8 @@ bool MsRegIsValue(UINT root, char *keyname, char *valuename);
 bool MsRegIsValueEx(UINT root, char *keyname, char *valuename, bool force32bit);
 bool MsRegIsValueEx2(UINT root, char *keyname, char *valuename, bool force32bit, bool force64bit);
 
-bool MsRegReadValueEx2(UINT root, char *keyname, char *valuename, void **data, UINT *type, UINT *size, bool force32bit, bool force64bit);
-bool MsRegReadValueEx2W(UINT root, char *keyname, char *valuename, void **data, UINT *type, UINT *size, bool force32bit, bool force64bit);
+bool MsRegReadValueEx2(UINT root, char *keyname, char *valuename, void **data, DWORD *type, DWORD *size, bool force32bit, bool force64bit);
+bool MsRegReadValueEx2W(UINT root, char *keyname, char *valuename, void **data, DWORD *type, DWORD *size, bool force32bit, bool force64bit);
 
 char *MsRegReadStr(UINT root, char *keyname, char *valuename);
 char *MsRegReadStrEx(UINT root, char *keyname, char *valuename, bool force32bit);
@@ -722,7 +448,6 @@ bool MsRegDeleteValueEx2(UINT root, char *keyname, char *valuename, bool force32
 bool MsRegLoadHive(UINT root, wchar_t *keyname, wchar_t *filename);
 bool MsRegUnloadHive(UINT root, wchar_t *keyname);
 
-bool MsIsNt();
 bool MsIsAdmin();
 bool MsIsWine();
 bool MsEnablePrivilege(char *name, bool enable);
@@ -847,13 +572,9 @@ void MsServiceMode(SERVICE_FUNCTION *start, SERVICE_FUNCTION *stop);
 void MsUserModeW(wchar_t *title, SERVICE_FUNCTION *start, SERVICE_FUNCTION *stop, UINT icon);
 bool MsIsUserMode();
 void MsTestOnly();
-char *MsGetPenCoreDllFileName();
 void MsPlaySound(char *name);
 void MsSetThreadSingleCpu();
-void MsWin9xTest();
 bool MsCheckVLanDeviceIdFromRootEnum(char *name);
-bool MsInstallVLan9x(char *instance_name, MS_DRIVER_VER *ver);
-void MsUpdateCompatibleIDs(char *instance_name);
 LIST *MsGetProcessList();
 LIST *MsGetProcessList9x();
 LIST *MsGetProcessListNt();
@@ -935,9 +656,6 @@ LIST *EnumAllChildWindowEx(HWND hWnd, bool no_recursion, bool include_ipcontrol,
 LIST *EnumAllTopWindow();
 
 bool MsExecDriverInstaller(char *arg);
-bool MsIsVista();
-bool MsIsWin2000OrGreater();
-bool MsIsWinXPOrGreater();
 void MsRegistWindowsFirewallEx(char *title, char *exe);
 void MsRegistWindowsFirewallEx2(char *title, char *exe, char *dir);
 bool MsIs64BitWindows();
@@ -953,6 +671,8 @@ bool MsIsInfCatalogRequired();
 
 bool MsCheckFileDigitalSignatureW(HWND hWnd, wchar_t *name, bool *danger);
 
+bool MsIsKB3033929RequiredAndMissing();
+bool MsIsSha2KernelModeSignatureSupported();
 
 bool MsGetProcessExeName(char *path, UINT size, UINT id);
 bool MsGetWindowOwnerProcessExeName(char *path, UINT size, HWND hWnd);
@@ -990,6 +710,7 @@ bool MsIsWinXPOrWinVista();
 bool MsGetFileInformation(void *h, void *info);
 void MsSetErrorModeToSilent();
 void MsSetEnableMinidump(bool enabled);
+bool MsIsMinidumpEnabled();
 void MsWriteMinidump(wchar_t *filename, void *ex);
 
 
@@ -1040,12 +761,11 @@ void MsProcLeaveSuspend();
 UINT64 MsGetSuspendModeBeginTick();
 
 // Inner functions
-#ifdef	MICROSOFT_C
+#ifdef MICROSOFT_C
+#include <SetupAPI.h>
 
 LONG CALLBACK MsExceptionHandler(struct _EXCEPTION_POINTERS *ExceptionInfo);
 HKEY MsGetRootKeyFromInt(UINT root);
-NT_API *MsLoadNtApiFunctions();
-void MsFreeNtApiFunctions(NT_API *nt);
 void MsDestroyDevInfo(HDEVINFO info);
 HDEVINFO MsGetDevInfoFromDeviceId(SP_DEVINFO_DATA *dev_info_data, char *device_id);
 bool MsStartDevice(HDEVINFO info, SP_DEVINFO_DATA *dev_info_data);
@@ -1066,21 +786,17 @@ void MsHideIconOnTray();
 void MsUserModeTrayMenu(HWND hWnd);
 bool MsAppendMenu(HMENU hMenu, UINT flags, UINT_PTR id, wchar_t *str);
 bool MsInsertMenu(HMENU hMenu, UINT pos, UINT flags, UINT_PTR id_new_item, wchar_t *lp_new_item);
-bool CALLBACK MsEnumChildWindowProc(HWND hWnd, LPARAM lParam);
+BOOL CALLBACK MsEnumChildWindowProc(HWND hWnd, LPARAM lParam);
 BOOL CALLBACK EnumTopWindowProc(HWND hWnd, LPARAM lParam);
-bool CALLBACK MsEnumThreadWindowProc(HWND hWnd, LPARAM lParam);
+BOOL CALLBACK MsEnumThreadWindowProc(HWND hWnd, LPARAM lParam);
 HANDLE MsCreateUserToken();
 SID *MsGetSidFromAccountName(char *name);
 void MsFreeSid(SID *sid);
-bool CALLBACK MsEnumResourcesInternalProc(HMODULE hModule, const char *type, char *name, LONG_PTR lParam);
+BOOL CALLBACK MsEnumResourcesInternalProc(HMODULE hModule, const char *type, char *name, LONG_PTR lParam);
 LRESULT CALLBACK MsSuspendHandlerWindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 void MsSuspendHandlerThreadProc(THREAD *thread, void *param);
+#endif // MICROSOFT_C
 
+#endif // MICROSOFT_H
 
-
-#endif	// MICROSOFT_C
-
-#endif	// MICROSOFT_H
-
-#endif	// OS_WIN32
-
+#endif // OS_WIN32

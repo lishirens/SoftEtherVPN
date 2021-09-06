@@ -6,9 +6,10 @@ add_library(PenCore SHARED pencore.c pencore.rc)
 
 set_target_properties(PenCore
   PROPERTIES
-  ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/src/bin/hamcore"
-  LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/src/bin/hamcore"
-  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/src/bin/hamcore"
+  ARCHIVE_OUTPUT_DIRECTORY "${TOP_DIRECTORY}/src/bin/hamcore"
+  LIBRARY_OUTPUT_DIRECTORY "${TOP_DIRECTORY}/src/bin/hamcore"
+  RUNTIME_OUTPUT_DIRECTORY "${TOP_DIRECTORY}/src/bin/hamcore"
+  PDB_OUTPUT_DIRECTORY "${BUILD_DIRECTORY}"
 )
 
-target_link_libraries(PenCore cedar mayaqua)
+target_link_libraries(PenCore)

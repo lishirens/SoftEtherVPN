@@ -1,10 +1,26 @@
-set(VPNSERVER_SOURCES vpnserver.c)
+set(COMPONENT_NAME "Server")
+set(COMPONENT_INTERNAL_NAME "vpnserver")
 
 if(WIN32)
-  set(VPNSERVER_SOURCES ${VPNSERVER_SOURCES} vpnserver.rc)
-endif()
+  add_executable(vpnserver WIN32
+    "vpnserver.c"
 
-add_executable(vpnserver ${VPNSERVER_SOURCES})
+    "${TOP_DIRECTORY}/src/BuildFiles/Manifests/common.manifest"
+  )
+
+  set_target_properties(vpnserver
+    PROPERTIES
+    PDB_OUTPUT_DIRECTORY "${BUILD_DIRECTORY}"
+  )
+
+  get_filename_component(COMPONENT_FILE_NAME vpnserver NAME)
+  set(COMPONENT_FILE_NAME "${COMPONENT_FILE_NAME}.exe")
+
+  configure_file("${TOP_DIRECTORY}/src/BuildFiles/VerScript/ver.rc" "${CMAKE_CURRENT_BINARY_DIR}/ver.rc")
+  target_sources(vpnserver PRIVATE "vpnserver.rc" "${CMAKE_CURRENT_BINARY_DIR}/ver.rc")
+else()
+  add_executable(vpnserver vpnserver.c)
+endif()
 
 set_target_properties(vpnserver
   PROPERTIES
@@ -13,7 +29,7 @@ set_target_properties(vpnserver
   RUNTIME_OUTPUT_DIRECTORY "${BUILD_DIRECTORY}"
 )
 
-target_link_libraries(vpnserver cedar mayaqua)
+target_link_libraries(vpnserver cedar)
 
 if(UNIX)
   # Copy binary and "hamcore.se2" to /usr/lib(exec)/softether/, install launch script and systemd service
@@ -29,13 +45,8 @@ if(UNIX)
     PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
   )
 
-  install_wrapper_script("vpnserver" "${CMAKE_INSTALL_FULL_LIBEXECDIR}/softether/vpnserver/vpnserver")
-  if(EXISTS "/lib/systemd/system")
-    configure_file(${CMAKE_SOURCE_DIR}/systemd/softether-vpnserver.service ${CMAKE_BINARY_DIR}/systemd/softether-vpnserver.service)
-    install(FILES ${CMAKE_BINARY_DIR}/systemd/softether-vpnserver.service
-      COMPONENT "vpnserver"
-      DESTINATION "/lib/systemd/system"
-      PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
-    )
+  install_wrapper_script("vpnserver")
+  if(NOT "${CMAKE_INSTALL_SYSTEMD_UNITDIR}" STREQUAL "")
+    install_unit_file("vpnserver")
   endif()
 endif()

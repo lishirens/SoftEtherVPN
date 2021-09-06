@@ -1,117 +1,36 @@
 // SoftEther VPN Source Code - Developer Edition Master Branch
 // Cedar Communication Module
-// 
-// SoftEther VPN Server, Client and Bridge are free software under GPLv2.
-// 
-// Copyright (c) Daiyuu Nobori.
-// Copyright (c) SoftEther VPN Project, University of Tsukuba, Japan.
-// Copyright (c) SoftEther Corporation.
-// 
-// All Rights Reserved.
-// 
-// http://www.softether.org/
-// 
-// Author: Daiyuu Nobori, Ph.D.
-// Comments: Tetsuo Sugiyama, Ph.D.
-// 
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// version 2 as published by the Free Software Foundation.
-// 
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License version 2
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-// CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-// SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-// 
-// THE LICENSE AGREEMENT IS ATTACHED ON THE SOURCE-CODE PACKAGE
-// AS "LICENSE.TXT" FILE. READ THE TEXT FILE IN ADVANCE TO USE THE SOFTWARE.
-// 
-// 
-// THIS SOFTWARE IS DEVELOPED IN JAPAN, AND DISTRIBUTED FROM JAPAN,
-// UNDER JAPANESE LAWS. YOU MUST AGREE IN ADVANCE TO USE, COPY, MODIFY,
-// MERGE, PUBLISH, DISTRIBUTE, SUBLICENSE, AND/OR SELL COPIES OF THIS
-// SOFTWARE, THAT ANY JURIDICAL DISPUTES WHICH ARE CONCERNED TO THIS
-// SOFTWARE OR ITS CONTENTS, AGAINST US (SOFTETHER PROJECT, SOFTETHER
-// CORPORATION, DAIYUU NOBORI OR OTHER SUPPLIERS), OR ANY JURIDICAL
-// DISPUTES AGAINST US WHICH ARE CAUSED BY ANY KIND OF USING, COPYING,
-// MODIFYING, MERGING, PUBLISHING, DISTRIBUTING, SUBLICENSING, AND/OR
-// SELLING COPIES OF THIS SOFTWARE SHALL BE REGARDED AS BE CONSTRUED AND
-// CONTROLLED BY JAPANESE LAWS, AND YOU MUST FURTHER CONSENT TO
-// EXCLUSIVE JURISDICTION AND VENUE IN THE COURTS SITTING IN TOKYO,
-// JAPAN. YOU MUST WAIVE ALL DEFENSES OF LACK OF PERSONAL JURISDICTION
-// AND FORUM NON CONVENIENS. PROCESS MAY BE SERVED ON EITHER PARTY IN
-// THE MANNER AUTHORIZED BY APPLICABLE LAW OR COURT RULE.
-// 
-// USE ONLY IN JAPAN. DO NOT USE THIS SOFTWARE IN ANOTHER COUNTRY UNLESS
-// YOU HAVE A CONFIRMATION THAT THIS SOFTWARE DOES NOT VIOLATE ANY
-// CRIMINAL LAWS OR CIVIL RIGHTS IN THAT PARTICULAR COUNTRY. USING THIS
-// SOFTWARE IN OTHER COUNTRIES IS COMPLETELY AT YOUR OWN RISK. THE
-// SOFTETHER VPN PROJECT HAS DEVELOPED AND DISTRIBUTED THIS SOFTWARE TO
-// COMPLY ONLY WITH THE JAPANESE LAWS AND EXISTING CIVIL RIGHTS INCLUDING
-// PATENTS WHICH ARE SUBJECTS APPLY IN JAPAN. OTHER COUNTRIES' LAWS OR
-// CIVIL RIGHTS ARE NONE OF OUR CONCERNS NOR RESPONSIBILITIES. WE HAVE
-// NEVER INVESTIGATED ANY CRIMINAL REGULATIONS, CIVIL LAWS OR
-// INTELLECTUAL PROPERTY RIGHTS INCLUDING PATENTS IN ANY OF OTHER 200+
-// COUNTRIES AND TERRITORIES. BY NATURE, THERE ARE 200+ REGIONS IN THE
-// WORLD, WITH DIFFERENT LAWS. IT IS IMPOSSIBLE TO VERIFY EVERY
-// COUNTRIES' LAWS, REGULATIONS AND CIVIL RIGHTS TO MAKE THE SOFTWARE
-// COMPLY WITH ALL COUNTRIES' LAWS BY THE PROJECT. EVEN IF YOU WILL BE
-// SUED BY A PRIVATE ENTITY OR BE DAMAGED BY A PUBLIC SERVANT IN YOUR
-// COUNTRY, THE DEVELOPERS OF THIS SOFTWARE WILL NEVER BE LIABLE TO
-// RECOVER OR COMPENSATE SUCH DAMAGES, CRIMINAL OR CIVIL
-// RESPONSIBILITIES. NOTE THAT THIS LINE IS NOT LICENSE RESTRICTION BUT
-// JUST A STATEMENT FOR WARNING AND DISCLAIMER.
-// 
-// 
-// SOURCE CODE CONTRIBUTION
-// ------------------------
-// 
-// Your contribution to SoftEther VPN Project is much appreciated.
-// Please send patches to us through GitHub.
-// Read the SoftEther VPN Patch Acceptance Policy in advance:
-// http://www.softether.org/5-download/src/9.patch
-// 
-// 
-// DEAR SECURITY EXPERTS
-// ---------------------
-// 
-// If you find a bug or a security vulnerability please kindly inform us
-// about the problem immediately so that we can fix the security problem
-// to protect a lot of users around the world as soon as possible.
-// 
-// Our e-mail address for security reports is:
-// softether-vpn-security [at] softether.org
-// 
-// Please note that the above e-mail address is not a technical support
-// inquiry address. If you need technical assistance, please visit
-// http://www.softether.org/ and ask your question on the users forum.
-// 
-// Thank you for your cooperation.
-// 
-// 
-// NO MEMORY OR RESOURCE LEAKS
-// ---------------------------
-// 
-// The memory-leaks and resource-leaks verification under the stress
-// test has been passed before release this source code.
-
+// © 2020 Nokia
 
 // Connection.c
 // Connection Manager
 
-#include "CedarPch.h"
+#include "Connection.h"
+
+#include "BridgeUnix.h"
+#include "BridgeWin32.h"
+#include "Hub.h"
+#include "Layer3.h"
+#include "Link.h"
+#include "Listener.h"
+#include "Nat.h"
+#include "Protocol.h"
+#include "Server.h"
+#include "SecureNAT.h"
+#include "Session.h"
+#include "UdpAccel.h"
+#include "Virtual.h"
+
+#include "Mayaqua/DNS.h"
+#include "Mayaqua/Kernel.h"
+#include "Mayaqua/Mayaqua.h"
+#include "Mayaqua/Memory.h"
+#include "Mayaqua/Object.h"
+#include "Mayaqua/Pack.h"
+#include "Mayaqua/Str.h"
+#include "Mayaqua/Tick64.h"
+
+#include <stdlib.h>
 
 // Determine whether the socket is to use to send
 #define	IS_SEND_TCP_SOCK(ts)		\
@@ -443,7 +362,7 @@ WAIT_FOR_ENABLE:
 				{
 					if (StrCmpi(k->ServerName, server_name) != 0 ||
 						k->ServerPort != server_port || k->Enable == false ||
-						k->UdpMode)
+						k->UdpMode == false)
 					{
 						changed = true;
 					}
@@ -644,6 +563,14 @@ CLIENT_AUTH *CopyClientAuth(CLIENT_AUTH *a)
 		// Secure device authentication
 		StrCpy(ret->SecurePublicCertName, sizeof(ret->SecurePublicCertName), a->SecurePublicCertName);
 		StrCpy(ret->SecurePrivateKeyName, sizeof(ret->SecurePrivateKeyName), a->SecurePrivateKeyName);
+		break;
+
+	case CLIENT_AUTHTYPE_OPENSSLENGINE:
+		// Secure device authentication
+		ret->ClientX = CloneX(a->ClientX);
+		StrCpy(ret->OpensslEnginePrivateKeyName, sizeof(ret->OpensslEnginePrivateKeyName), a->OpensslEnginePrivateKeyName);
+		StrCpy(ret->OpensslEngineName, sizeof(ret->OpensslEngineName), a->OpensslEngineName);
+    ret->ClientK = OpensslEngineToK(ret->OpensslEnginePrivateKeyName, ret->OpensslEngineName);
 		break;
 	}
 
@@ -960,8 +887,9 @@ void SendKeepAlive(CONNECTION *c, TCPSOCK *ts)
 	UINT size, i, num;
 	UINT size_be;
 	SESSION *s;
+	UDP_ACCEL *udp_accel;
 	UCHAR *buf;
-	bool insert_natt_port = false;
+	bool insert_natt_port = false, insert_natt_ip = false;
 	// Validate arguments
 	if (c == NULL || ts == NULL)
 	{
@@ -969,33 +897,65 @@ void SendKeepAlive(CONNECTION *c, TCPSOCK *ts)
 	}
 
 	s = c->Session;
+	if (s == NULL)
+	{
+		return;
+	}
+
+	udp_accel = s->UdpAccel;
 
 	size = rand() % MAX_KEEPALIVE_SIZE;
 	num = KEEP_ALIVE_MAGIC;
 
-	if (s != NULL && s->UseUdpAcceleration && s->UdpAccel != NULL)
+	if (s->UseUdpAcceleration && udp_accel != NULL)
 	{
-		if (s->UdpAccel->MyPortByNatTServer != 0)
+		UINT required_size = 0;
+
+		if (udp_accel->MyPortNatT != 0)
 		{
-			size = MAX(size, (StrLen(UDP_NAT_T_PORT_SIGNATURE_IN_KEEP_ALIVE) + sizeof(USHORT)));
+			required_size += StrLen(UDP_NAT_T_PORT_SIGNATURE_IN_KEEP_ALIVE) + sizeof(USHORT);
 
 			insert_natt_port = true;
 		}
+
+		if (IsZeroIP(&udp_accel->MyIpNatT) == false)
+		{
+			required_size += StrLen(UDP_NAT_T_IP_SIGNATURE_IN_KEEP_ALIVE) + sizeof(udp_accel->MyIpNatT.address);
+
+			insert_natt_ip = true;
+		}
+
+		size = MAX(size, required_size);
+
 	}
 
 	buf = MallocFast(size);
 
-	for (i = 0;i < size;i++)
+	for (i = 0; i < size; ++i)
 	{
 		buf[i] = rand();
 	}
 
+	UCHAR *seek = buf;
+
 	if (insert_natt_port)
 	{
-		USHORT myport = Endian16((USHORT)s->UdpAccel->MyPortByNatTServer);
+		const UINT nat_t_port_sig_size = StrLen(UDP_NAT_T_PORT_SIGNATURE_IN_KEEP_ALIVE);
+		const USHORT port = Endian16(udp_accel->MyPortNatT);
 
-		Copy(buf, UDP_NAT_T_PORT_SIGNATURE_IN_KEEP_ALIVE, StrLen(UDP_NAT_T_PORT_SIGNATURE_IN_KEEP_ALIVE));
-		Copy(buf + StrLen(UDP_NAT_T_PORT_SIGNATURE_IN_KEEP_ALIVE), &myport, sizeof(USHORT));
+		Copy(buf, UDP_NAT_T_PORT_SIGNATURE_IN_KEEP_ALIVE, nat_t_port_sig_size);
+		seek += nat_t_port_sig_size;
+		Copy(seek, &port, sizeof(port));
+		seek += sizeof(port);
+	}
+
+	if (insert_natt_ip)
+	{
+		const UINT nat_t_ip_sig_size = StrLen(UDP_NAT_T_IP_SIGNATURE_IN_KEEP_ALIVE);
+
+		Copy(seek, UDP_NAT_T_IP_SIGNATURE_IN_KEEP_ALIVE, nat_t_ip_sig_size);
+		seek += nat_t_ip_sig_size;
+		Copy(seek, udp_accel->MyIpNatT.address, sizeof(udp_accel->MyIpNatT.address));
 	}
 
 	num = Endian32(num);
@@ -1077,7 +1037,7 @@ void ConnectionSend(CONNECTION *c, UINT64 now)
 				{
 					// Processing of KeepAlive
 					if (now >= tcpsock->NextKeepAliveTime || tcpsock->NextKeepAliveTime == 0 ||
-						(s->UseUdpAcceleration && s->UdpAccel != NULL && s->UdpAccel->MyPortByNatTServerChanged))
+						(s->UseUdpAcceleration && s->UdpAccel != NULL && s->UdpAccel->MyIpOrPortNatTChanged))
 					{
 						// Send the KeepAlive
 						SendKeepAlive(c, tcpsock);
@@ -1085,7 +1045,7 @@ void ConnectionSend(CONNECTION *c, UINT64 now)
 
 						if (s->UseUdpAcceleration && s->UdpAccel != NULL)
 						{
-							s->UdpAccel->MyPortByNatTServerChanged = false;
+							s->UdpAccel->MyIpOrPortNatTChanged = false;
 						}
 					}
 
@@ -1266,6 +1226,8 @@ void ConnectionSend(CONNECTION *c, UINT64 now)
 										s->TotalSendSizeReal += b->Size;
 
 										c->CurrentSendQueueSize -= b->Size;
+
+										Free(new_buf);
 									}
 
 									FreeBlock(b);
@@ -2257,28 +2219,48 @@ DISCONNECT_THIS_TCP:
 						ts->Mode = 0;
 						sz = ts->NextBlockSize;
 
-						if (sz >= (StrLen(UDP_NAT_T_PORT_SIGNATURE_IN_KEEP_ALIVE) + sizeof(USHORT)))
+						if (s->UseUdpAcceleration && s->UdpAccel != NULL)
 						{
-							UCHAR *keep_alive_buffer = FifoPtr(ts->RecvFifo);
+							const UCHAR *keep_alive_buffer = FifoPtr(ts->RecvFifo);
+							const UINT nat_t_ip_sig_size = StrLen(UDP_NAT_T_IP_SIGNATURE_IN_KEEP_ALIVE);
+							const UINT nat_t_port_sig_size = StrLen(UDP_NAT_T_PORT_SIGNATURE_IN_KEEP_ALIVE);
+							UINT cur_size = sz;
 
-							if (Cmp(keep_alive_buffer, UDP_NAT_T_PORT_SIGNATURE_IN_KEEP_ALIVE, StrLen(UDP_NAT_T_PORT_SIGNATURE_IN_KEEP_ALIVE)) == 0)
+							if (cur_size >= nat_t_port_sig_size + sizeof(USHORT))
 							{
-								USHORT us = READ_USHORT(keep_alive_buffer + StrLen(UDP_NAT_T_PORT_SIGNATURE_IN_KEEP_ALIVE));
-
-								if (us != 0)
+								if (Cmp(keep_alive_buffer, UDP_NAT_T_PORT_SIGNATURE_IN_KEEP_ALIVE, nat_t_port_sig_size) == 0)
 								{
-									if (s->UseUdpAcceleration && s->UdpAccel != NULL)
+									cur_size -= nat_t_port_sig_size;
+									keep_alive_buffer += nat_t_port_sig_size;
+
+									const USHORT port = READ_USHORT(keep_alive_buffer);
+									cur_size -= sizeof(USHORT);
+									keep_alive_buffer += sizeof(USHORT);
+
+									if (port && s->UdpAccel->YourPortNatT != port)
 									{
-										UINT port = (UINT)us;
+										s->UdpAccel->YourPortNatT = port;
+										s->UdpAccel->YourIpOrPortNatTChanged = true;
 
-										if (s->UdpAccel->YourPortByNatTServer != port)
-										{
-											s->UdpAccel->YourPortByNatTServer = port;
-											s->UdpAccel->YourPortByNatTServerChanged = true;
+										Debug("ConnectionReceive(): New peer NAT-T port: %u\n", port);
+									}
+								}
+							}
 
-											Debug("s->UdpAccel->YourPortByNatTServer: %u\n",
-												s->UdpAccel->YourPortByNatTServer);
-										}
+							if (cur_size >= nat_t_ip_sig_size + sizeof(s->UdpAccel->YourIpNatT.address))
+							{
+								if (Cmp(keep_alive_buffer, UDP_NAT_T_IP_SIGNATURE_IN_KEEP_ALIVE, nat_t_ip_sig_size) == 0)
+								{
+									keep_alive_buffer += nat_t_ip_sig_size;
+
+									IP ip;
+									SetIP6(&ip, keep_alive_buffer);
+									if (IsZeroIP(&ip) == false && CmpIpAddr(&s->UdpAccel->YourIpNatT, &ip) != 0)
+									{
+										Copy(&s->UdpAccel->YourIpNatT, &ip, sizeof(s->UdpAccel->YourIpNatT));
+										s->UdpAccel->YourIpOrPortNatTChanged = true;
+
+										Debug("ConnectionReceive(): New peer NAT-T IP: %r\n", &ip);
 									}
 								}
 							}
@@ -2788,6 +2770,8 @@ BLOCK *NewBlock(void *data, UINT size, int compress)
 
 	b = MallocFast(sizeof(BLOCK));
 
+	b->RawFlagRetUdpAccel = 0;
+
 	b->IsFlooding = false;
 
 	b->PriorityQoS = b->Ttl = b->Param1 = 0;
@@ -2795,7 +2779,7 @@ BLOCK *NewBlock(void *data, UINT size, int compress)
 	if (compress == 0)
 	{
 		// Uncompressed
-		b->Compressed = FALSE;
+		b->Compressed = false;
 		b->Buf = data;
 		b->Size = size;
 		b->SizeofData = size;
@@ -2805,7 +2789,7 @@ BLOCK *NewBlock(void *data, UINT size, int compress)
 		UINT max_size;
 
 		// Compressed
-		b->Compressed = TRUE;
+		b->Compressed = true;
 		max_size = CalcCompress(size);
 		b->Buf = MallocFast(max_size);
 		b->Size = Compress(b->Buf, max_size, data, size);
@@ -2819,7 +2803,7 @@ BLOCK *NewBlock(void *data, UINT size, int compress)
 		// Expand
 		UINT max_size;
 
-		b->Compressed = FALSE;
+		b->Compressed = false;
 		max_size = MAX_PACKET_SIZE;
 		b->Buf = MallocFast(max_size);
 		b->Size = Uncompress(b->Buf, max_size, data, size);
@@ -3007,21 +2991,8 @@ void ConnectionAccept(CONNECTION *c)
 	X *x;
 	K *k;
 	char tmp[128];
-	UCHAR openssl_check_buf[2];
-	char *error_details = NULL;
-	SERVER *server;
-	UCHAR *peek_buf = NULL;
-	UINT peek_buf_size = 1500;
-	char sni[256] = {0};
-	bool native1 = false;
-	bool native2 = false;
-	bool native3 = false;
-	bool no_native = false;
-	UINT peek_size = 0;
 	UINT initial_timeout = CONNECTING_TIMEOUT;
-	bool no_peek_log = false;
 	UCHAR ctoken_hash[SHA1_SIZE];
-	bool no_write_ctoken_log = false;
 
 	// Validate arguments
 	if (c == NULL)
@@ -3031,13 +3002,7 @@ void ConnectionAccept(CONNECTION *c)
 
 	Zero(ctoken_hash, sizeof(ctoken_hash));
 
-	peek_buf = ZeroMalloc(peek_buf_size);
-
-	Debug("ConnectionAccept()\n");
-
-	server = c->Cedar->Server;
-
-	// get a socket
+	// Get a socket
 	s = c->FirstSock;
 	AddRef(s->ref);
 
@@ -3051,37 +3016,18 @@ void ConnectionAccept(CONNECTION *c)
 	initial_timeout += GetMachineRand() % (CONNECTING_TIMEOUT / 2);
 	SetTimeout(s, initial_timeout);
 
-
-	// Peek whether OpenSSL packet
-	if (s->IsReverseAcceptedSocket == false)
+	// Handle third-party protocols
+	if (s->IsReverseAcceptedSocket == false && s->Type == SOCK_TCP)
 	{
-		if (s->Type == SOCK_TCP && (c->Cedar != NULL && c->Cedar->Server != NULL && c->Cedar->Server->DisableOpenVPNServer == false))
+		if (c->Cedar != NULL && c->Cedar->Server != NULL)
 		{
-			if (Peek(s, openssl_check_buf, sizeof(openssl_check_buf)) == sizeof(openssl_check_buf))
+			PROTO *proto = c->Cedar->Server->Proto;
+			if (proto && ProtoHandleConnection(proto, s, NULL) == true)
 			{
-				if (OvsCheckTcpRecvBufIfOpenVPNProtocol(openssl_check_buf, sizeof(openssl_check_buf)))
-				{
-					// Detect OpenSSL packet
-					Debug("Detect OpenSSL on TCP!\n");
-
-					no_native = true;
-
-					if (OvsGetNoOpenVpnTcp() == false)
-					{
-						// Do OpenSSL processing
-						c->Type = CONNECTION_TYPE_OPENVPN;
-						if (OvsPerformTcpServer(c->Cedar, s) == false)
-						{
-							error_details = "OpenVPN_TCP_Aborted";
-						}
-					}
-
-					goto ERROR;
-				}
+				c->Type = CONNECTION_TYPE_OTHER;
+				goto FINAL;
 			}
 		}
-
-
 	}
 
 	// Specify the encryption algorithm
@@ -3098,21 +3044,17 @@ void ConnectionAccept(CONNECTION *c)
 	Unlock(c->Cedar->lock);
 
 	// Start the SSL communication
-	Debug("StartSSL()\n");
 	Copy(&s->SslAcceptSettings, &c->Cedar->SslAcceptSettings, sizeof(SSL_ACCEPT_SETTINGS));
 	if (StartSSL(s, x, k) == false)
 	{
 		// Failed
 		AddNoSsl(c->Cedar, &s->RemoteIP);
-		Debug("Failed to StartSSL.\n");
+		Debug("ConnectionAccept(): StartSSL() failed\n");
 		FreeX(x);
 		FreeK(k);
 
-		error_details = "StartSSL";
-
-		goto ERROR;
+		goto FINAL;
 	}
-
 
 	FreeX(x);
 	FreeK(k);
@@ -3125,29 +3067,18 @@ void ConnectionAccept(CONNECTION *c)
 	if (ServerAccept(c) == false)
 	{
 		// Failed
-		Debug("ServerAccept Failed. Err = %u\n", c->Err);
-		goto ERROR;
+		Debug("ConnectionAccept(): ServerAccept() failed with error %u\n", c->Err);
 	}
 
+FINAL:
 	if (c->flag1 == false)
 	{
 		Debug("%s %u c->flag1 == false\n", __FILE__, __LINE__);
 		Disconnect(s);
 	}
+
 	DelConnection(c->Cedar, c);
 	ReleaseSock(s);
-
-	Free(peek_buf);
-	return;
-
-ERROR:
-	Debug("ConnectionAccept() Error.\n");
-
-
-	Disconnect(s);
-	DelConnection(c->Cedar, c);
-	ReleaseSock(s);
-	Free(peek_buf);
 }
 
 // Stop the threads putting additional connection of all that are currently running

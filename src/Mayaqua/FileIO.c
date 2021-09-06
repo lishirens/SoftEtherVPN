@@ -1,131 +1,29 @@
 // SoftEther VPN Source Code - Developer Edition Master Branch
 // Mayaqua Kernel
-// 
-// SoftEther VPN Server, Client and Bridge are free software under GPLv2.
-// 
-// Copyright (c) Daiyuu Nobori.
-// Copyright (c) SoftEther VPN Project, University of Tsukuba, Japan.
-// Copyright (c) SoftEther Corporation.
-// 
-// All Rights Reserved.
-// 
-// http://www.softether.org/
-// 
-// Author: Daiyuu Nobori, Ph.D.
-// Comments: Tetsuo Sugiyama, Ph.D.
-// 
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// version 2 as published by the Free Software Foundation.
-// 
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License version 2
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-// CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-// SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-// 
-// THE LICENSE AGREEMENT IS ATTACHED ON THE SOURCE-CODE PACKAGE
-// AS "LICENSE.TXT" FILE. READ THE TEXT FILE IN ADVANCE TO USE THE SOFTWARE.
-// 
-// 
-// THIS SOFTWARE IS DEVELOPED IN JAPAN, AND DISTRIBUTED FROM JAPAN,
-// UNDER JAPANESE LAWS. YOU MUST AGREE IN ADVANCE TO USE, COPY, MODIFY,
-// MERGE, PUBLISH, DISTRIBUTE, SUBLICENSE, AND/OR SELL COPIES OF THIS
-// SOFTWARE, THAT ANY JURIDICAL DISPUTES WHICH ARE CONCERNED TO THIS
-// SOFTWARE OR ITS CONTENTS, AGAINST US (SOFTETHER PROJECT, SOFTETHER
-// CORPORATION, DAIYUU NOBORI OR OTHER SUPPLIERS), OR ANY JURIDICAL
-// DISPUTES AGAINST US WHICH ARE CAUSED BY ANY KIND OF USING, COPYING,
-// MODIFYING, MERGING, PUBLISHING, DISTRIBUTING, SUBLICENSING, AND/OR
-// SELLING COPIES OF THIS SOFTWARE SHALL BE REGARDED AS BE CONSTRUED AND
-// CONTROLLED BY JAPANESE LAWS, AND YOU MUST FURTHER CONSENT TO
-// EXCLUSIVE JURISDICTION AND VENUE IN THE COURTS SITTING IN TOKYO,
-// JAPAN. YOU MUST WAIVE ALL DEFENSES OF LACK OF PERSONAL JURISDICTION
-// AND FORUM NON CONVENIENS. PROCESS MAY BE SERVED ON EITHER PARTY IN
-// THE MANNER AUTHORIZED BY APPLICABLE LAW OR COURT RULE.
-// 
-// USE ONLY IN JAPAN. DO NOT USE THIS SOFTWARE IN ANOTHER COUNTRY UNLESS
-// YOU HAVE A CONFIRMATION THAT THIS SOFTWARE DOES NOT VIOLATE ANY
-// CRIMINAL LAWS OR CIVIL RIGHTS IN THAT PARTICULAR COUNTRY. USING THIS
-// SOFTWARE IN OTHER COUNTRIES IS COMPLETELY AT YOUR OWN RISK. THE
-// SOFTETHER VPN PROJECT HAS DEVELOPED AND DISTRIBUTED THIS SOFTWARE TO
-// COMPLY ONLY WITH THE JAPANESE LAWS AND EXISTING CIVIL RIGHTS INCLUDING
-// PATENTS WHICH ARE SUBJECTS APPLY IN JAPAN. OTHER COUNTRIES' LAWS OR
-// CIVIL RIGHTS ARE NONE OF OUR CONCERNS NOR RESPONSIBILITIES. WE HAVE
-// NEVER INVESTIGATED ANY CRIMINAL REGULATIONS, CIVIL LAWS OR
-// INTELLECTUAL PROPERTY RIGHTS INCLUDING PATENTS IN ANY OF OTHER 200+
-// COUNTRIES AND TERRITORIES. BY NATURE, THERE ARE 200+ REGIONS IN THE
-// WORLD, WITH DIFFERENT LAWS. IT IS IMPOSSIBLE TO VERIFY EVERY
-// COUNTRIES' LAWS, REGULATIONS AND CIVIL RIGHTS TO MAKE THE SOFTWARE
-// COMPLY WITH ALL COUNTRIES' LAWS BY THE PROJECT. EVEN IF YOU WILL BE
-// SUED BY A PRIVATE ENTITY OR BE DAMAGED BY A PUBLIC SERVANT IN YOUR
-// COUNTRY, THE DEVELOPERS OF THIS SOFTWARE WILL NEVER BE LIABLE TO
-// RECOVER OR COMPENSATE SUCH DAMAGES, CRIMINAL OR CIVIL
-// RESPONSIBILITIES. NOTE THAT THIS LINE IS NOT LICENSE RESTRICTION BUT
-// JUST A STATEMENT FOR WARNING AND DISCLAIMER.
-// 
-// 
-// SOURCE CODE CONTRIBUTION
-// ------------------------
-// 
-// Your contribution to SoftEther VPN Project is much appreciated.
-// Please send patches to us through GitHub.
-// Read the SoftEther VPN Patch Acceptance Policy in advance:
-// http://www.softether.org/5-download/src/9.patch
-// 
-// 
-// DEAR SECURITY EXPERTS
-// ---------------------
-// 
-// If you find a bug or a security vulnerability please kindly inform us
-// about the problem immediately so that we can fix the security problem
-// to protect a lot of users around the world as soon as possible.
-// 
-// Our e-mail address for security reports is:
-// softether-vpn-security [at] softether.org
-// 
-// Please note that the above e-mail address is not a technical support
-// inquiry address. If you need technical assistance, please visit
-// http://www.softether.org/ and ask your question on the users forum.
-// 
-// Thank you for your cooperation.
-// 
-// 
-// NO MEMORY OR RESOURCE LEAKS
-// ---------------------------
-// 
-// The memory-leaks and resource-leaks verification under the stress
-// test has been passed before release this source code.
 
 
 // FileIO.c
 // File Input / Output code
 
-#include <GlobalConst.h>
+#include "FileIO.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <wchar.h>
-#include <stdarg.h>
-#include <time.h>
-#include <errno.h>
-#include <Mayaqua/Mayaqua.h>
+#include "Cfg.h"
+#include "GlobalConst.h"
+#include "Internat.h"
+#include "Memory.h"
+#include "Microsoft.h"
+#include "Str.h"
+#include "Tick64.h"
+#include "Tracking.h"
+#include "Unix.h"
+#include "Win32.h"
+
+#include <Hamcore.h>
 
 static char exe_file_name[MAX_SIZE] = "/tmp/a.out";
 static wchar_t exe_file_name_w[MAX_SIZE] = L"/tmp/a.out";
 static LIST *hamcore = NULL;
-static IO *hamcore_io = NULL;
+static HAMCORE *hamcore_io = NULL;
 
 #define	NUM_CRC32_TABLE	256
 static UINT crc32_table[NUM_CRC32_TABLE];
@@ -658,25 +556,6 @@ bool IsFileW(wchar_t *name)
 	return true;
 }
 
-// Rename to replace the file
-bool FileReplaceRenameW(wchar_t *old_name, wchar_t *new_name)
-{
-	// Validate arguments
-	if (old_name == NULL || new_name == NULL)
-	{
-		return false;
-	}
-
-	if (FileCopyW(old_name, new_name) == false)
-	{
-		return false;
-	}
-
-	FileDeleteW(old_name);
-
-	return true;
-}
-
 // Make the file name safe
 void ConvertSafeFileName(char *dst, UINT size, char *src)
 {
@@ -714,110 +593,6 @@ bool GetDiskFree(char *path, UINT64 *free_size, UINT64 *used_size, UINT64 *total
 #endif	// OS_WIN32
 
 	return ret;
-}
-
-// Enumeration of direction with all sub directories
-TOKEN_LIST *EnumDirWithSubDirs(char *dirname)
-{
-	TOKEN_LIST *ret;
-	UNI_TOKEN_LIST *ret2;
-	wchar_t tmp[MAX_SIZE];
-	// Validate arguments
-	if (dirname == NULL)
-	{
-		dirname = "./";
-	}
-
-	StrToUni(tmp, sizeof(tmp), dirname);
-
-	ret2 = EnumDirWithSubDirsW(tmp);
-
-	ret = UniTokenListToTokenList(ret2);
-
-	UniFreeToken(ret2);
-
-	return ret;
-}
-UNI_TOKEN_LIST *EnumDirWithSubDirsW(wchar_t *dirname)
-{
-	ENUM_DIR_WITH_SUB_DATA d;
-	UNI_TOKEN_LIST *ret;
-	UINT i;
-	// Validate arguments
-	if (dirname == NULL)
-	{
-		dirname = L"./";
-	}
-
-	Zero(&d, sizeof(d));
-
-	d.FileList = NewListFast(NULL);
-
-	EnumDirWithSubDirsMain(&d, dirname);
-
-	ret = ZeroMalloc(sizeof(UNI_TOKEN_LIST));
-
-	ret->NumTokens = LIST_NUM(d.FileList);
-	ret->Token = ZeroMalloc(sizeof(wchar_t *) * ret->NumTokens);
-
-	for (i = 0;i < ret->NumTokens;i++)
-	{
-		wchar_t *s = LIST_DATA(d.FileList, i);
-
-		ret->Token[i] = UniCopyStr(s);
-	}
-
-	FreeStrList(d.FileList);
-
-	return ret;
-}
-void EnumDirWithSubDirsMain(ENUM_DIR_WITH_SUB_DATA *d, wchar_t *dirname)
-{
-	DIRLIST *dir;
-	UINT i;
-	// Validate arguments
-	if (d == NULL || dirname == NULL)
-	{
-		return;
-	}
-
-	dir = EnumDirExW(dirname, NULL);
-	if (dir == NULL)
-	{
-		return;
-	}
-
-	// Files
-	for (i = 0;i < dir->NumFiles;i++)
-	{
-		DIRENT *e = dir->File[i];
-
-		if (e->Folder == false)
-		{
-			wchar_t tmp[MAX_SIZE];
-
-			ConbinePathW(tmp, sizeof(tmp), dirname, e->FileNameW);
-
-			Add(d->FileList, CopyUniStr(tmp));
-		}
-	}
-
-	// Sub directories
-	for (i = 0;i < dir->NumFiles;i++)
-	{
-		DIRENT *e = dir->File[i];
-
-		if (e->Folder)
-		{
-			wchar_t tmp[MAX_SIZE];
-
-			ConbinePathW(tmp, sizeof(tmp), dirname, e->FileNameW);
-
-			EnumDirWithSubDirsMain(d, tmp);
-		}
-	}
-
-	FreeDir(dir);
 }
 
 // Enumeration of directory
@@ -943,395 +718,137 @@ BUF *ReadHamcoreW(wchar_t *filename)
 }
 BUF *ReadHamcore(char *name)
 {
-	wchar_t tmp[MAX_SIZE];
-	wchar_t exe_dir[MAX_SIZE];
-	BUF *b;
-	char filename[MAX_PATH];
-	// Validate arguments
-	if (name == NULL)
+	if (name == NULL || MayaquaIsMinimalMode())
 	{
 		return NULL;
 	}
 
-	if (name[0] == '|')
+	if (name[0] == '/')
 	{
-		name++;
+		++name;
 	}
 
-	if (name[0] == '/' || name[0] == '\\')
+	char path[MAX_PATH];
+	GetExeDir(path, sizeof(path));
+	Format(path, sizeof(path), "%s/%s/%s", path, HAMCORE_DIR_NAME, name);
+
+	BUF *buf = ReadDump(path);
+	if (buf != NULL)
 	{
-		name++;
+		return buf;
 	}
 
-	StrCpy(filename, sizeof(filename), name);
-
-	ReplaceStrEx(filename, sizeof(filename), filename, "/", "\\", true);
-
-	if (MayaquaIsMinimalMode())
-	{
-		return NULL;
-	}
-
-	// If the file exist in hamcore/ directory on the local disk, read it
-	GetExeDirW(exe_dir, sizeof(exe_dir));
-
-	UniFormat(tmp, sizeof(tmp), L"%s/%S/%S", exe_dir, HAMCORE_DIR_NAME, filename);
-
-	b = ReadDumpW(tmp);
-	if (b != NULL)
-	{
-		return b;
-	}
-
-	// Search from HamCore file system if it isn't found
 	LockList(hamcore);
 	{
-		HC t, *c;
-		UINT i;
-
-		Zero(&t, sizeof(t));
-		t.FileName = filename;
-		c = Search(hamcore, &t);
-
+		HC t = {0};
+		t.Path = name;
+		HC *c = Search(hamcore, &t);
 		if (c == NULL)
 		{
-			// File does not exist
-			b = NULL;
-		}
-		else
-		{
-			// File exists
-			if (c->Buffer != NULL)
+			const HAMCORE_FILE *file = HamcoreFind(hamcore_io, name);
+			if (file)
 			{
-				// It is already loaded
-				b = NewBuf();
-				WriteBuf(b, c->Buffer, c->Size);
-				SeekBuf(b, 0, 0);
-				c->LastAccess = Tick64();
-			}
-			else
-			{
-				// Read from a file is if it is not read
-				if (FileSeek(hamcore_io, 0, c->Offset) == false)
+				c = Malloc(sizeof(HC));
+				c->Size = file->OriginalSize;
+				c->Path = CopyStr(name);
+				c->Buffer = Malloc(c->Size);
+
+				if (HamcoreRead(hamcore_io, c->Buffer, file))
 				{
-					// Failed to seek
-					b = NULL;
+					Add(hamcore, c);
 				}
 				else
 				{
-					// Read the compressed data
-					void *data = Malloc(c->SizeCompressed);
-					if (FileRead(hamcore_io, data, c->SizeCompressed) == false)
-					{
-						// Failed to read
-						Free(data);
-						b = NULL;
-					}
-					else
-					{
-						// Expand
-						c->Buffer = ZeroMalloc(c->Size);
-						if (Uncompress(c->Buffer, c->Size, data, c->SizeCompressed) != c->Size)
-						{
-							// Failed to expand
-							Free(data);
-							Free(c->Buffer);
-							b = NULL;
-						}
-						else
-						{
-							// Successful
-							Free(data);
-							b = NewBuf();
-							WriteBuf(b, c->Buffer, c->Size);
-							SeekBuf(b, 0, 0);
-							c->LastAccess = Tick64();
-						}
-					}
+					Free(c->Buffer);
+					Free(c->Path);
+					Free(c);
+
+					c = NULL;
 				}
 			}
 		}
 
-		// Delete the expired cache
-		for (i = 0;i < LIST_NUM(hamcore);i++)
+		if (c != NULL)
+		{
+			buf = NewBuf();
+			WriteBuf(buf, c->Buffer, c->Size);
+			SeekBuf(buf, 0, 0);
+			c->LastAccess = Tick64();
+		}
+
+		LIST *to_delete = NewListFast(NULL);
+
+		for (UINT i = 0; i < LIST_NUM(hamcore); ++i)
 		{
 			HC *c = LIST_DATA(hamcore, i);
-
-			if (c->Buffer != NULL)
+			if (c->LastAccess + HAMCORE_CACHE_EXPIRES <= Tick64())
 			{
-				if (((c->LastAccess + HAMCORE_CACHE_EXPIRES) <= Tick64()) ||
-					(StartWith(c->FileName, "Li")))
-				{
-					Free(c->Buffer);
-					c->Buffer = NULL;
-				}
+				Add(to_delete, c);
 			}
 		}
+
+		for (UINT i = 0; i < LIST_NUM(to_delete); ++i)
+		{
+			HC *c = LIST_DATA(to_delete, i);
+
+			Delete(hamcore, c);
+
+			Free(c->Buffer);
+			Free(c->Path);
+			Free(c);
+		}
+
+		ReleaseList(to_delete);
 	}
 	UnlockList(hamcore);
 
-	return b;
+	return buf;
 }
 
 // Initialization of HamCore file system
 void InitHamcore()
 {
-	wchar_t tmp[MAX_PATH];
-	wchar_t tmp2[MAX_PATH];
-	wchar_t exe_dir[MAX_PATH];
-	UINT i, num;
-	char header[HAMCORE_HEADER_SIZE];
-
-	hamcore = NewList(CompareHamcore);
-
 	if (MayaquaIsMinimalMode())
 	{
 		return;
 	}
 
-	GetExeDirW(exe_dir, sizeof(exe_dir));
-	UniFormat(tmp, sizeof(tmp), L"%s/%S", exe_dir, HAMCORE_FILE_NAME);
-
-	UniFormat(tmp2, sizeof(tmp2), L"%s/%S", exe_dir, HAMCORE_FILE_NAME_2);
-
-	// If there is _hamcore.se2, overwrite it yo the hamcore.se2 
-	FileReplaceRenameW(tmp2, tmp);
-
-	// Read if there is a file hamcore.se2
-	hamcore_io = FileOpenW(tmp, false);
-	if (hamcore_io == NULL)
+	hamcore = NewList(CompareHamcore);
+#ifdef HAMCORE_FILE_PATH
+	hamcore_io = HamcoreOpen(HAMCORE_FILE_PATH);
+	if (hamcore_io != NULL)
 	{
-		// Look in other locations if it isn't found
-#ifdef	OS_WIN32
-		UniFormat(tmp, sizeof(tmp), L"%S/%S", MsGetSystem32Dir(), HAMCORE_FILE_NAME);
-#else	// OS_WIN32
-		UniFormat(tmp, sizeof(tmp), L"/bin/%S", HAMCORE_FILE_NAME);
-#endif	// OS_WIN32
-
-		hamcore_io = FileOpenW(tmp, false);
-		if (hamcore_io == NULL)
-		{
-			return;
-		}
-	}
-
-	// Read the file header
-	Zero(header, sizeof(header));
-	FileRead(hamcore_io, header, HAMCORE_HEADER_SIZE);
-
-	if (Cmp(header, HAMCORE_HEADER_DATA, HAMCORE_HEADER_SIZE) != 0)
-	{
-		// Invalid header
-		FileClose(hamcore_io);
-		hamcore_io = NULL;
+		Debug("InitHamcore(): Loaded from \"%s\".\n", HAMCORE_FILE_PATH);
 		return;
 	}
+#endif
+	char path[MAX_PATH];
+	GetExeDir(path, sizeof(path));
+	Format(path, sizeof(path), "%s/%s", path, HAMCORE_FILE_NAME);
 
-	// The number of the File
-	num = 0;
-	FileRead(hamcore_io, &num, sizeof(num));
-	num = Endian32(num);
-	for (i = 0;i < num;i++)
+	hamcore_io = HamcoreOpen(path);
+	if (hamcore_io != NULL)
 	{
-		// File name
-		char tmp[MAX_SIZE];
-		UINT str_size = 0;
-		HC *c;
-
-		FileRead(hamcore_io, &str_size, sizeof(str_size));
-		str_size = Endian32(str_size);
-		if (str_size >= 1)
-		{
-			str_size--;
-		}
-
-		Zero(tmp, sizeof(tmp));
-		FileRead(hamcore_io, tmp, str_size);
-
-		c = ZeroMalloc(sizeof(HC));
-		c->FileName = CopyStr(tmp);
-
-		FileRead(hamcore_io, &c->Size, sizeof(UINT));
-		c->Size = Endian32(c->Size);
-
-		FileRead(hamcore_io, &c->SizeCompressed, sizeof(UINT));
-		c->SizeCompressed = Endian32(c->SizeCompressed);
-
-		FileRead(hamcore_io, &c->Offset, sizeof(UINT));
-		c->Offset = Endian32(c->Offset);
-
-		Insert(hamcore, c);
+		Debug("InitHamcore(): Loaded from \"%s\".\n", path);
 	}
 }
 
 // Release of HamCore file system
 void FreeHamcore()
 {
-	UINT i;
-	for (i = 0;i < LIST_NUM(hamcore);i++)
+	for (UINT i = 0; i < LIST_NUM(hamcore); ++i)
 	{
 		HC *c = LIST_DATA(hamcore, i);
-		Free(c->FileName);
-		if (c->Buffer != NULL)
-		{
-			Free(c->Buffer);
-		}
+
+		Free(c->Buffer);
+		Free(c->Path);
 		Free(c);
 	}
 	ReleaseList(hamcore);
 
-	FileClose(hamcore_io);
+	HamcoreClose(hamcore_io);
 	hamcore_io = NULL;
 	hamcore = NULL;
-}
-
-// Build a Hamcore file
-void BuildHamcore(char *dst_filename, char *src_dir, bool unix_only)
-{
-	char exe_dir[MAX_SIZE];
-	bool ok = true;
-	LIST *o;
-	UINT i;
-	TOKEN_LIST *src_file_list;
-
-	GetExeDir(exe_dir, sizeof(exe_dir));
-
-	src_file_list = EnumDirWithSubDirs(src_dir);
-
-	o = NewListFast(CompareHamcore);
-
-	for (i = 0;i < src_file_list->NumTokens;i++)
-	{
-		char rpath[MAX_SIZE];
-		BUF *b;
-		char s[MAX_SIZE];
-
-		StrCpy(s, sizeof(s), src_file_list->Token[i]);
-		Trim(s);
-
-		if (GetRelativePath(rpath, sizeof(rpath), s, src_dir) == false)
-		{
-			// Unknown error !
-		}
-		else
-		{
-			bool ok = true;
-
-			ReplaceStr(rpath, sizeof(rpath), rpath, "/", "\\");
-
-			if (unix_only)
-			{
-				// Exclude non-UNIX files
-				if (EndWith(s, ".exe") ||
-					EndWith(s, ".dll") ||
-					EndWith(s, ".sys") ||
-					EndWith(s, ".inf") ||
-					EndWith(s, ".cat") ||
-					EndWith(s, ".wav"))
-				{
-					ok = false;
-				}
-			}
-
-			if (ok)
-			{
-				b = ReadDump(s);
-				if (b == NULL)
-				{
-					Print("Failed to open '%s'.\n", s);
-					ok = false;
-				}
-				else
-				{
-					HC *c = ZeroMalloc(sizeof(HC));
-					UINT tmp_size;
-					void *tmp;
-					c->FileName = CopyStr(rpath);
-					c->Size = b->Size;
-					tmp_size = CalcCompress(c->Size);
-					tmp = Malloc(tmp_size);
-					c->SizeCompressed = Compress(tmp, tmp_size, b->Buf, b->Size);
-					c->Buffer = tmp;
-					Insert(o, c);
-					Print("%s: %u -> %u\n", s, c->Size, c->SizeCompressed);
-					FreeBuf(b);
-				}
-			}
-		}
-	}
-
-	if (ok)
-	{
-		// Calculate the offset of the buffer for each file
-		UINT i, z;
-		char tmp[MAX_SIZE];
-		BUF *b;
-		z = 0;
-		z += HAMCORE_HEADER_SIZE;
-		// The number of files
-		z += sizeof(UINT);
-		// For file table first
-		for (i = 0;i < LIST_NUM(o);i++)
-		{
-			HC *c = LIST_DATA(o, i);
-			// File name
-			z += StrLen(c->FileName) + sizeof(UINT);
-			// File size
-			z += sizeof(UINT);
-			z += sizeof(UINT);
-			// Offset data
-			z += sizeof(UINT);
-		}
-		// File body
-		for (i = 0;i < LIST_NUM(o);i++)
-		{
-			HC *c = LIST_DATA(o, i);
-			// Buffer body
-			c->Offset = z;
-			printf("%s: offset: %u\n", c->FileName, c->Offset);
-			z += c->SizeCompressed;
-		}
-		// Writing
-		b = NewBuf();
-		// Header
-		WriteBuf(b, HAMCORE_HEADER_DATA, HAMCORE_HEADER_SIZE);
-		WriteBufInt(b, LIST_NUM(o));
-		for (i = 0;i < LIST_NUM(o);i++)
-		{
-			HC *c = LIST_DATA(o, i);
-			// File name
-			WriteBufStr(b, c->FileName);
-			// File size
-			WriteBufInt(b, c->Size);
-			WriteBufInt(b, c->SizeCompressed);
-			// Offset
-			WriteBufInt(b, c->Offset);
-		}
-		// Body
-		for (i = 0;i < LIST_NUM(o);i++)
-		{
-			HC *c = LIST_DATA(o, i);
-			WriteBuf(b, c->Buffer, c->SizeCompressed);
-		}
-		// Writing
-		StrCpy(tmp, sizeof(tmp), dst_filename);
-		Print("Writing %s...\n", tmp);
-		FileDelete(tmp);
-		DumpBuf(b, tmp);
-		FreeBuf(b);
-	}
-
-	for (i = 0;i < LIST_NUM(o);i++)
-	{
-		HC *c = LIST_DATA(o, i);
-		Free(c->Buffer);
-		Free(c->FileName);
-		Free(c);
-	}
-
-	ReleaseList(o);
-
-	FreeToken(src_file_list);
 }
 
 // Comparison of the HCs
@@ -1348,7 +865,7 @@ int CompareHamcore(void *p1, void *p2)
 	{
 		return 0;
 	}
-	return StrCmpi(c1->FileName, c2->FileName);
+	return StrCmpi(c1->Path, c2->Path);
 }
 
 // Getting the name of the directory where the EXE file is in
@@ -1393,6 +910,60 @@ void GetExeNameW(wchar_t *name, UINT size)
 	}
 
 	UniStrCpy(name, size, exe_file_name_w);
+}
+
+void GetLogDir(char *name, UINT size)
+{
+#ifdef SE_LOGDIR
+	Format(name, size, SE_LOGDIR);
+#else
+	GetExeDir(name, size);
+#endif
+}
+
+void GetLogDirW(wchar_t *name, UINT size)
+{
+#ifdef SE_LOGDIR
+	UniFormat(name, size, L""SE_LOGDIR);
+#else
+	GetExeDirW(name, size);
+#endif
+}
+
+void GetDbDir(char *name, UINT size)
+{
+#ifdef SE_DBDIR
+	Format(name, size, SE_DBDIR);
+#else
+	GetExeDir(name, size);
+#endif
+}
+
+void GetDbDirW(wchar_t *name, UINT size)
+{
+#ifdef SE_DBDIR
+	UniFormat(name, size, L""SE_DBDIR);
+#else
+	GetExeDirW(name, size);
+#endif
+}
+
+void GetPidDir(char *name, UINT size)
+{
+#ifdef SE_PIDDIR
+	Format(name, size, SE_PIDDIR);
+#else
+	GetExeDir(name, size);
+#endif
+}
+
+void GetPidDirW(wchar_t *name, UINT size)
+{
+#ifdef SE_PIDDIR
+	UniFormat(name, size, L""SE_PIDDIR);
+#else
+	GetExeDirW(name, size);
+#endif
 }
 
 // Initialization of the acquisition of the EXE file name
@@ -1844,67 +1415,6 @@ UNI_TOKEN_LIST *ParseSplitedPathW(wchar_t *path)
 	return ret;
 }
 
-// Get the relative path
-bool GetRelativePathW(wchar_t *dst, UINT size, wchar_t *fullpath, wchar_t *basepath)
-{
-	wchar_t fullpath2[MAX_SIZE];
-	wchar_t basepath2[MAX_SIZE];
-	// Validate arguments
-	if (dst == NULL || fullpath == NULL || basepath == NULL)
-	{
-		return false;
-	}
-	ClearUniStr(dst, size);
-
-	NormalizePathW(fullpath2, sizeof(fullpath2), fullpath);
-	NormalizePathW(basepath2, sizeof(basepath2), basepath);
-
-#ifdef	OS_WIN32
-	UniStrCat(basepath2, sizeof(basepath2), L"\\");
-#else	// OS_WIN32
-	UniStrCat(basepath2, sizeof(basepath2), L"/");
-#endif	// OS_WIN32
-
-	if (UniStrLen(fullpath2) <= UniStrLen(basepath2))
-	{
-		return false;
-	}
-
-	if (UniStartWith(fullpath2, basepath2) == false)
-	{
-		return false;
-	}
-
-	UniStrCpy(dst, size, fullpath2 + UniStrLen(basepath2));
-
-	return true;
-}
-bool GetRelativePath(char *dst, UINT size, char *fullpath, char *basepath)
-{
-	wchar_t dst_w[MAX_SIZE];
-	wchar_t fullpath_w[MAX_SIZE];
-	wchar_t basepath_w[MAX_SIZE];
-	bool ret;
-	// Validate arguments
-	if (dst == NULL || fullpath == NULL || basepath == NULL)
-	{
-		return false;
-	}
-
-	StrToUni(fullpath_w, sizeof(fullpath_w), fullpath);
-	StrToUni(basepath_w, sizeof(basepath_w), basepath);
-
-	ret = GetRelativePathW(dst_w, sizeof(dst_w), fullpath_w, basepath_w);
-	if (ret == false)
-	{
-		return false;
-	}
-
-	UniToStr(dst, size, dst_w);
-
-	return true;
-}
-
 // Normalize the file path
 void NormalizePathW(wchar_t *dst, UINT size, wchar_t *src)
 {
@@ -2079,17 +1589,6 @@ void NormalizePath(char *dst, UINT size, char *src)
 }
 
 // Rename the file
-bool FileRename(char *old_name, char *new_name)
-{
-	wchar_t *old_name_w = CopyStrToUni(old_name);
-	wchar_t *new_name_w = CopyStrToUni(new_name);
-	bool ret = FileRenameW(old_name_w, new_name_w);
-
-	Free(old_name_w);
-	Free(new_name_w);
-
-	return ret;
-}
 bool FileRenameW(wchar_t *old_name, wchar_t *new_name)
 {
 	wchar_t tmp1[MAX_SIZE];
@@ -2179,15 +1678,21 @@ void InnerFilePathW(wchar_t *dst, UINT size, wchar_t *src)
 		return;
 	}
 
-	if (src[0] != L'@')
+	if (src[0] == L'@')
 	{
-		NormalizePathW(dst, size, src);
+		wchar_t dir[MAX_SIZE];
+		GetLogDirW(dir, sizeof(dir));
+		ConbinePathW(dst, size, dir, &src[1]);
+	}
+	else if (src[0] == L'$')
+	{
+		wchar_t dir[MAX_SIZE];
+		GetDbDirW(dir, sizeof(dir));
+		ConbinePathW(dst, size, dir, &src[1]);
 	}
 	else
 	{
-		wchar_t dir[MAX_SIZE];
-		GetExeDirW(dir, sizeof(dir));
-		ConbinePathW(dst, size, dir, &src[1]);
+		NormalizePathW(dst, size, src);
 	}
 }
 void InnerFilePath(char *dst, UINT size, char *src)
